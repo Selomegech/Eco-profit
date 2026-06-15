@@ -1,0 +1,216 @@
+// Ecom Profit — data model
+// Postgres (Neon/Supabase). App uses the pooled DATABASE_URL,
+// migrations use DIRECT_URL.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum BillingInterval {
+  MONTHLY
+  QUARTERLY
+  ANNUAL
+}
+
+enum SubscriptionStatus {
+  PENDING // created, awaiting first successful payment
+  ACTIVE // paid and within validity window
+  EXPIRED // validity window passed
+  CANCELLED // user/admin cancelled
+}
+
+enum Gateway {
+  STRIPE
+  RAZORPAY
+}
+
+enum PaymentStatus {
+  CREATED
+  PAID
+  FAILED
+  REFUNDED
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  passwordHash  String?
+  emailVerified DateTime?
+  role          Role      @default(USER)
+
+  // Optional GST details captured at checkout for B2B invoicing
+  billingName    String?
+  gstin          String?
+  stateCode      String?
+  billingAddress String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  subscriptions      Subscription[]
+  payments           Payment[]
+  invoices           Invoice[]
+  verificationTokens VerificationToken[]
+  auditLogs          AuditLog[]
+
+  @@index([role])
+}
+
+// Email verification + password reset tokens (single-use, hashed).
+model VerificationToken {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String   @unique
+  purpose   String // "EMAIL_VERIFY" | "PASSWORD_RESET"
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model Plan {
+  id          String          @id @default(cuid())
+  code        String          @unique // e.g. "monthly", "quarterly", "annual"
+  name        String
+  interval    BillingInterval
+  // Amounts stored in paise (smallest INR unit) to avoid float errors.
+  amountPaise Int
+  currency    String          @default("INR")
+  durationDays Int            // validity granted per successful payment
+  isActive    Boolean         @default(true)
+  sortOrder   Int             @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  subscriptions Subscription[]
+}
+
+model Subscription {
+  id     String             @id @default(cuid())
+  userId String
+  user   User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  planId String
+  plan   Plan               @relation(fields: [planId], references: [id])
+  status SubscriptionStatus @default(PENDING)
+
+  currentPeriodStart DateTime?
+  currentPeriodEnd   DateTime?
+  cancelledAt        DateTime?
+
+  // Reminder bookkeeping so we don't double-send.
+  expiryReminderSentAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  payments Payment[]
+  invoices Invoice[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([currentPeriodEnd])
+}
+
+model Payment {
+  id             String        @id @default(cuid())
+  userId         String
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscriptionId String?
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
+
+  gateway  Gateway
+  status   PaymentStatus @default(CREATED)
+  // Amount actually charged, in paise, plus the GST breakdown.
+  amountPaise Int
+  taxPaise    Int           @default(0)
+  currency    String        @default("INR")
+
+  // Gateway references. orderId is what we create; paymentId is what they return.
+  gatewayOrderId   String?  @unique
+  gatewayPaymentId String?  @unique
+  gatewaySignature String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  invoice Invoice?
+
+  @@index([userId])
+  @@index([status])
+}
+
+model Invoice {
+  id             String        @id @default(cuid())
+  number         String        @unique // sequential GST invoice number
+  userId         String
+  user           User          @relation(fields: [userId], references: [id])
+  subscriptionId String?
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
+  paymentId      String        @unique
+  payment        Payment       @relation(fields: [paymentId], references: [id])
+
+  // Snapshot of billing details at issue time (immutable record).
+  sellerGstin   String
+  buyerName     String
+  buyerGstin    String?
+  buyerState    String?
+  placeOfSupply String
+
+  // All money in paise.
+  subtotalPaise Int
+  cgstPaise     Int @default(0)
+  sgstPaise     Int @default(0)
+  igstPaise     Int @default(0)
+  totalPaise    Int
+  gstRate       Float
+  sac           String
+  isInterState  Boolean @default(false)
+
+  issuedAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+// Monotonic counter for GST invoice numbering (per financial year).
+model InvoiceCounter {
+  id        String @id @default(cuid())
+  fyLabel   String @unique // e.g. "2026-27"
+  lastValue Int    @default(0)
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String // e.g. "AUTH_LOGIN", "PAYMENT_VERIFIED", "ADMIN_CANCEL_SUB"
+  meta      Json?
+  ip        String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+// Simple persistent rate-limit buckets (keyed by ip+route window).
+model RateLimit {
+  id        String   @id // `${key}:${windowStart}`
+  count     Int      @default(0)
+  expiresAt DateTime
+
+  @@index([expiresAt])
+}
