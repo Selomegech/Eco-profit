@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { Inter, Fraunces } from "next/font/google";
 import "./globals.css";
 
@@ -27,9 +28,17 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  // Reading a request header opts every route into dynamic rendering. This is
+  // required for the per-request CSP nonce (generated in middleware) to be
+  // stamped onto Next.js's own bootstrap scripts. Without it, hosts that serve
+  // the statically-prerendered HTML (e.g. Netlify) ship a stale/absent nonce,
+  // and under our `strict-dynamic` CSP the browser blocks ALL scripts — so the
+  // page never hydrates and client components (login/register forms) vanish.
+  await headers();
+
   return (
     <html lang="en" className={`${inter.variable} ${fraunces.variable} h-full`}>
       <body className="min-h-full flex flex-col antialiased">{children}</body>
