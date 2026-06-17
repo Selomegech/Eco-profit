@@ -23,6 +23,12 @@ const schema = z.object({
   RAZORPAY_KEY_SECRET: z.string().optional(),
   RAZORPAY_WEBHOOK_SECRET: z.string().optional(),
 
+  // PhonePe PG. Defaults are the public UAT/sandbox credentials.
+  PHONEPE_MERCHANT_ID: z.string().optional(),
+  PHONEPE_SALT_KEY: z.string().optional(),
+  PHONEPE_SALT_INDEX: z.string().default("1"),
+  PHONEPE_HOST: z.string().default("https://api-preprod.phonepe.com/apis/pg-sandbox"),
+
   SMTP_HOST: z.string().optional(),
   SMTP_PORT: z.string().optional(),
   SMTP_SECURE: z.string().optional(),

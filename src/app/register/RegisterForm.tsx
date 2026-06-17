@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { inputClass, labelClass, primaryBtn } from "@/components/AuthShell";
+import { PasswordInput } from "@/components/PasswordInput";
 
 export function RegisterForm() {
   const params = useSearchParams();
@@ -64,7 +65,7 @@ export function RegisterForm() {
       </div>
       <div>
         <label className={labelClass} htmlFor="password">Password</label>
-        <input id="password" name="password" type="password" required autoComplete="new-password" className={inputClass} />
+        <PasswordInput id="password" required autoComplete="new-password" />
         <p className="mt-1 text-xs text-muted">At least 10 characters, with upper, lower and a number.</p>
       </div>
       {error && <p className="text-sm text-neg">{error}</p>}

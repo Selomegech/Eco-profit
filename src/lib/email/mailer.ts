@@ -31,8 +31,11 @@ export async function sendMail(msg: MailMessage): Promise<void> {
   const from = env.EMAIL_FROM || "Ecom Profit <no-reply@localhost>";
   if (!tx) {
     // No SMTP configured (e.g. local dev) — log instead of throwing so the
-    // signup/payment flow still completes.
+    // signup/payment flow still completes. Surface any action links so flows
+    // like email verification remain testable locally without a mail server.
     console.warn(`[email:disabled] would send "${msg.subject}" to ${msg.to}`);
+    const links = extractLinks(msg.html);
+    for (const link of links) console.warn(`[email:disabled]   link: ${link}`);
     return;
   }
   await tx.sendMail({
@@ -43,6 +46,13 @@ export async function sendMail(msg: MailMessage): Promise<void> {
     html: msg.html,
     attachments: msg.attachments,
   });
+}
+
+function extractLinks(html: string): string[] {
+  const out = new Set<string>();
+  const re = /https?:\/\/[^\s"'<>]+/gi;
+  for (const m of html.matchAll(re)) out.add(m[0]);
+  return [...out];
 }
 
 function stripHtml(html: string): string {

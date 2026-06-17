@@ -4,6 +4,10 @@
 
 generator client {
   provider = "prisma-client-js"
+  // "native" for local dev; "rhel-openssl-3.0.x" for the AWS Lambda runtime
+  // that Netlify (and most serverless hosts) use, so the query engine binary
+  // is present in production.
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
@@ -20,6 +24,7 @@ enum Role {
 enum BillingInterval {
   MONTHLY
   QUARTERLY
+  HALFYEARLY
   ANNUAL
 }
 
@@ -33,6 +38,7 @@ enum SubscriptionStatus {
 enum Gateway {
   STRIPE
   RAZORPAY
+  PHONEPE
 }
 
 enum PaymentStatus {

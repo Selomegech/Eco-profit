@@ -4,7 +4,7 @@ import { env, adminEmails } from "@/lib/env";
 import { hashPassword } from "@/lib/password";
 import { issueToken } from "@/lib/tokens";
 import { sendMail } from "@/lib/email/mailer";
-import { verifyEmailTemplate, welcomeTemplate } from "@/lib/email/templates";
+import { verifyEmailTemplate } from "@/lib/email/templates";
 import { rateLimit, clientIp } from "@/lib/ratelimit";
 import { audit } from "@/lib/audit";
 import { sameOrigin, json, badRequest, tooMany } from "@/lib/http";
@@ -53,9 +53,9 @@ export async function POST(req: Request) {
     });
     const link = `${env.APP_URL}/api/verify-email?token=${token}`;
     const tpl = verifyEmailTemplate(link);
+    // Only the verification email at signup. The "choose a plan" welcome email
+    // is sent once the user confirms their address (see verify-email route).
     await sendMail({ to: email, subject: tpl.subject, html: tpl.html });
-    const w = welcomeTemplate(parsed.data.name);
-    await sendMail({ to: email, subject: w.subject, html: w.html });
     await audit({ action: "AUTH_REGISTER", userId: user.id, ip });
   }
 

@@ -1,0 +1,14 @@
+# Netlify deployment config for the Next.js app.
+# The official Next.js runtime plugin handles SSR routes, API routes and
+# middleware as serverless/edge functions automatically.
+
+[build]
+  command = "npm run build"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# NOTE: the daily subscription-expiry cron in vercel.json does NOT run on
+# Netlify. When we go past the preview stage, wire it up as a Netlify
+# Scheduled Function (or an external cron) hitting /api/cron/subscriptions
+# with the CRON_SECRET bearer token.

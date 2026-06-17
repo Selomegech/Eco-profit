@@ -53,7 +53,7 @@ const faqs = [
   },
   {
     q: "How does billing work?",
-    a: "Choose Monthly, Quarterly, or Annual. Pay securely via Stripe or Razorpay. Your subscription activates automatically and you get a GST-compliant invoice by email.",
+    a: "Choose Monthly, Semi-annual, or Annual. Pay securely via PhonePe (UPI, cards or netbanking). Your subscription activates automatically and you get a GST-compliant invoice by email.",
   },
   {
     q: "Can I cancel anytime?",
@@ -164,7 +164,7 @@ export default function Home() {
             <div className="mx-auto max-w-2xl text-center">
               <h2 className="font-serif text-3xl font-black md:text-4xl">Simple, honest pricing</h2>
               <p className="mt-3 text-muted">
-                Every plan includes the full toolset. Prices are inclusive of GST.
+                Every plan includes the full toolset. Prices are exclusive of GST; 18% GST is added at checkout.
               </p>
             </div>
             <div className="mt-12">

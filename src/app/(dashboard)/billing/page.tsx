@@ -29,7 +29,7 @@ export default async function BillingPage() {
     <div className="space-y-8">
       <div>
         <h1 className="font-serif text-3xl font-black">Billing</h1>
-        <p className="mt-1 text-muted">Choose a plan and pay securely with Stripe or Razorpay.</p>
+        <p className="mt-1 text-muted">Choose a plan and pay securely with PhonePe (UPI, cards or netbanking).</p>
       </div>
 
       {isActive && sub && (

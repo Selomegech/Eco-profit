@@ -1,6 +1,13 @@
 import Link from "next/link";
-import { PLANS } from "@/lib/plans";
+import { PLANS, intervalMonths } from "@/lib/plans";
 import { paiseToInr } from "@/lib/money";
+
+const intervalLabel: Record<string, string> = {
+  MONTHLY: "mo",
+  QUARTERLY: "quarter",
+  HALFYEARLY: "6 mo",
+  ANNUAL: "yr",
+};
 
 const perks = [
   "Unlimited Meesho & Flipkart uploads",
@@ -17,7 +24,7 @@ export function PricingCards({ ctaHref = "/register" }: { ctaHref?: string }) {
   return (
     <div className="grid gap-6 md:grid-cols-3">
       {PLANS.map((plan) => {
-        const monthlyEq = Math.round(plan.amountPaise / (plan.durationDays / 30));
+        const monthlyEq = Math.round(plan.amountPaise / intervalMonths(plan.interval));
         return (
           <div
             key={plan.code}
@@ -34,12 +41,10 @@ export function PricingCards({ ctaHref = "/register" }: { ctaHref?: string }) {
             <p className="mt-1 text-sm text-muted">{plan.blurb}</p>
             <div className="mt-5 flex items-baseline gap-1.5">
               <span className="font-serif text-4xl font-black">{paiseToInr(plan.amountPaise)}</span>
-              <span className="text-sm text-muted">
-                /{plan.interval === "MONTHLY" ? "mo" : plan.interval === "QUARTERLY" ? "quarter" : "yr"}
-              </span>
+              <span className="text-sm text-muted">/{intervalLabel[plan.interval] ?? "mo"}</span>
             </div>
             <p className="mt-1 text-xs text-muted">
-              ≈ {paiseToInr(monthlyEq)}/month · incl. GST
+              ≈ {paiseToInr(monthlyEq)}/month · + 18% GST
             </p>
             <Link
               href={`${ctaHref}?plan=${plan.code}`}

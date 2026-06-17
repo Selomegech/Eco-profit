@@ -27,6 +27,15 @@ async function main() {
     });
     console.log(`seeded plan: ${p.code}`);
   }
+
+  // Retire any plan no longer in the catalog (e.g. the old "quarterly"). We keep
+  // the row for invoice/subscription history but stop offering it for purchase.
+  const codes = PLANS.map((p) => p.code);
+  const retired = await prisma.plan.updateMany({
+    where: { code: { notIn: codes }, isActive: true },
+    data: { isActive: false },
+  });
+  if (retired.count) console.log(`retired ${retired.count} old plan(s)`);
 }
 
 main()

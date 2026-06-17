@@ -4,6 +4,7 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { inputClass, labelClass, primaryBtn } from "@/components/AuthShell";
+import { PasswordInput } from "@/components/PasswordInput";
 
 export function LoginForm() {
   const router = useRouter();
@@ -24,11 +25,13 @@ export function LoginForm() {
       password: form.get("password"),
       redirect: false,
     });
-    setLoading(false);
     if (!res || res.error) {
+      setLoading(false);
       setError("Invalid email or password, or your email isn't verified yet.");
       return;
     }
+    // Keep the button in its loading state through navigation — the dashboard
+    // route's loading.tsx then takes over until the page is ready.
     const dest = plan ? `/billing?plan=${plan}` : callbackUrl || "/dashboard";
     router.push(dest);
     router.refresh();
@@ -52,7 +55,7 @@ export function LoginForm() {
       </div>
       <div>
         <label className={labelClass} htmlFor="password">Password</label>
-        <input id="password" name="password" type="password" required autoComplete="current-password" className={inputClass} />
+        <PasswordInput id="password" required autoComplete="current-password" />
       </div>
       {error && <p className="text-sm text-neg">{error}</p>}
       <button type="submit" disabled={loading} className={primaryBtn}>

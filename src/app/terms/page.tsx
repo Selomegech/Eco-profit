@@ -27,10 +27,11 @@ export default function TermsPage() {
 
       <H2>3. Subscriptions &amp; Payments</H2>
       <p>
-        Paid plans are offered on a monthly, quarterly or annual basis. Payments are processed by our
-        third-party gateways (Stripe and Razorpay); we do not store your card details. Access is
+        Paid plans are offered on a monthly, semi-annual or annual basis. Payments are processed by our
+        third-party gateway (PhonePe); we do not store your card details. Access is
         granted for the period purchased and does not auto-charge unless you initiate a renewal.
-        Prices are inclusive of applicable GST and a tax invoice is issued for each payment.
+        Listed prices are exclusive of GST; applicable GST (18%) is added at checkout and a tax invoice
+        is issued for each payment.
       </p>
 
       <H2>4. Refunds</H2>

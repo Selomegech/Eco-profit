@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { env } from "@/lib/env";
-import { computeGstFromInclusive } from "@/lib/money";
+import { computeGstFromExclusive } from "@/lib/money";
 import { nextInvoiceNumber } from "@/lib/invoice/number";
 
 // State-code -> readable name for place-of-supply on invoices.
@@ -50,7 +50,7 @@ export async function activatePaidPayment(opts: {
         planName: payment.subscription.plan.name,
         userEmail: payment.user.email,
         userName: payment.user.name,
-        totalPaise: payment.amountPaise,
+        totalPaise: payment.invoice.totalPaise,
       };
     }
 
@@ -65,8 +65,9 @@ export async function activatePaidPayment(opts: {
         : now;
     const validTill = new Date(base.getTime() + plan.durationDays * 24 * 60 * 60 * 1000);
 
-    const gst = computeGstFromInclusive({
-      totalPaise: payment.amountPaise,
+    // payment.amountPaise is the GST-exclusive base; add tax on top.
+    const gst = computeGstFromExclusive({
+      basePaise: payment.amountPaise,
       gstRate: env.GST_RATE,
       buyerStateCode: payment.user.stateCode,
       sellerStateCode: env.SELLER_STATE_CODE,
@@ -124,7 +125,7 @@ export async function activatePaidPayment(opts: {
       planName: plan.name,
       userEmail: payment.user.email,
       userName: payment.user.name,
-      totalPaise: payment.amountPaise,
+      totalPaise: gst.totalPaise,
     };
   });
 }

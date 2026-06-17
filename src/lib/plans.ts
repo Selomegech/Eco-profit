@@ -1,7 +1,8 @@
 import type { BillingInterval } from "@prisma/client";
 
 // Catalog source of truth. Seeded into the Plan table via `npm run db:seed`.
-// Prices are GST-INCLUSIVE, in paise.
+// Prices are GST-EXCLUSIVE base amounts, in paise. 18% GST is added on top at
+// checkout; these are the figures we display (without tax) to the customer.
 export interface PlanSeed {
   code: string;
   name: string;
@@ -18,31 +19,45 @@ export const PLANS: PlanSeed[] = [
     code: "monthly",
     name: "Monthly",
     interval: "MONTHLY",
-    amountPaise: 49900, // ₹499
+    amountPaise: 150000, // ₹1,500 / month (base, +18% GST at checkout)
     durationDays: 30,
     sortOrder: 1,
-    blurb: "Best for trying things out.",
+    blurb: "Billed every month.",
   },
   {
-    code: "quarterly",
-    name: "Quarterly",
-    interval: "QUARTERLY",
-    amountPaise: 129900, // ₹1,299 (~13% off)
-    durationDays: 91,
+    code: "semiannual",
+    name: "Semi-annual",
+    interval: "HALFYEARLY",
+    amountPaise: 600000, // ₹6,000 every 6 months = ₹1,000/mo (base, +18% GST)
+    durationDays: 182,
     sortOrder: 2,
-    blurb: "Save vs monthly. Most popular.",
+    blurb: "₹1,000/month, billed every 6 months.",
     highlight: true,
   },
   {
     code: "annual",
     name: "Annual",
     interval: "ANNUAL",
-    amountPaise: 449900, // ₹4,499 (~25% off)
+    amountPaise: 900000, // ₹9,000 / year = ₹750/mo (base, +18% GST)
     durationDays: 365,
     sortOrder: 3,
-    blurb: "Best value for full-time sellers.",
+    blurb: "₹750/month, billed annually.",
   },
 ];
+
+// Display months per interval, used to show the effective per-month price.
+export function intervalMonths(interval: BillingInterval): number {
+  switch (interval) {
+    case "MONTHLY":
+      return 1;
+    case "QUARTERLY":
+      return 3;
+    case "HALFYEARLY":
+      return 6;
+    case "ANNUAL":
+      return 12;
+  }
+}
 
 export function planByCode(code: string): PlanSeed | undefined {
   return PLANS.find((p) => p.code === code);

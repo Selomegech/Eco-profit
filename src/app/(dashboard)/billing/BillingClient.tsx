@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
-type Gateway = "STRIPE" | "RAZORPAY";
+// Only PhonePe is active. Stripe and Razorpay are paused but their handling is
+// kept (commented) below so they can be switched back on later.
+type Gateway = "PHONEPE";
 
 interface PlanView {
   code: string;
@@ -14,33 +16,13 @@ interface PlanView {
   blurb: string;
 }
 
-declare global {
-  interface Window {
-    Razorpay?: new (options: Record<string, unknown>) => { open: () => void };
-  }
-}
-
-function loadRazorpay(): Promise<boolean> {
-  return new Promise((resolve) => {
-    if (window.Razorpay) return resolve(true);
-    // Under our strict-dynamic CSP, a script injected by this trusted (nonce'd)
-    // bundle is allowed to load.
-    const s = document.createElement("script");
-    s.src = "https://checkout.razorpay.com/v1/checkout.js";
-    s.onload = () => resolve(true);
-    s.onerror = () => resolve(false);
-    document.body.appendChild(s);
-  });
-}
-
 export function BillingClient({ plans }: { plans: PlanView[] }) {
-  const router = useRouter();
   const params = useSearchParams();
   const preselect = params.get("plan");
   const status = params.get("status");
 
   const [selected, setSelected] = useState(preselect ?? plans.find((p) => p.highlight)?.code ?? plans[0]?.code);
-  const [gateway, setGateway] = useState<Gateway>("RAZORPAY");
+  const gateway: Gateway = "PHONEPE";
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -60,44 +42,15 @@ export function BillingClient({ plans }: { plans: PlanView[] }) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Could not start checkout");
 
-      if (data.gateway === "STRIPE") {
+      // PhonePe: redirect the buyer to the hosted payment page.
+      if (data.gateway === "PHONEPE" && data.url) {
         window.location.href = data.url;
         return;
       }
 
-      const ok = await loadRazorpay();
-      if (!ok || !window.Razorpay) throw new Error("Couldn't load Razorpay");
-      const rzp = new window.Razorpay({
-        key: data.keyId,
-        order_id: data.orderId,
-        amount: data.amount,
-        currency: data.currency,
-        name: data.name,
-        prefill: data.prefill,
-        theme: { color: "#0f5c4d" },
-        handler: async (resp: Record<string, string>) => {
-          const verify = await fetch("/api/razorpay/verify", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              razorpay_order_id: resp.razorpay_order_id,
-              razorpay_payment_id: resp.razorpay_payment_id,
-              razorpay_signature: resp.razorpay_signature,
-            }),
-          });
-          if (verify.ok) {
-            router.push("/dashboard");
-            router.refresh();
-          } else {
-            setError("Payment verification failed. If you were charged, contact support.");
-          }
-        },
-        modal: { ondismiss: () => setLoading(false) },
-      });
-      rzp.open();
+      throw new Error("Unexpected checkout response");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
       setLoading(false);
     }
   }
@@ -111,7 +64,7 @@ export function BillingClient({ plans }: { plans: PlanView[] }) {
       )}
       {status === "cancelled" && (
         <p className="mb-4 rounded-lg bg-neg/10 px-3 py-2 text-sm text-neg">
-          Checkout was cancelled. You can try again any time.
+          Checkout was cancelled or not completed. You can try again any time.
         </p>
       )}
 
@@ -138,18 +91,11 @@ export function BillingClient({ plans }: { plans: PlanView[] }) {
 
       <h2 className="mt-6 font-serif text-xl font-semibold">Payment method</h2>
       <div className="mt-3 flex flex-wrap gap-3">
-        {(["RAZORPAY", "STRIPE"] as Gateway[]).map((g) => (
-          <button
-            key={g}
-            type="button"
-            onClick={() => setGateway(g)}
-            className={`rounded-lg border px-5 py-2.5 text-sm font-semibold transition ${
-              gateway === g ? "border-accent bg-accent/5 text-accent" : "border-line text-ink/80 hover:border-accent/50"
-            }`}
-          >
-            {g === "RAZORPAY" ? "Razorpay (UPI / Cards / Netbanking)" : "Stripe (International cards)"}
-          </button>
-        ))}
+        <div className="rounded-lg border border-accent bg-accent/5 px-5 py-2.5 text-sm font-semibold text-accent">
+          PhonePe (UPI / Cards / Netbanking)
+        </div>
+        {/* Stripe and Razorpay are paused. To re-enable, restore the gateway
+            selector here and the matching branches in /api/checkout. */}
       </div>
 
       {error && <p className="mt-4 text-sm text-neg">{error}</p>}
@@ -159,10 +105,11 @@ export function BillingClient({ plans }: { plans: PlanView[] }) {
         disabled={loading || !selected}
         className="mt-6 rounded-lg bg-accent px-6 py-3 text-sm font-semibold text-white transition hover:bg-accent-dark disabled:opacity-50"
       >
-        {loading ? "Starting checkout…" : "Proceed to payment"}
+        {loading ? "Redirecting to PhonePe…" : "Proceed to payment"}
       </button>
       <p className="mt-3 text-xs text-muted">
-        You&apos;ll receive a GST invoice by email after a successful payment. Prices are inclusive of GST.
+        Prices shown are exclusive of tax. 18% GST is added at checkout and you&apos;ll receive a
+        GST invoice by email after a successful payment.
       </p>
     </div>
   );

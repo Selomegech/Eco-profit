@@ -50,7 +50,7 @@ export default async function DashboardPage() {
         {sub && isActive ? (
           <div className="mt-4 grid gap-4 sm:grid-cols-3">
             <Field label="Plan" value={sub.plan.name} />
-            <Field label="Price" value={`${paiseToInr(sub.plan.amountPaise)} incl. GST`} />
+            <Field label="Price" value={`${paiseToInr(sub.plan.amountPaise)} + GST`} />
             <Field
               label="Renews / expires"
               value={sub.currentPeriodEnd?.toLocaleDateString("en-IN") ?? "—"}

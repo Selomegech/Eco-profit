@@ -61,3 +61,47 @@ export function computeGstFromInclusive(opts: {
     isInterState: false,
   };
 }
+
+// Plan prices are stored GST-EXCLUSIVE (the taxable base). Here we add the tax
+// on top and split it for the invoice. The total is what we charge the gateway.
+export function computeGstFromExclusive(opts: {
+  basePaise: number;
+  gstRate: number;
+  buyerStateCode?: string | null;
+  sellerStateCode: string;
+}): GstBreakdown {
+  const { basePaise, gstRate, buyerStateCode, sellerStateCode } = opts;
+  const taxPaise = Math.round((basePaise * gstRate) / 100);
+  const totalPaise = basePaise + taxPaise;
+
+  // Unknown buyer state defaults to intra-state (place of supply = seller).
+  const isInterState = !!buyerStateCode && buyerStateCode !== sellerStateCode;
+
+  if (isInterState) {
+    return {
+      subtotalPaise: basePaise,
+      cgstPaise: 0,
+      sgstPaise: 0,
+      igstPaise: taxPaise,
+      totalPaise,
+      gstRate,
+      isInterState: true,
+    };
+  }
+
+  const half = Math.floor(taxPaise / 2);
+  return {
+    subtotalPaise: basePaise,
+    cgstPaise: half,
+    sgstPaise: taxPaise - half,
+    igstPaise: 0,
+    totalPaise,
+    gstRate,
+    isInterState: false,
+  };
+}
+
+// The GST-inclusive total charged for a GST-exclusive base price.
+export function grossFromBase(basePaise: number, gstRate: number): number {
+  return basePaise + Math.round((basePaise * gstRate) / 100);
+}
