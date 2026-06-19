@@ -1,38 +1,56 @@
 import Link from "next/link";
+import { ThemeToggle } from "./ThemeToggle";
+import { NavScroll } from "./NavScroll";
 
 const links = [
-  { href: "/#features", label: "Features" },
+  { href: "/#problem", label: "Why" },
   { href: "/#how", label: "How it works" },
+  { href: "/#features", label: "Features" },
   { href: "/pricing", label: "Pricing" },
   { href: "/#faq", label: "FAQ" },
 ];
 
 export function Nav() {
   return (
-    <header className="sticky top-0 z-40 border-b border-line/70 bg-paper/80 backdrop-blur-md">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3.5">
-        <Link href="/" className="font-serif text-2xl font-black tracking-tight text-accent">
-          Ecom&nbsp;Profit
+    <nav className="site-nav" id="nav">
+      <NavScroll />
+      <div className="bar">
+        <Link href="/" className="logo">
+          <span className="brand-badge">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/brand/logo_icon.png" alt="Ecom Profit" className="brand-logo-icon" />
+          </span>
+          <span className="brand-text">
+            <span className="brand-word">
+              Ecom <b>Profit</b>
+            </span>
+            <span className="brand-tag">Calculate · Analyse · Maximise</span>
+          </span>
         </Link>
-        <nav className="hidden items-center gap-7 md:flex">
+
+        <div className="navlinks">
           {links.map((l) => (
-            <a key={l.href} href={l.href} className="text-sm font-medium text-ink/80 hover:text-accent">
+            <a key={l.href} href={l.href}>
               {l.label}
             </a>
           ))}
-        </nav>
-        <div className="flex items-center gap-2.5">
-          <Link href="/login" className="rounded-md px-3.5 py-2 text-sm font-medium text-ink hover:bg-ink/5">
+        </div>
+
+        <div className="nav-cta">
+          <ThemeToggle />
+          <Link href="/#demo" className="btn btn-ghost btn-sm">
+            View Demo
+          </Link>
+          <Link href="/login" className="btn btn-primary btn-sm">
             Log in
           </Link>
-          <Link
-            href="/register"
-            className="rounded-md bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:bg-accent-dark"
-          >
-            Get started
+          <Link href="/#features" className="menu-btn" aria-label="Menu">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            </svg>
           </Link>
         </div>
       </div>
-    </header>
+    </nav>
   );
 }

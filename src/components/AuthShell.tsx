@@ -27,7 +27,7 @@ export function AuthShell({
 }
 
 export const inputClass =
-  "w-full rounded-lg border border-line bg-white px-3.5 py-2.5 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/30";
+  "w-full rounded-lg border border-line bg-paper px-3.5 py-2.5 text-sm text-ink outline-none focus:border-accent focus:ring-2 focus:ring-accent/30";
 export const labelClass = "block text-xs font-semibold uppercase tracking-wider text-muted mb-1.5";
 export const primaryBtn =
   "w-full rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-dark disabled:opacity-50";

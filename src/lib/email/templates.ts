@@ -1,23 +1,30 @@
 import { env } from "@/lib/env";
 
 const BRAND = env.APP_NAME;
-const ACCENT = "#0f5c4d";
-const INK = "#14201d";
+
+// New brand palette (matches the marketing site / app theme).
+const BG = "#0b0f19"; // page background
+const CARD = "#0f1525"; // card surface
+const BORDER = "#1e2a44"; // hairline border
+const TEXT = "#ffffff"; // primary text
+const MUTED = "#94a3b8"; // secondary text
+const ACCENT = "#7c3aed"; // purple CTA
+const GREEN = "#14f195"; // "Profit" highlight
 
 function shell(title: string, body: string): string {
-  return `<!doctype html><html><body style="margin:0;background:#f4f1e9;font-family:Inter,Arial,sans-serif;color:${INK}">
+  return `<!doctype html><html><body style="margin:0;background:${BG};font-family:Inter,Arial,sans-serif;color:${TEXT}">
   <div style="max-width:560px;margin:0 auto;padding:32px 20px">
-    <div style="font-family:Georgia,serif;font-weight:900;font-size:24px;color:${ACCENT};margin-bottom:8px">${BRAND}</div>
-    <div style="background:#fffdf7;border:1px solid #d9d2c2;border-radius:8px;padding:28px 26px">
-      <h1 style="font-family:Georgia,serif;font-size:20px;margin:0 0 14px">${title}</h1>
+    <div style="font-family:'Space Grotesk',Georgia,serif;font-weight:700;font-size:22px;letter-spacing:-0.02em;color:${TEXT};margin-bottom:14px">Ecom <span style="color:${GREEN}">Profit</span></div>
+    <div style="background:${CARD};border:1px solid ${BORDER};border-radius:14px;padding:28px 26px">
+      <h1 style="font-family:'Space Grotesk',Georgia,serif;font-size:20px;margin:0 0 14px;color:${TEXT}">${title}</h1>
       ${body}
     </div>
-    <p style="color:#6b6457;font-size:12px;margin-top:18px">This is an automated message from ${BRAND}. Please do not reply.</p>
+    <p style="color:${MUTED};font-size:12px;margin-top:18px">This is an automated message from ${BRAND}. Please do not reply.</p>
   </div></body></html>`;
 }
 
 function button(href: string, label: string): string {
-  return `<a href="${href}" style="display:inline-block;background:${ACCENT};color:#fff;text-decoration:none;font-weight:600;padding:11px 22px;border-radius:6px;margin:8px 0">${label}</a>`;
+  return `<a href="${href}" style="display:inline-block;background:${ACCENT};color:#fff;text-decoration:none;font-weight:600;padding:12px 24px;border-radius:8px;margin:8px 0">${label}</a>`;
 }
 
 export function verifyEmailTemplate(link: string) {
@@ -27,7 +34,7 @@ export function verifyEmailTemplate(link: string) {
       "Confirm your email",
       `<p>Welcome to ${BRAND}. Confirm your email address to activate your account.</p>
        <p>${button(link, "Verify email")}</p>
-       <p style="font-size:13px;color:#6b6457">This link expires in 24 hours. If you didn't sign up, ignore this email.</p>`,
+       <p style="font-size:13px;color:${MUTED}">This link expires in 24 hours. If you didn't sign up, ignore this email.</p>`,
     ),
   };
 }
@@ -55,9 +62,9 @@ export function paymentConfirmedTemplate(opts: {
       "Payment confirmed",
       `<p>Thank you. Your <b>${opts.planName}</b> subscription is now active.</p>
        <table style="width:100%;font-size:14px;margin:14px 0">
-         <tr><td style="color:#6b6457;padding:4px 0">Amount paid</td><td style="text-align:right">${opts.amount}</td></tr>
-         <tr><td style="color:#6b6457;padding:4px 0">Active until</td><td style="text-align:right">${opts.validTill}</td></tr>
-         <tr><td style="color:#6b6457;padding:4px 0">Invoice</td><td style="text-align:right">${opts.invoiceNumber}</td></tr>
+         <tr><td style="color:${MUTED};padding:4px 0">Amount paid</td><td style="text-align:right">${opts.amount}</td></tr>
+         <tr><td style="color:${MUTED};padding:4px 0">Active until</td><td style="text-align:right">${opts.validTill}</td></tr>
+         <tr><td style="color:${MUTED};padding:4px 0">Invoice</td><td style="text-align:right">${opts.invoiceNumber}</td></tr>
        </table>
        <p>Your GST invoice is attached. ${button(env.APP_URL + "/app", "Open the app")}</p>`,
     ),

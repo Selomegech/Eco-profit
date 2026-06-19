@@ -22,7 +22,7 @@ export const PLANS: PlanSeed[] = [
     amountPaise: 150000, // ₹1,500 / month (base, +18% GST at checkout)
     durationDays: 30,
     sortOrder: 1,
-    blurb: "Billed every month.",
+    blurb: "Full access, billed every month.",
   },
   {
     code: "semiannual",
@@ -31,8 +31,7 @@ export const PLANS: PlanSeed[] = [
     amountPaise: 600000, // ₹6,000 every 6 months = ₹1,000/mo (base, +18% GST)
     durationDays: 182,
     sortOrder: 2,
-    blurb: "₹1,000/month, billed every 6 months.",
-    highlight: true,
+    blurb: "Save 33% versus monthly.",
   },
   {
     code: "annual",
@@ -41,7 +40,8 @@ export const PLANS: PlanSeed[] = [
     amountPaise: 900000, // ₹9,000 / year = ₹750/mo (base, +18% GST)
     durationDays: 365,
     sortOrder: 3,
-    blurb: "₹750/month, billed annually.",
+    blurb: "Save 50% versus monthly.",
+    highlight: true,
   },
 ];
 

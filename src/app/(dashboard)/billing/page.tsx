@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { paiseToInr } from "@/lib/money";
 import { PLANS } from "@/lib/plans";
 import { BillingClient } from "./BillingClient";
+import { CancelSubscription } from "./CancelSubscription";
 
 export const metadata = { title: "Billing — Ecom Profit" };
 
@@ -34,8 +35,21 @@ export default async function BillingPage() {
 
       {isActive && sub && (
         <div className="rounded-xl border border-pos/30 bg-pos/5 p-4 text-sm">
-          You&apos;re on the <b>{sub.plan.name}</b> plan, active until{" "}
-          <b>{sub.currentPeriodEnd?.toLocaleDateString("en-IN")}</b>. Buying again extends your access.
+          {sub.cancelledAt ? (
+            <>
+              Your <b>{sub.plan.name}</b> plan is <b>cancelled</b> and won&apos;t renew. You keep full
+              access until <b>{sub.currentPeriodEnd?.toLocaleDateString("en-IN")}</b>. Buying again
+              reactivates and extends your access.
+            </>
+          ) : (
+            <>
+              You&apos;re on the <b>{sub.plan.name}</b> plan, active until{" "}
+              <b>{sub.currentPeriodEnd?.toLocaleDateString("en-IN")}</b>. Buying again extends your access.
+              <CancelSubscription
+                periodEnd={sub.currentPeriodEnd?.toLocaleDateString("en-IN") ?? ""}
+              />
+            </>
+          )}
         </div>
       )}
 

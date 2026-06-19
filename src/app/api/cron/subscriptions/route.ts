@@ -32,11 +32,14 @@ async function run() {
   }
 
   // 2) Renewal reminders for subscriptions ending within 3 days (once each).
+  // Skip cancelled subs — they opted out of renewing, so a "renew now" nudge
+  // would be wrong. They still get expired in step 1 at period end.
   const ending = await prisma.subscription.findMany({
     where: {
       status: "ACTIVE",
       currentPeriodEnd: { gte: now, lte: soon },
       expiryReminderSentAt: null,
+      cancelledAt: null,
     },
     include: { user: true, plan: true },
   });

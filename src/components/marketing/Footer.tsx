@@ -2,34 +2,46 @@ import Link from "next/link";
 
 export function Footer() {
   return (
-    <footer className="mt-auto border-t border-line bg-card">
-      <div className="mx-auto grid max-w-6xl gap-8 px-5 py-12 sm:grid-cols-2 md:grid-cols-4">
-        <div className="sm:col-span-2">
-          <div className="font-serif text-xl font-black text-accent">Ecom Profit</div>
-          <p className="mt-2 max-w-xs text-sm text-muted">
-            Settlement reconciliation, SKU profitability & GST-ready reports for Meesho and Flipkart
-            sellers. Your data stays in your browser.
-          </p>
+    <footer className="site-foot">
+      <div className="wrap">
+        <div className="foot-grid">
+          <div className="foot-brand">
+            <Link href="/" className="flex items-center gap-2.5">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/brand/logo_icon.png" alt="" width={34} height={34} className="h-[32px] w-auto" />
+              <span className="brand-word">
+                Ecom <b>Profit</b>
+              </span>
+            </Link>
+            <p>
+              Know your real profit. Grow smarter. Profit intelligence for Flipkart &amp; Meesho
+              sellers — settlement reconciliation, SKU-level P&amp;L and GST-ready reports.
+            </p>
+          </div>
+          <div className="foot-col">
+            <h5>Product</h5>
+            <a href="/#features">Features</a>
+            <a href="/#demo">Product tour</a>
+            <Link href="/pricing">Pricing</Link>
+            <Link href="/login">Log in</Link>
+          </div>
+          <div className="foot-col">
+            <h5>Company</h5>
+            <a href="/#problem">Why Ecom Profit</a>
+            <a href="/#how">How it works</a>
+            <a href="/#faq">FAQ</a>
+          </div>
+          <div className="foot-col">
+            <h5>Legal</h5>
+            <Link href="/terms">Terms of Service</Link>
+            <Link href="/privacy">Privacy Policy</Link>
+            <Link href="/refund">Refund Policy</Link>
+          </div>
         </div>
-        <div>
-          <div className="text-xs font-semibold uppercase tracking-wider text-muted">Product</div>
-          <ul className="mt-3 space-y-2 text-sm">
-            <li><a href="/#features" className="text-ink/80 hover:text-accent">Features</a></li>
-            <li><Link href="/pricing" className="text-ink/80 hover:text-accent">Pricing</Link></li>
-            <li><Link href="/login" className="text-ink/80 hover:text-accent">Log in</Link></li>
-          </ul>
+        <div className="foot-bot">
+          <span>© {new Date().getFullYear()} Ecom Profit · www.ecomprofit.co.in</span>
+          <span>Your data stays in your browser.</span>
         </div>
-        <div>
-          <div className="text-xs font-semibold uppercase tracking-wider text-muted">Legal</div>
-          <ul className="mt-3 space-y-2 text-sm">
-            <li><Link href="/terms" className="text-ink/80 hover:text-accent">Terms of Service</Link></li>
-            <li><Link href="/privacy" className="text-ink/80 hover:text-accent">Privacy Policy</Link></li>
-            <li><Link href="/refund" className="text-ink/80 hover:text-accent">Refund Policy</Link></li>
-          </ul>
-        </div>
-      </div>
-      <div className="border-t border-line py-5 text-center text-xs text-muted">
-        © {new Date().getFullYear()} Ecom Profit. All rights reserved.
       </div>
     </footer>
   );

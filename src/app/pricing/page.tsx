@@ -12,8 +12,8 @@ export default function PricingPage() {
         <div className="mx-auto max-w-2xl text-center">
           <h1 className="font-serif text-4xl font-black md:text-5xl">Pricing</h1>
           <p className="mt-3 text-muted">
-            One toolset, three commitments. All prices include GST and you can pay with Stripe or
-            Razorpay.
+            One toolset, three commitments. Prices shown are exclusive of 18% GST, which is added at
+            checkout.
           </p>
         </div>
         <div className="mt-14">

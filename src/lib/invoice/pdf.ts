@@ -18,9 +18,12 @@ export interface InvoicePdfData {
   isInterState: boolean;
 }
 
-const INK = "#14201d";
-const MUTED = "#6b6457";
-const ACCENT = "#0f5c4d";
+// Theme-aligned palette. The invoice stays on a white background (it is meant
+// to be printed/archived), but uses the new brand accent and slate text tones.
+const INK = "#0f172a";
+const MUTED = "#64748b";
+const ACCENT = "#7c3aed";
+const BORDER = "#e2e8f0";
 
 export function renderInvoicePdf(data: InvoicePdfData): Promise<Buffer> {
   return new Promise((resolve, reject) => {
@@ -52,7 +55,7 @@ export function renderInvoicePdf(data: InvoicePdfData): Promise<Buffer> {
     });
 
     // Divider
-    doc.moveTo(left, 150).lineTo(right, 150).strokeColor("#d9d2c2").stroke();
+    doc.moveTo(left, 150).lineTo(right, 150).strokeColor(BORDER).stroke();
 
     // Bill to
     doc.fillColor(MUTED).font("Helvetica-Bold").fontSize(9).text("BILL TO", left, 165);
@@ -86,7 +89,7 @@ export function renderInvoicePdf(data: InvoicePdfData): Promise<Buffer> {
       ty += bold ? 20 : 16;
     };
 
-    doc.moveTo(labelX, ty - 8).lineTo(right, ty - 8).strokeColor("#d9d2c2").stroke();
+    doc.moveTo(labelX, ty - 8).lineTo(right, ty - 8).strokeColor(BORDER).stroke();
     line("Taxable", paiseToInr(data.subtotalPaise));
     if (data.isInterState) {
       line(`IGST @ ${data.gstRate}%`, paiseToInr(data.igstPaise));
