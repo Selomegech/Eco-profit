@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* ============================================================
-   Ecom Profit — global theme
+   Ecom Profit - global theme
    The marketing site and the whole app share one dark, neon
    "profit-intelligence" theme (client-supplied). A light variant
    is available via [data-theme="light"] on <html> (theme toggle).
@@ -20,8 +20,15 @@
   --color-ink: var(--text);
   --color-line: var(--border);
   --color-muted: var(--muted);
-  --color-accent: var(--purple);
-  --color-accent-dark: #6d28d9;
+  /* Primary brand green for the app/dashboard `accent` utilities (the marketing
+     site keeps its own purple via --purple directly). It is theme-aware, exactly
+     like the tool: a bright mint (#34D399) on the dark dashboard and a deep
+     emerald (#0f5c4d) in light mode, so it always reads well. `on-accent` is the
+     text colour to use ON an accent fill (dark ink on the bright green, white on
+     the deep green). Concrete values live in the :root / [data-theme] blocks. */
+  --color-accent: var(--accent-strong);
+  --color-accent-dark: var(--accent-hover);
+  --color-on-accent: var(--accent-on);
   --color-accent2: var(--cyan);
   --color-pos: var(--green);
   --color-neg: var(--red);
@@ -47,6 +54,11 @@
   --border2: rgba(255, 255, 255, 0.14);
   --glass: rgba(17, 24, 39, 0.55);
 
+  /* Dashboard accent (dark mode): bright mint, with dark ink for text on it. */
+  --accent-strong: #34d399;
+  --accent-hover: #25a378;
+  --accent-on: #06231a;
+
   --display: var(--font-space), system-ui, sans-serif;
   --body: var(--font-inter), system-ui, sans-serif;
   --mono: var(--font-jbmono), ui-monospace, "SF Mono", Menlo, monospace;
@@ -70,6 +82,11 @@
   --border: rgba(13, 20, 40, 0.09);
   --border2: rgba(13, 20, 40, 0.15);
   --glass: rgba(255, 255, 255, 0.78);
+
+  /* Dashboard accent (light mode): deep emerald, with white text on it. */
+  --accent-strong: #0f5c4d;
+  --accent-hover: #0b4a3e;
+  --accent-on: #ffffff;
 }
 
 * {
@@ -994,10 +1011,50 @@ body.fx-on .reveal.in {
   display: flex;
   flex-direction: column;
   gap: 14px;
+  min-height: 280px;
 }
 .ai-msg {
   display: flex;
   gap: 11px;
+  opacity: 0;
+  transform: translateY(12px);
+  animation: msgIn 0.5s forwards;
+}
+@keyframes msgIn {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.ai-typing {
+  display: inline-flex;
+  gap: 4px;
+  padding: 2px 0;
+}
+.ai-typing span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--muted);
+  animation: bounce 1.2s infinite;
+}
+.ai-typing span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.ai-typing span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+@keyframes bounce {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  30% {
+    transform: translateY(-6px);
+    opacity: 1;
+  }
 }
 .ai-msg .mav {
   width: 30px;
@@ -1132,6 +1189,227 @@ body.fx-on .reveal.in {
   color: var(--muted);
   border-left: 1px solid var(--border);
   border-right: 1px solid var(--border);
+  position: relative;
+}
+
+/* ===== comparison animations ===== */
+.cmp-col .cmp-row {
+  opacity: 0;
+  transition:
+    opacity 0.55s ease,
+    transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: opacity, transform;
+}
+.cmp-col.old .cmp-row {
+  transform: translateX(-16px);
+}
+.cmp-col.new .cmp-row {
+  transform: translateX(16px);
+}
+.cmp.in .cmp-col .cmp-row {
+  opacity: 1;
+  transform: none;
+}
+.cmp.in .cmp-col .cmp-row:nth-child(2) {
+  transition-delay: 0.08s;
+}
+.cmp.in .cmp-col .cmp-row:nth-child(3) {
+  transition-delay: 0.16s;
+}
+.cmp.in .cmp-col .cmp-row:nth-child(4) {
+  transition-delay: 0.24s;
+}
+.cmp.in .cmp-col .cmp-row:nth-child(5) {
+  transition-delay: 0.32s;
+}
+.cmp.in .cmp-col .cmp-row:nth-child(6) {
+  transition-delay: 0.4s;
+}
+.cmp-row:hover {
+  transform: translateX(5px) !important;
+  transition-delay: 0s !important;
+  color: var(--text);
+}
+.cmp-col.new {
+  position: relative;
+  overflow: hidden;
+}
+.cmp-col.new::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -60%;
+  width: 40%;
+  height: 100%;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent, rgba(20, 241, 149, 0.12), transparent);
+  transform: skewX(-18deg);
+  animation: cmpSweep 5s ease-in-out infinite;
+}
+@keyframes cmpSweep {
+  0%,
+  100% {
+    left: -60%;
+    opacity: 0;
+  }
+  45% {
+    opacity: 1;
+  }
+  55% {
+    opacity: 1;
+  }
+  92% {
+    left: 160%;
+    opacity: 0;
+  }
+}
+.cmp-vs span {
+  position: relative;
+  z-index: 2;
+  display: inline-block;
+  animation: vsfloat 2.6s ease-in-out infinite;
+}
+.cmp-vs::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 229, 255, 0.45), transparent 70%);
+  transform: translate(-50%, -50%);
+  animation: vsglow 2.6s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes vsglow {
+  0%,
+  100% {
+    opacity: 0.35;
+    width: 40px;
+    height: 40px;
+  }
+  50% {
+    opacity: 0.95;
+    width: 66px;
+    height: 66px;
+  }
+}
+@keyframes vsfloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+.brand-badge.sm {
+  padding: 3px 8px;
+  border-radius: 8px;
+}
+.brand-badge.sm .brand-logo-icon {
+  height: 22px;
+}
+
+/* ===== how it works: travelling dot + number pop/ring ===== */
+.step-line {
+  overflow: visible;
+}
+.flow-dot {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, #fff 30%, var(--cyan));
+  box-shadow:
+    0 0 12px var(--cyan),
+    0 0 24px rgba(124, 58, 237, 0.7);
+  animation: flowMove 3.6s ease-in-out infinite;
+  z-index: 3;
+  pointer-events: none;
+}
+@keyframes flowMove {
+  0% {
+    left: 0;
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+.step .num {
+  overflow: visible;
+}
+.step .num::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border-radius: 15px;
+  border: 2px solid var(--cyan);
+  opacity: 0;
+  pointer-events: none;
+}
+.step.in .num::after {
+  animation: numRing 2.6s ease-out infinite;
+}
+@keyframes numRing {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1.55);
+    opacity: 0;
+  }
+}
+.step.in .num {
+  animation: numPop 0.55s cubic-bezier(0.2, 1.5, 0.4, 1) both;
+}
+@keyframes numPop {
+  0% {
+    transform: scale(0.3) rotate(-12deg);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) rotate(0);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cmp-col .cmp-row {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .flow-dot,
+  .cmp-col.new::after,
+  .cmp-vs span,
+  .cmp-vs::before {
+    animation: none !important;
+  }
+  .step.in .num,
+  .step.in .num::after {
+    animation: none !important;
+  }
+  .ai-msg {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
+  }
+  .ai-typing span {
+    animation: none !important;
+  }
 }
 
 /* ---------- testimonials ---------- */
@@ -1316,6 +1594,101 @@ body.fx-on .reveal.in {
 .plan .btn {
   width: 100%;
   justify-content: center;
+}
+
+/* ---------- free / demo tier ---------- */
+.free-card {
+  display: grid;
+  grid-template-columns: 1.3fr 1.2fr auto;
+  align-items: center;
+  gap: 32px;
+  max-width: 1100px;
+  margin: 0 auto 22px;
+  padding: 26px 30px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: linear-gradient(160deg, rgba(34, 197, 94, 0.06), rgba(0, 229, 255, 0.05));
+}
+.free-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.free-name {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 18px;
+}
+.free-tag {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--green);
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  background: rgba(34, 197, 94, 0.1);
+  padding: 3px 10px;
+  border-radius: 100px;
+}
+.free-desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+  max-width: 38ch;
+}
+.free-perks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+.free-perks li {
+  display: flex;
+  gap: 10px;
+  font-size: 13px;
+  color: #cbd5e1;
+}
+[data-theme="light"] .free-perks li {
+  color: #475569;
+}
+.free-perks li svg {
+  flex-shrink: 0;
+  color: var(--green);
+}
+.free-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  min-width: 150px;
+}
+.free-price {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+}
+.free-price .cur {
+  font-size: 18px;
+  color: var(--muted);
+}
+.free-price .amt {
+  font-family: var(--mono);
+  font-weight: 600;
+  font-size: 34px;
+}
+.free-cta .btn {
+  width: 100%;
+  justify-content: center;
+}
+@media (max-width: 760px) {
+  .free-card {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .free-cta {
+    align-items: flex-start;
+  }
 }
 
 /* ---------- faq ---------- */

@@ -10,7 +10,8 @@ type Gateway = "PHONEPE";
 interface PlanView {
   code: string;
   name: string;
-  price: string;
+  perMonth: number;
+  note: string;
   interval: string;
   highlight: boolean;
   blurb: string;
@@ -83,7 +84,11 @@ export function BillingClient({ plans }: { plans: PlanView[] }) {
               <span className="font-semibold">{p.name}</span>
               {p.highlight && <span className="text-xs font-semibold text-accent">Popular</span>}
             </div>
-            <div className="mt-1 font-serif text-2xl font-black">{p.price}</div>
+            <div className="mt-1 font-serif text-2xl font-black">
+              ₹{p.perMonth.toLocaleString("en-IN")}
+              <span className="text-sm font-semibold text-muted">/mo</span>
+            </div>
+            <div className="mt-0.5 text-xs text-muted">{p.note}</div>
             <div className="mt-1 text-xs text-muted">{p.blurb}</div>
           </button>
         ))}
@@ -103,7 +108,7 @@ export function BillingClient({ plans }: { plans: PlanView[] }) {
       <button
         onClick={startCheckout}
         disabled={loading || !selected}
-        className="mt-6 rounded-lg bg-accent px-6 py-3 text-sm font-semibold text-white transition hover:bg-accent-dark disabled:opacity-50"
+        className="mt-6 rounded-lg bg-accent px-6 py-3 text-sm font-semibold text-on-accent transition hover:bg-accent-dark disabled:opacity-50"
       >
         {loading ? "Redirecting to PhonePe…" : "Proceed to payment"}
       </button>

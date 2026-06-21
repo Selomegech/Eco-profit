@@ -26,8 +26,18 @@ export function AuthShell({
   );
 }
 
+export function AuthDivider({ label = "or" }: { label?: string }) {
+  return (
+    <div className="my-5 flex items-center gap-3 text-xs text-muted">
+      <span className="h-px flex-1 bg-line" />
+      {label}
+      <span className="h-px flex-1 bg-line" />
+    </div>
+  );
+}
+
 export const inputClass =
   "w-full rounded-lg border border-line bg-paper px-3.5 py-2.5 text-sm text-ink outline-none focus:border-accent focus:ring-2 focus:ring-accent/30";
 export const labelClass = "block text-xs font-semibold uppercase tracking-wider text-muted mb-1.5";
 export const primaryBtn =
-  "w-full rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-dark disabled:opacity-50";
+  "w-full rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-on-accent transition hover:bg-accent-dark disabled:opacity-50";

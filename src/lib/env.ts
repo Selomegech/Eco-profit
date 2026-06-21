@@ -15,6 +15,11 @@ const schema = z.object({
 
   AUTH_SECRET: z.string().min(16),
 
+  // Google OAuth (optional). When both are set, "Continue with Google" is
+  // enabled on the login/register pages. Leave unset to hide it.
+  GOOGLE_CLIENT_ID: z.string().optional(),
+  GOOGLE_CLIENT_SECRET: z.string().optional(),
+
   STRIPE_SECRET_KEY: z.string().optional(),
   STRIPE_PUBLISHABLE_KEY: z.string().optional(),
   STRIPE_WEBHOOK_SECRET: z.string().optional(),
@@ -68,3 +73,6 @@ export function requireEnv<K extends keyof typeof env>(...keys: K[]): void {
 export const adminEmails = env.ADMIN_EMAILS.split(",")
   .map((e) => e.trim().toLowerCase())
   .filter(Boolean);
+
+// Google sign-in is available only when both OAuth credentials are configured.
+export const googleEnabled = Boolean(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET);

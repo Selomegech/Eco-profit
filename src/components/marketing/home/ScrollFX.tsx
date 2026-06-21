@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 
 // All the landing-page scroll choreography in one place. Everything here is
-// one-shot (IntersectionObserver fires once, then unobserves) — there is NO
+// one-shot (IntersectionObserver fires once, then unobserves); there is NO
 // requestAnimationFrame loop, particle canvas, or mousemove handler, which is
 // what made the original static HTML feel janky. Pure CSS handles the rest.
 function smoothPath(pts: number[][]) {

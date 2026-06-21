@@ -38,7 +38,7 @@ export function Nav() {
 
         <div className="nav-cta">
           <ThemeToggle />
-          <Link href="/#demo" className="btn btn-ghost btn-sm">
+          <Link href="/register" className="btn btn-ghost btn-sm">
             View Demo
           </Link>
           <Link href="/login" className="btn btn-primary btn-sm">

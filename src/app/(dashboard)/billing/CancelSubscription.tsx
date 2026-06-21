@@ -43,7 +43,7 @@ export function CancelSubscription({ periodEnd }: { periodEnd: string }) {
     <div className="mt-3 rounded-lg border border-neg/30 bg-neg/5 p-3 text-xs">
       <p className="text-foreground">
         Cancel your subscription? You&apos;ll keep full access until{" "}
-        <b>{periodEnd}</b> — we just won&apos;t renew after that.
+        <b>{periodEnd}</b>. We just won&apos;t renew after that.
       </p>
       {error && <p className="mt-2 text-neg">{error}</p>}
       <div className="mt-3 flex gap-2">

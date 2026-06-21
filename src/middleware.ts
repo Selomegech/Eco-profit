@@ -22,7 +22,7 @@ function buildCsp(nonce: string): string {
     // strict-dynamic + nonce: only our nonce'd scripts (and what they load,
     // e.g. Stripe.js / Razorpay checkout) can execute. https: is a fallback
     // for browsers that ignore strict-dynamic. 'unsafe-eval' is added in dev
-    // only — React's dev build needs eval() for debugging; production never does.
+    // only; React's dev build needs eval() for debugging; production never does.
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https:${isProd ? "" : " 'unsafe-eval'"}`,
     `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`,
     `font-src 'self' https://fonts.gstatic.com data:`,

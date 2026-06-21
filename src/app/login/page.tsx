@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { LoginForm } from "./LoginForm";
-import { AuthShell } from "@/components/AuthShell";
+import { AuthShell, AuthDivider } from "@/components/AuthShell";
+import { GoogleButton } from "@/components/GoogleButton";
+import { googleEnabled } from "@/lib/env";
 
-export const metadata = { title: "Log in — Ecom Profit" };
+export const metadata = { title: "Log in - Ecom Profit" };
 
 export default function LoginPage() {
   return (
@@ -20,6 +22,12 @@ export default function LoginPage() {
       }
     >
       <Suspense>
+        {googleEnabled && (
+          <>
+            <GoogleButton label="Continue with Google" />
+            <AuthDivider />
+          </>
+        )}
         <LoginForm />
       </Suspense>
     </AuthShell>

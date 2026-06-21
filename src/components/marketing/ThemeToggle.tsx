@@ -25,6 +25,15 @@ export function ThemeToggle() {
     } catch {
       /* storage may be unavailable */
     }
+    // Broadcast so same-page listeners (e.g. the tool iframe bridge) can react
+    // without a reload.
+    try {
+      window.dispatchEvent(
+        new CustomEvent("ecom-theme-change", { detail: next ? "light" : "dark" }),
+      );
+    } catch {
+      /* CustomEvent unsupported */
+    }
   }
 
   return (

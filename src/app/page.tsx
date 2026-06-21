@@ -4,6 +4,7 @@ import { Footer } from "@/components/marketing/Footer";
 import { PricingCards } from "@/components/marketing/PricingCards";
 import { ScrollFX } from "@/components/marketing/home/ScrollFX";
 import { DemoTabs } from "@/components/marketing/home/DemoTabs";
+import { AiChat } from "@/components/marketing/home/AiChat";
 
 const caps = [
   "Total Sales",
@@ -22,7 +23,7 @@ const caps = [
 const features: [string, string, string][] = [
   [
     "True Profit Tracking",
-    "Real net profit per order, day and SKU — not just revenue.",
+    "Real net profit per order, day and SKU, not just revenue.",
     "M3 13h4v8H3zM10 3h4v18h-4zM17 9h4v12h-4z",
   ],
   [
@@ -67,7 +68,7 @@ const steps: [string, string, string][] = [
 
 const aiPoints: [string, string][] = [
   ["Finds hidden profit leaks", "Spots low-margin SKUs and rising marketplace fees before they hurt."],
-  ["Recommends action, not just data", "Tells you what to cut, raise or scale — with the rupee impact."],
+  ["Recommends action, not just data", "Tells you what to cut, raise or scale, with the rupee impact."],
   ["Catches settlement mismatches", "Matches every Flipkart & Meesho settlement and flags discrepancies."],
 ];
 
@@ -81,7 +82,7 @@ const oldWay = [
 const newWay = [
   "Automated, reconciled insights",
   "True profit, down to the SKU",
-  "Updated every time you import",
+  "Real-time, updated every order",
   "Every fee & return captured",
   "Decisions backed by data",
 ];
@@ -96,11 +97,11 @@ const testimonials: [string, string, string, string][] = [
 ];
 
 const faqs: [string, string][] = [
-  ["How does Ecom Profit calculate my real profit?", "It takes your order and settlement data, then subtracts marketplace fees, returns, shipping and your SKU cost prices — matched to each transaction — to give true net profit per order, SKU and day."],
+  ["How does Ecom Profit calculate my real profit?", "It takes your order and settlement data, then subtracts marketplace fees, returns, shipping and your SKU cost prices, matched to each transaction, to give true net profit per order, SKU and day."],
   ["Which marketplaces do you support?", "Flipkart and Meesho. Ecom Profit is built specifically for these two marketplaces and shows both in one unified profit view."],
-  ["Do I need to import my data myself?", "Yes. You download your order and settlement reports from Flipkart and Meesho and import them — the tool runs fully in your browser and never connects to your accounts."],
+  ["Do I need to import my data myself?", "Yes. You download your order and settlement reports from Flipkart and Meesho and import them. The tool runs fully in your browser and never connects to your accounts."],
   ["Is my data secure?", "Completely. The analytics tool runs locally in your browser. Your sales data never leaves your device and nothing is uploaded to our servers."],
-  ["How long does setup take?", "Just a few minutes. Open the tool, import your reports and add your SKU costs — your profit dashboard populates instantly."],
+  ["How long does setup take?", "Just a few minutes. Open the tool, import your reports and add your SKU costs. Your profit dashboard populates instantly."],
   ["How does billing work?", "Choose Monthly, 6 Months, or Yearly. Pay securely via PhonePe (UPI, cards or netbanking). Your subscription activates automatically and you get a GST invoice by email."],
   ["Can I cancel anytime?", "Yes. You keep access until the end of your current period; we simply won't renew. Manage everything from your dashboard."],
 ];
@@ -141,9 +142,6 @@ export default function Home() {
                 <Link href="/register" className="btn btn-primary btn-lg">
                   Get Started <span className="arrow">→</span>
                 </Link>
-                <a href="#demo" className="btn btn-ghost btn-lg">
-                  View Demo
-                </a>
               </div>
               <div className="works-row reveal d4">
                 <span className="works-lab">Built for</span>
@@ -268,7 +266,7 @@ export default function Home() {
               </h2>
               <p className="lead">
                 You see ₹5,00,000 in sales and feel great. Then the marketplace takes its cut, ads
-                eat the margin, returns pile up — and your real profit is a fraction of what you
+                eat the margin, returns pile up, and your real profit is a fraction of what you
                 thought.
               </p>
               <div className="pain-list">
@@ -310,13 +308,14 @@ export default function Home() {
                 From marketplace chaos to <span className="gradient-text">clear profit</span>
               </h2>
               <p>
-                Four simple steps. No marketplace login needed — import your data and let Ecom Profit
+                Four simple steps. No marketplace login needed. Import your data and let Ecom Profit
                 do the profit math.
               </p>
             </div>
             <div className="steps" id="steps">
               <div className="step-line">
                 <div className="prog" id="stepProg" />
+                <div className="flow-dot" />
               </div>
               {steps.map(([num, t, d], i) => (
                 <div className={`step reveal${i ? ` d${i}` : ""}`} key={num}>
@@ -338,7 +337,7 @@ export default function Home() {
                 One dashboard for <span className="gradient-text">every number that matters</span>
               </h2>
               <p>
-                Switch between sales, profit, SKU-level data and returns — all reconciled across
+                Switch between sales, profit, SKU-level data and returns, all reconciled across
                 Flipkart &amp; Meesho.
               </p>
             </div>
@@ -365,7 +364,7 @@ export default function Home() {
                 Built for sellers who want <span className="gradient-text">the full picture</span>
               </h2>
               <p>
-                Everything you need to measure, understand and grow real profit — not just revenue.
+                Everything you need to measure, understand and grow real profit, not just revenue.
               </p>
             </div>
             <div className="feat-grid">
@@ -414,20 +413,7 @@ export default function Home() {
                   <div className="st">Analyzing your store</div>
                 </div>
               </div>
-              <div className="ai-msgs">
-                <Msg>
-                  Your top-selling SKU <b>Bluetooth Earbuds</b> generates only <b>4% profit</b> after
-                  fees. Consider a price increase.
-                </Msg>
-                <Msg>
-                  Returns reduced profit by <b>18%</b> last month — mostly apparel sizing. Better size
-                  charts could save <b>₹62,000</b>.
-                </Msg>
-                <Msg>
-                  3 SKUs are selling at a <b>net loss</b> after fees &amp; returns. Review pricing or
-                  delist them.
-                </Msg>
-              </div>
+              <AiChat />
             </div>
             <div className="reveal d1">
               <span className="eyebrow">Insights</span>
@@ -436,7 +422,7 @@ export default function Home() {
               </h2>
               <p className="lead">
                 Ecom Profit reads every order and surfaces the decisions that actually move your
-                margin — in plain language.
+                margin, in plain language.
               </p>
               <div className="ai-points">
                 {aiPoints.map(([t, d]) => (
@@ -476,6 +462,14 @@ export default function Home() {
               </div>
               <div className="cmp-col new">
                 <div className="h">
+                  <span className="brand-badge sm">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="/brand/logo_icon.png"
+                      alt="Ecom Profit"
+                      className="brand-logo-icon"
+                    />
+                  </span>{" "}
                   <span className="brand-word" style={{ fontSize: 17 }}>
                     Ecom <b>Profit</b>
                   </span>
@@ -587,18 +581,5 @@ export default function Home() {
       </main>
       <Footer />
     </>
-  );
-}
-
-function Msg({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="ai-msg">
-      <div className="mav">
-        <svg viewBox="0 0 24 24" fill="#fff">
-          <path d="M13 2L4 14h6l-1 8 9-12h-6z" />
-        </svg>
-      </div>
-      <div className="bubble">{children}</div>
-    </div>
   );
 }

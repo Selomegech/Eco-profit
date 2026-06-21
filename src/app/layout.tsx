@@ -24,12 +24,12 @@ const jetBrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Ecom Profit — Know your real marketplace profit for Meesho & Flipkart",
+  title: "Ecom Profit - Know your real marketplace profit for Meesho & Flipkart",
   description:
     "Track sales, fees, returns, shipping and true profitability across Flipkart & Meesho in one dashboard. Settlement reconciliation, SKU-level P&L and GST-ready reports. Your data never leaves your browser.",
   metadataBase: new URL(process.env.APP_URL ?? "http://localhost:3000"),
   openGraph: {
-    title: "Ecom Profit — Marketplace P&L",
+    title: "Ecom Profit - Marketplace P&L",
     description: "Settlement reconciliation, SKU profitability & MIS for Indian marketplace sellers.",
     type: "website",
   },
@@ -42,7 +42,7 @@ export default async function RootLayout({
   // required for the per-request CSP nonce (generated in middleware) to be
   // stamped onto Next.js's own bootstrap scripts. Without it, hosts that serve
   // the statically-prerendered HTML (e.g. Netlify) ship a stale/absent nonce,
-  // and under our `strict-dynamic` CSP the browser blocks ALL scripts — so the
+  // and under our `strict-dynamic` CSP the browser blocks ALL scripts, so the
   // page never hydrates and client components (login/register forms) vanish.
   const nonce = (await headers()).get("x-nonce") ?? undefined;
 

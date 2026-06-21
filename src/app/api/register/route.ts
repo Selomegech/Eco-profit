@@ -55,7 +55,12 @@ export async function POST(req: Request) {
     const tpl = verifyEmailTemplate(link);
     // Only the verification email at signup. The "choose a plan" welcome email
     // is sent once the user confirms their address (see verify-email route).
-    await sendMail({ to: email, subject: tpl.subject, html: tpl.html });
+    // A mail outage must not crash signup or leave a half-created account error.
+    try {
+      await sendMail({ to: email, subject: tpl.subject, html: tpl.html });
+    } catch (err) {
+      console.error("[register] verification mail send failed:", err);
+    }
     await audit({ action: "AUTH_REGISTER", userId: user.id, ip });
   }
 

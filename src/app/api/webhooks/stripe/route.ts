@@ -19,7 +19,7 @@ export async function POST(req: Request) {
   try {
     event = stripe().webhooks.constructEvent(raw, sig, env.STRIPE_WEBHOOK_SECRET);
   } catch {
-    // Invalid signature — reject without leaking detail.
+    // Invalid signature; reject without leaking detail.
     return new Response("Invalid signature", { status: 400 });
   }
 

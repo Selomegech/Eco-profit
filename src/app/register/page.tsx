@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { RegisterForm } from "./RegisterForm";
-import { AuthShell } from "@/components/AuthShell";
+import { AuthShell, AuthDivider } from "@/components/AuthShell";
+import { GoogleButton } from "@/components/GoogleButton";
+import { googleEnabled } from "@/lib/env";
 
-export const metadata = { title: "Create your account — Ecom Profit" };
+export const metadata = { title: "Create your account - Ecom Profit" };
 
 export default function RegisterPage() {
   return (
@@ -20,6 +22,12 @@ export default function RegisterPage() {
       }
     >
       <Suspense>
+        {googleEnabled && (
+          <>
+            <GoogleButton label="Sign up with Google" />
+            <AuthDivider />
+          </>
+        )}
         <RegisterForm />
       </Suspense>
     </AuthShell>

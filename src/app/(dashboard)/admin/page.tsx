@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { paiseToInr } from "@/lib/money";
 import { AdminUsers } from "./AdminUsers";
 
-export const metadata = { title: "Admin — Ecom Profit" };
+export const metadata = { title: "Admin - Ecom Profit" };
 
 export default async function AdminPage() {
   await requireAdmin();

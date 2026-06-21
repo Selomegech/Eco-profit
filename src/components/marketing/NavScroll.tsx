@@ -4,7 +4,7 @@ import { useEffect } from "react";
 
 // Adds `.scrolled` to the nav once the page is scrolled a little, so the bar
 // fades from transparent to opaque. Passive listener + rAF throttle, and it
-// only reads window.scrollY and toggles a class — no getBoundingClientRect or
+// only reads window.scrollY and toggles a class, no getBoundingClientRect or
 // style reads, so there's no layout thrash (keeps scrolling smooth).
 export function NavScroll() {
   useEffect(() => {

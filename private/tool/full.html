@@ -3,25 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ecom Profit — Marketplace P&L</title>
+<title>[Upload] Ecom Profit — Marketplace P&L</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Inter:wght@400;500;600;700&family=Spectral:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Inter:wght@400;500;600;700&family=Spectral:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#0f172a; --paper:#f3f5f9; --card:#ffffff; --line:#e2e8f0;
-    --accent:#7c3aed; --accent2:#d97706; --pos:#059669; --neg:#e11d48;
-    --shadow:0 1px 0 #fff inset,0 12px 30px -18px rgba(15,23,42,.40);
-    --muted:#64748b;
+    --ink:#14201d; --paper:#f4f1e9; --card:#fffdf7; --line:#d9d2c2;
+    --accent:#0f5c4d; --accent2:#c2703d; --pos:#15695a; --neg:#a23b2e;
+    --shadow:0 1px 0 #fff inset,0 12px 30px -18px rgba(20,32,29,.45);
+    --muted:#6b6457;
     --serif:'Fraunces',Georgia,serif; --body:'Inter','Helvetica Neue',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);-webkit-font-smoothing:antialiased;letter-spacing:-0.005em;
-    background-image:radial-gradient(circle at 1px 1px,rgba(15,23,42,.04) 1px,transparent 0);background-size:22px 22px;}
+    background-image:radial-gradient(circle at 1px 1px,rgba(20,32,29,.04) 1px,transparent 0);background-size:22px 22px;}
   .wrap{max-width:1280px;margin:0 auto;padding:32px 24px 80px}
   header.top{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;border-bottom:2px solid var(--ink);padding-bottom:18px;margin-bottom:26px;flex-wrap:wrap}
   .brand h1{font-family:var(--serif);font-weight:900;font-size:38px;line-height:.95;margin:0;letter-spacing:-.02em}
@@ -33,7 +34,7 @@
   .drops{display:grid;grid-template-columns:1.6fr 1fr;gap:16px}
   @media(max-width:720px){.drops{grid-template-columns:1fr}}
   .drop{border:1.5px dashed var(--line);border-radius:6px;padding:20px;text-align:center;transition:.18s;cursor:pointer;background:#fff}
-  .drop:hover,.drop.over{border-color:var(--accent);background:#f5f3ff}
+  .drop:hover,.drop.over{border-color:var(--accent);background:#f3f8f5}
   .drop .lbl{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700}
   .drop.pending .lbl{color:var(--accent2)}
   .drop .desc{font-size:13px;color:var(--muted);margin-top:8px}
@@ -53,7 +54,7 @@
   select,input[type=date]{padding:9px 12px;border:1px solid var(--line);border-radius:4px;background:#fff;color:var(--ink)}
   select{min-width:190px}
   button.go{font-family:var(--mono);text-transform:uppercase;letter-spacing:.08em;font-size:12px;font-weight:700;background:var(--accent);color:#fff;border:none;padding:11px 22px;border-radius:4px;cursor:pointer;transition:.15s}
-  button.go:hover{background:#6d28d9}
+  button.go:hover{background:#0b4a3e}
   button.ghost{background:transparent;border:1px solid var(--ink);color:var(--ink)}
   button.ghost:hover{background:var(--ink);color:var(--paper)}
   button:disabled{opacity:.4;cursor:not-allowed}
@@ -70,9 +71,9 @@
   .stat .v.neg{color:var(--neg)} .stat .v.pos{color:var(--pos)}
   .stat .x{font-size:11.5px;color:var(--muted);margin-top:4px;line-height:1.35}
   /* featured headline card */
-  .stat.feature{background:linear-gradient(160deg,#3a2a63,#241641);border-color:#241641}
+  .stat.feature{background:linear-gradient(160deg,#103b32,#0c2c26);border-color:#0c2c26}
   .stat.feature::before{display:none}
-  .stat.feature .k{color:#c4b5fd} .stat.feature .x{color:#a78bda}
+  .stat.feature .k{color:#9fc7ba} .stat.feature .x{color:#8fb3a8}
   .stat.feature .v{color:#fff} .stat.feature .v.neg{color:#ff9b8e}
   .pnl{display:grid;grid-template-columns:1fr 1fr;gap:22px}
   @media(max-width:820px){.pnl{grid-template-columns:1fr}}
@@ -103,12 +104,16 @@
   table.sku tbody td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
   table.sku tbody td.l{text-align:left;font-family:var(--body);font-size:13.5px;white-space:normal;min-width:200px}
   table.sku tbody tr:nth-child(even){background:#faf8f1}
-  table.sku tbody tr:hover{background:#f4f3fb}
-  table.sku tfoot td{padding:11px 10px;border-top:2px solid var(--ink);font-family:var(--mono);font-weight:700;text-align:right;background:#eef2f7}
+  table.sku tbody tr:hover{background:#f0f6f3}
+  table.sku tfoot td{padding:11px 10px;border-top:2px solid var(--ink);font-family:var(--mono);font-weight:700;text-align:right;background:#f4f1e9}
   table.sku tfoot td.l{text-align:left;font-family:var(--body)}
   td.neg,tfoot td.neg{color:var(--neg)} td.pos{color:var(--pos)} td.est{color:var(--muted)}
   td.pending{color:var(--accent2)}
   .cogsin{width:80px;padding:5px 7px;border:1px solid var(--line);border-radius:3px;font-family:var(--mono);font-size:12px;text-align:right;background:#fffef9}
+  .cogs-ctl{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted);font-weight:600}
+  .cogs-ctl input{width:92px;padding:6px 8px;border:1px solid var(--line);border-radius:4px;font-family:var(--mono);font-size:13px;text-align:right;background:#fff}
+  #bulkCogsBtn{background:var(--ink,#11202E);color:#fff;border:none;border-radius:5px;padding:6px 12px;font-family:var(--body);font-size:12.5px;font-weight:600;cursor:pointer}
+  #bulkCogsBtn:hover{opacity:.9}
   .gstin{width:58px;padding:5px 6px;border:1px solid var(--line);border-radius:3px;font-family:var(--mono);font-size:12px;text-align:right;background:#f3f9ff}
   .gstin:focus{outline:2px solid #2874F0;border-color:#2874F0}
   .cogsin:focus{outline:2px solid var(--accent);border-color:var(--accent)}
@@ -133,8 +138,8 @@
   .recon-file-tbl thead th.l{text-align:left}
   .recon-file-tbl tbody td{padding:9px 8px;border-bottom:1px solid var(--line);font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;font-size:12.5px}
   .recon-file-tbl tbody td.l{text-align:left;font-family:var(--body);font-size:13px}
-  .recon-file-tbl tbody tr:hover{background:#f4f3fb}
-  .recon-file-tbl tfoot td{padding:10px 8px;border-top:2px solid var(--ink);font-family:var(--mono);font-weight:700;text-align:right;background:#eef2f7;font-size:13px}
+  .recon-file-tbl tbody tr:hover{background:#f0f6f3}
+  .recon-file-tbl tfoot td{padding:10px 8px;border-top:2px solid var(--ink);font-family:var(--mono);font-weight:700;text-align:right;background:#f4f1e9;font-size:13px}
   .recon-file-tbl tfoot td.l{text-align:left;font-family:var(--body)}
   .recon-section-hd{font-family:var(--serif);font-weight:600;font-size:16px;margin:22px 0 6px;display:flex;align-items:center;gap:10px}
   .recon-section-hd .tag{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;background:var(--ink);color:var(--paper);padding:3px 8px;border-radius:2px}
@@ -176,7 +181,13 @@
   .ex-tile.accent .ex-v{color:var(--accent)}
   .ex-tile.pos .ex-v{color:var(--pos)} .ex-tile.neg .ex-v{color:var(--neg)}
   .zone-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
-  .zgst{color:var(--accent);font-weight:700}
+  .zgst{color:#0f5c4d;font-weight:700}
+  .demo-cta{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px;padding:14px 16px;background:linear-gradient(90deg,#fbf7ec,#fdfcf8);border:1px solid #ecdfbf;border-radius:10px}
+  .demo-btn{background:#0f5c4d;color:#fff;border:none;border-radius:7px;padding:11px 18px;font-family:var(--body);font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(15,92,77,.25);transition:transform .08s,box-shadow .15s;white-space:nowrap}
+  .demo-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(15,92,77,.32)}
+  .demo-cta-note{font-size:13px;color:#6a5a32}
+  .demo-badge{position:fixed;top:0;left:0;right:0;z-index:9999;background:#B78A34;color:#fff;font-family:var(--body);font-size:13px;font-weight:600;text-align:center;padding:7px 12px;box-shadow:0 2px 8px rgba(0,0,0,.18);display:none}
+  body.demo-on{padding-top:34px}
   .drop.mz,.drop.fz{margin:0;text-align:left;padding:13px 14px;border-radius:8px;transition:.15s;cursor:pointer;border:1.5px dashed}
   .drop.mz{border-color:#f5a8cb;background:#fff}
   .drop.mz:hover,.drop.mz.over{border-color:#F43397;background:#fff0f6;transform:translateY(-1px)}
@@ -230,19 +241,185 @@
   .sumbox-sub{font-weight:400;font-size:11.5px;color:var(--muted)}
   .secttitle .meta{font-family:var(--mono);font-size:12px;color:var(--muted)}
   footer{text-align:center;color:var(--muted);font-size:12px;margin-top:40px;font-family:var(--mono)}
+
+  /* ============================================================
+     THEME SYSTEM — light (default base CSS) + dark (Cockpit)
+     Toggle sets body[data-theme]. Rail/toggle/at-a-glance are themed for both.
+     ============================================================ */
+  /* left rail — shared layout, light colours by default */
+  .crail{position:fixed;left:0;top:0;bottom:0;width:212px;padding:22px 14px;z-index:40;display:flex;flex-direction:column;gap:4px;overflow-y:auto;
+    background:#fff;border-right:1px solid var(--line)}
+  .crail .cb{display:flex;align-items:center;gap:10px;padding:0 6px 8px;margin-bottom:12px}
+  .crail .cb .mk{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#16604A,#0f5c4d);display:grid;place-items:center;color:#fff;font-family:var(--serif);font-weight:700;font-size:17px}
+  .crail .cb b{font-family:var(--serif);color:var(--ink);font-size:14.5px;letter-spacing:.04em;line-height:1}
+  .crail .cb span{display:block;font-size:9.5px;color:var(--muted);letter-spacing:.06em;margin-top:3px}
+  .crail a{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:8px;color:var(--muted);font-family:var(--body);font-size:13.5px;font-weight:600;text-decoration:none;transition:.15s}
+  .crail a .d{width:7px;height:7px;border-radius:2px;background:currentColor;opacity:.55}
+  .crail a:hover{color:var(--ink);background:#f1f4f2}
+  .crail a.act{background:#eaf1ed;color:#0f5c4d}
+  .crail .cfoot{margin-top:auto;font-size:10px;color:var(--muted);padding:10px 8px;line-height:1.5}
+  .crail .themebtn{margin-top:auto}
+  .themebtn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin:6px 0 8px;padding:9px 12px;border-radius:8px;
+    border:1px solid var(--line);background:transparent;color:var(--muted);font-family:var(--body);font-size:12.5px;font-weight:600;cursor:pointer;transition:.15s}
+  .themebtn:hover{color:var(--ink);border-color:var(--ink)}
+  @media(min-width:1040px){ .wrap{margin-left:212px;max-width:1180px} }
+  @media(max-width:1039px){ .crail{display:none} }
+  /* 'At a glance' tri-cards — shared + light defaults */
+  .tri-card{border-radius:8px;padding:16px 18px;border:1px solid var(--line);border-top:3px solid var(--ink)}
+  .tri-card.tri-meesho{background:#fff5f8;border-top-color:#F43397}
+  .tri-card.tri-flipkart{background:#f0f5ff;border-top-color:#2874F0}
+  .tri-card.tri-all{background:#f4f1e9;border-top-color:var(--ink)}
+  .tri-empty{background:#fafafa;border:1px dashed var(--line);border-radius:8px;padding:18px;text-align:center;color:var(--muted);font-size:13px}
+  .tri-row{display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.06)}
+  .tri-num{font-family:var(--serif);font-weight:600;font-size:26px;color:var(--ink);letter-spacing:-.01em}
+  /* settlement-cycle cards + bar tracks (themed for both modes) */
+  .cyc-card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px;color:var(--ink)}
+  .cyc-card .cyc-h{font-weight:700;font-size:13.5px;margin-bottom:12px;color:var(--ink)}
+  .cyc-track{background:var(--cyc-track,#eef1f0);border-radius:7px;overflow:hidden}
+  /* reconciliation/ageing tint backgrounds — light defaults */
+  :root{--tint-tot:#eef4f1;--tint-head:#f4f1e8;--tint-pos:#eef6f1;--tint-neg:#fdeeea;--tint-warn:#fff8e8;--tint-feerow:#f9f4f4;--tint-posbd:#cfe6da;--tint-negbd:#f0c9c0;--tint-warnbd:#e0c97a}
+
+  /* ===================== DARK (COCKPIT) THEME ===================== */
+  body[data-theme="dark"]{
+    --ink:#EAF1F7; --ink2:#b9c6d2; --paper:#0C1620; --card:#13212F; --line:#203345;
+    --accent:#34D399; --accent2:#F4B740; --pos:#34D399; --neg:#F87171; --muted:#7f93a6;
+    --serif:'Space Grotesk','Inter',sans-serif; --body:'Inter',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+    --shadow:0 18px 44px -28px rgba(0,0,0,.7);
+    --panel2:#0E1B27; --rail:#0A131C; --linesoft:#1a2a39;
+    background:#0C1620; color:var(--ink);
+  }
+  body[data-theme="dark"] ::selection{background:#34D39933}
+  body[data-theme="dark"] .crail{background:var(--rail);border-right:1px solid #18293a}
+  body[data-theme="dark"] .crail .cb .mk{background:linear-gradient(135deg,#34D399,#0E9F6E);color:#06231a}
+  body[data-theme="dark"] .crail .cb b{color:#EAF1F7}
+  body[data-theme="dark"] .crail .cb span{color:#6f8094}
+  body[data-theme="dark"] .crail a{color:#8295a8}
+  body[data-theme="dark"] .crail a:hover{color:#cfe0d8;background:#0f1d29}
+  body[data-theme="dark"] .crail a.act{background:#10342a;color:#34D399}
+  body[data-theme="dark"] .crail .cfoot{color:#566576}
+  body[data-theme="dark"] .themebtn{border-color:#24506b;color:#9fb6cf}
+  body[data-theme="dark"] .themebtn:hover{color:#cfe0f5;border-color:#34D399}
+  body[data-theme="dark"] .tri-card.tri-meesho{background:#1a1320}
+  body[data-theme="dark"] .tri-card.tri-flipkart{background:#0f1a2b}
+  body[data-theme="dark"] .tri-card.tri-all{background:#13212F}
+  body[data-theme="dark"] .tri-empty{background:#0f1d29}
+  body[data-theme="dark"] .tri-row{border-bottom:1px solid var(--linesoft)}
+  body[data-theme="dark"]{--cyc-track:#1b2c3b}
+  body[data-theme="dark"]{--tint-tot:#10342a;--tint-head:#0E1B27;--tint-pos:#10342a;--tint-neg:#3a1d1d;--tint-warn:#2a230f;--tint-feerow:#241a1a;--tint-posbd:#1c4a3c;--tint-negbd:#5a2d2d;--tint-warnbd:#5a4520;--mist:#0E1B27;--cream:#0E1B27}
+
+  body[data-theme="dark"] header.top{border-bottom:1px solid var(--line)}
+  body[data-theme="dark"] header.top .sub{color:var(--muted)}
+  body[data-theme="dark"] #logoSoft{background:#fff;padding:10px 14px;border-radius:14px;box-shadow:0 10px 30px -12px rgba(0,0,0,.6);height:78px!important}
+  body[data-theme="dark"] .badge{background:#10342a;color:#34D399;border:1px solid #1c4a3c;border-radius:20px;letter-spacing:.08em}
+
+  body[data-theme="dark"] .panel{background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:12px}
+  body[data-theme="dark"] .panel h2{color:var(--ink)}
+  body[data-theme="dark"] .panel .hint, body[data-theme="dark"] .legend{color:var(--muted)} body[data-theme="dark"] .legend b{color:var(--ink2)}
+  body[data-theme="dark"] h2, body[data-theme="dark"] h3, body[data-theme="dark"] .pname, body[data-theme="dark"] .exgst-title, body[data-theme="dark"] .recon-section-hd, body[data-theme="dark"] .sumbox-h, body[data-theme="dark"] .zhd, body[data-theme="dark"] .recon-card .rv, body[data-theme="dark"] .stat.feature{font-family:var(--serif)!important}
+
+  body[data-theme="dark"] select, body[data-theme="dark"] input[type=date], body[data-theme="dark"] input[type=search], body[data-theme="dark"] input[type=number], body[data-theme="dark"] .cogsin, body[data-theme="dark"] .gstin, body[data-theme="dark"] .cogs-ctl input{
+    background:#0E1B27!important;color:var(--ink)!important;border:1px solid var(--line)!important}
+  body[data-theme="dark"] select:focus, body[data-theme="dark"] input:focus{outline:2px solid #34D399!important;border-color:#34D399!important}
+  body[data-theme="dark"] ::placeholder{color:#5e7081}
+  body[data-theme="dark"] .controls{border-top:1px solid var(--line)}
+  body[data-theme="dark"] .ctl label, body[data-theme="dark"] .sku-count, body[data-theme="dark"] .sku-hint, body[data-theme="dark"] .cmp-label, body[data-theme="dark"] .pgroup-cue, body[data-theme="dark"] .pgroup-tag, body[data-theme="dark"] .recon-bar-lbl, body[data-theme="dark"] .zmulti{color:var(--muted)}
+  body[data-theme="dark"] button.go{background:linear-gradient(135deg,#34D399,#0E9F6E);color:#06231a;box-shadow:0 4px 16px -6px rgba(52,211,153,.5)}
+  body[data-theme="dark"] button.go:hover{filter:brightness(1.08)}
+  body[data-theme="dark"] button.go:disabled{background:#1c2a38;color:#566576;box-shadow:none;cursor:not-allowed}
+  body[data-theme="dark"] button.ghost{border:1px solid #34507a;color:#9fc2ec}
+  body[data-theme="dark"] button.ghost:hover{background:#13263f;color:#cfe0f5}
+  body[data-theme="dark"] #bulkCogsBtn{background:#1c4a3c;color:#34D399}
+
+  body[data-theme="dark"] .stat{background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow)}
+  body[data-theme="dark"] .stat .k, body[data-theme="dark"] .stat .x{color:var(--muted)}
+  body[data-theme="dark"] .stat .v{font-family:var(--mono);font-weight:700}
+  body[data-theme="dark"] .stat.feature{background:linear-gradient(155deg,#10342a,#0c2620);border-color:#1c4a3c}
+  body[data-theme="dark"] .stat.feature .k{color:#7fd9bd} body[data-theme="dark"] .stat.feature .x{color:#6fb39f}
+  body[data-theme="dark"] .ex-tile .ex-v, body[data-theme="dark"] .cmp-val, body[data-theme="dark"] .aging-bucket .av, body[data-theme="dark"] .sumbox table tr.total td.amt, body[data-theme="dark"] .pname{font-family:var(--mono)!important}
+
+  body[data-theme="dark"] .pnl table td{border-bottom:1px solid var(--linesoft)}
+  body[data-theme="dark"] .pnl tr.total td{border-top:2px solid var(--accent);border-bottom:none}
+  body[data-theme="dark"] .sumbox{background:#13212F;border:1px solid var(--line);box-shadow:none}
+  body[data-theme="dark"] .sumbox.accent2{background:linear-gradient(180deg,#142433,#101d29);border-color:#24506b}
+  body[data-theme="dark"] .sumbox-h{color:var(--ink);border-bottom:1px solid var(--line)}
+  body[data-theme="dark"] .sumbox table td{border-bottom:1px solid var(--linesoft)!important}
+  body[data-theme="dark"] .sumbox table tr.total td{border-top:1.5px solid var(--accent)!important}
+  body[data-theme="dark"] .sumbox.profit-pos table tr.total td{background:#10342a;color:#34D399}
+  body[data-theme="dark"] .sumbox.profit-neg table tr.total td{background:#3a1d1d;color:#F87171}
+  body[data-theme="dark"] .sumbox table tr:not(.total):not(.sub):hover td{background:#16273a}
+
+  body[data-theme="dark"] .skuwrap{border:1px solid var(--line)}
+  body[data-theme="dark"] table.sku thead th{background:var(--panel2);color:#9fb1c2}
+  body[data-theme="dark"] table.sku tbody td{border-bottom:1px solid var(--linesoft)}
+  body[data-theme="dark"] table.sku tbody td.l{color:var(--ink)}
+  body[data-theme="dark"] table.sku tbody tr:nth-child(even){background:#101d29}
+  body[data-theme="dark"] table.sku tbody tr:hover{background:#16273a}
+  body[data-theme="dark"] table.sku tfoot td{border-top:2px solid var(--accent);background:var(--panel2);color:var(--ink)}
+  body[data-theme="dark"] td.pending{color:var(--accent2)}
+  body[data-theme="dark"] .arrows .ar{color:#54647e} body[data-theme="dark"] .arrows .ar:hover, body[data-theme="dark"] .arrows .ar.on{color:#34D399}
+
+  body[data-theme="dark"] .pgroup{background:#0F1D29;border:1px solid var(--line)}
+  body[data-theme="dark"] .pgroup.meesho{border-top:4px solid #F472B6;background:linear-gradient(180deg,#1a1320,#0F1D29 60%)}
+  body[data-theme="dark"] .pgroup.flipkart{border-top:4px solid #5AA9FF;background:linear-gradient(180deg,#0f1a2b,#0F1D29 60%)}
+  body[data-theme="dark"] .pgroup.open{box-shadow:0 12px 34px -18px #000}
+  body[data-theme="dark"] .drop, body[data-theme="dark"] .drop.mz, body[data-theme="dark"] .drop.fz, body[data-theme="dark"] .aging-bucket{background:#0C1620;border-color:var(--line)}
+  body[data-theme="dark"] .drop:hover, body[data-theme="dark"] .drop.over{border-color:#34D399;background:#0e2620}
+  body[data-theme="dark"] .drop.mz:hover, body[data-theme="dark"] .drop.mz.over{border-color:#F472B6;background:#221422}
+  body[data-theme="dark"] .drop.fz:hover, body[data-theme="dark"] .drop.fz.over{border-color:#5AA9FF;background:#101f33}
+  body[data-theme="dark"] .drop .lbl{color:#34D399} body[data-theme="dark"] .drop.pending .lbl{color:#F4B740}
+  body[data-theme="dark"] .drop .desc, body[data-theme="dark"] .drop .cue, body[data-theme="dark"] .drop .cue{color:var(--muted)}
+  body[data-theme="dark"] .chip{background:#0E1B27;border:1px solid var(--line);color:var(--ink2)}
+  body[data-theme="dark"] .chip .nm{color:var(--ink2)}
+  body[data-theme="dark"] .ptab{color:var(--muted)} body[data-theme="dark"] .ptab:hover, body[data-theme="dark"] .ptab.active{color:var(--ink)}
+  body[data-theme="dark"] .ztick{color:#34D399} body[data-theme="dark"] .zclock{color:#F4B740} body[data-theme="dark"] .zdoc, body[data-theme="dark"] .zad{color:#5AA9FF}
+  body[data-theme="dark"] .zmulti{background:#13263f;color:#9fb6cf} body[data-theme="dark"] .zmulti.one{background:#33260c;color:#F4B740}
+  body[data-theme="dark"] .exgst-wrap{background:linear-gradient(180deg,#11202c,#0F1D29);border:1px solid var(--line)}
+  body[data-theme="dark"] .exgst-grid{background:var(--line)} body[data-theme="dark"] .ex-tile{background:#0F1D29}
+  body[data-theme="dark"] .ex-tile .ex-v{color:var(--ink)} body[data-theme="dark"] .ex-tile.accent .ex-v, body[data-theme="dark"] .ex-tile.pos .ex-v{color:#34D399} body[data-theme="dark"] .ex-tile.neg .ex-v{color:#F87171}
+
+  body[data-theme="dark"] .recon-card, body[data-theme="dark"] .cmp-card{background:#13212F;border:1px solid var(--line)}
+  body[data-theme="dark"] .recon-card .rk, body[data-theme="dark"] .recon-card .rx, body[data-theme="dark"] .aging-bucket .ab, body[data-theme="dark"] .aging-bucket .ac{color:var(--muted)}
+  body[data-theme="dark"] .cmp-card:hover{box-shadow:0 16px 32px -18px #000}
+  body[data-theme="dark"] .recon-file-tbl thead th{border-bottom:2px solid var(--accent);color:var(--muted)}
+  body[data-theme="dark"] .recon-file-tbl tbody td{border-bottom:1px solid var(--linesoft)}
+  body[data-theme="dark"] .recon-file-tbl tbody tr:hover{background:#16273a}
+  body[data-theme="dark"] .recon-file-tbl tfoot td{border-top:2px solid var(--accent);background:var(--panel2)}
+  body[data-theme="dark"] .recon-section-hd .tag{background:#10342a;color:#34D399}
+  body[data-theme="dark"] .recon-gap{background:#231a0c;border:1px solid #5a4520} body[data-theme="dark"] .recon-gap .gh{color:#F4B740}
+  body[data-theme="dark"] .recon-bar{background:var(--line)}
+  body[data-theme="dark"] .cmp-val{color:var(--muted)} body[data-theme="dark"] .cmp-val.win{color:var(--ink)} body[data-theme="dark"] .cmp-bar{background:#1a2a39}
+  body[data-theme="dark"] .cmp-win{color:#F472B6}
+
+  body[data-theme="dark"] .demo-cta{background:linear-gradient(90deg,#10342a,#0f1d29);border:1px solid #1c4a3c}
+  body[data-theme="dark"] .demo-btn{background:linear-gradient(135deg,#34D399,#0E9F6E);color:#06231a;box-shadow:0 4px 16px -6px rgba(52,211,153,.5)}
+  body[data-theme="dark"] .demo-cta-note{color:#7fd9bd}
+  body[data-theme="dark"] .demo-badge{background:#F4B740;color:#1a1206}
+  body[data-theme="dark"] .err{color:#F87171}
+  body[data-theme="dark"] #screenCharts>div{background:var(--card)!important;border:1px solid var(--line)!important}
+  body[data-theme="dark"] #screenCharts>div>div{color:var(--ink)!important}
 </style>
 </head>
-<body>
+<body data-theme="dark">
+<script>(function(){try{var t=localStorage.getItem('mp_theme');if(t==='light'||t==='dark')document.body.setAttribute('data-theme',t);}catch(e){}})();</script>
+<aside class="crail">
+  <div class="cb"><div class="mk">E</div><div><b>ECOM&nbsp;PROFIT</b><span>WEALTHCORE SOFTECH</span></div></div>
+  <a href="#inputPanel"><span class="d"></span> 1 · Upload files</a>
+  <a href="#summaryPanel"><span class="d"></span> 2 · Summary</a>
+  <a href="#skuPanel"><span class="d"></span> 3 · SKU-level P&amp;L</a>
+  <a href="#reconcPanel"><span class="d"></span> 4 · Settlement &amp; Ageing</a>
+  <a href="#cyclePanel"><span class="d"></span> 5 · Settlement Cycle</a>
+  <a href="#comparisonPanel"><span class="d"></span> 6 · Platform Compare</a>
+  <button class="themebtn" id="themeToggle" type="button">Toggle theme</button>
+</aside>
 <div class="wrap">
   <header class="top" style="flex-direction:column;align-items:center;text-align:center;gap:6px">
     <img id="logoSoft" alt="Ecom Profit" style="height:104px;width:auto;display:block"/>
     <div class="sub" style="margin-top:2px">Meesho · Flipkart — settlement reconciliation, SKU profitability &amp; MIS</div>
-    <div class="badge" style="margin-top:4px">runs offline · data stays on your device</div>
   </header>
 
   <section class="panel" id="inputPanel">
     <h2 style="margin-bottom:4px">1 · Upload your files</h2>
-    <p class="hint" style="margin-bottom:18px">Choose a marketplace to upload its files. Everything is processed in your browser — add as many months as you like.</p>
+    <p class="hint" style="margin-bottom:14px">Choose a marketplace and upload its files — add as many months as you like.</p>
 
     <div class="platform-groups">
       <!-- MEESHO -->
@@ -315,6 +492,10 @@
         <label for="gstInput">Blanket GST % on sales</label>
         <input type="number" id="gstInput" min="0" max="28" step="0.5" style="width:120px;padding:9px 12px;border:1px solid var(--line);border-radius:4px;background:#fff;font-family:var(--body);font-size:15px" placeholder="from sheet" title="Optional. Applies to all SKUs unless overridden per-SKU in the table below. Blank = use the rate from the uploaded Sales Report / data.">
       </div>
+      <div class="ctl">
+        <label for="retMinInput">Return tables: min orders</label>
+        <input type="number" id="retMinInput" min="0" step="5" style="width:120px;padding:9px 12px;border:1px solid var(--line);border-radius:4px;background:#fff;font-family:var(--body);font-size:15px" placeholder="50" title="In the PDF 'Return Rate by SKU' tables, only SKUs with at least this many order units are ranked. Default 50. Set 0 to include all SKUs.">
+      </div>
       <button class="go" id="runBtn" disabled>Generate report</button>
       <button class="ghost go" id="exportBtn" disabled>⤓ Export to Excel</button>
       <button class="ghost go" id="pdfBtn" disabled>⤓ PDF report</button>
@@ -342,7 +523,7 @@
       </div>
       <div id="triSummaryContent" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px"></div>
     </section>
-    <section class="panel">
+    <section class="panel" id="summaryPanel">
       <div class="secttitle">
         <h2 style="margin:0">2 · Summary — <span id="rangeLabel"></span></h2>
         <div class="meta" id="orderMeta"></div>
@@ -377,7 +558,7 @@
       <div id="screenCharts" style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:24px"></div>
     </section>
 
-    <section class="panel">
+    <section class="panel" id="skuPanel">
       <div class="secttitle">
         <h2 style="margin:0">3 · SKU-level P&amp;L</h2>
         <div class="meta">Enter per-unit cost (COGS) in the blue column — remembered for next time. The GST% column is editable too (overrides the blanket rate and the Sales Report). Returns/RTO carry no COGS. Ad cost is platform-wide, so it sits in the summary.</div>
@@ -386,6 +567,16 @@
         <input type="search" id="skuSearch" placeholder="🔍  Search SKU or product name…" oninput="onSkuSearch(this.value)">
         <span id="skuCount" class="sku-count"></span>
         <span class="sku-hint">▲ highest→lowest · ▼ lowest→highest — click a column arrow to sort</span>
+      </div>
+      <div class="sku-controls" style="margin-top:8px">
+        <label class="cogs-ctl" title="Default per-unit cost applied to every SKU that doesn't have its own cost entered.">Blanket COGS / unit
+          <input type="number" id="blanketCogsInput" min="0" step="any" placeholder="none">
+        </label>
+        <label class="cogs-ctl" title="Sets the per-unit cost for every SKU matching the search box above (name or SKU code contains the text).">Set COGS for matches
+          <input type="number" id="bulkCogsInput" min="0" step="any" placeholder="₹/unit">
+          <button id="bulkCogsBtn" type="button">Apply to matching</button>
+        </label>
+        <span id="bulkCogsMsg" class="sku-hint"></span>
       </div>
       <div class="skuwrap"><table class="sku" id="skuTable"></table></div>
       <div class="legend" id="legend"></div>
@@ -399,20 +590,28 @@
       <div id="reconcContent"></div>
     </section>
 
+    <section class="panel hidden" id="cyclePanel">
+      <div class="secttitle">
+        <h2 style="margin:0">5 · Settlement Cycle Time</h2>
+        <div class="meta">How long money stays locked — days from order date to settlement in your bank. Lower is better for working capital.</div>
+      </div>
+      <div id="cycleContent"></div>
+    </section>
+
     <section class="panel hidden" id="comparisonPanel">
       <div class="secttitle">
-        <h2 style="margin:0">5 · Platform Comparison</h2>
+        <h2 style="margin:0">6 · Platform Comparison</h2>
       </div>
       <div id="comparisonContent"></div>
     </section>
   </div>
 
-  <footer>Marketplace P&amp;L — Meesho &amp; Flipkart reconciliation · offline · data stays on your device</footer>
+  <footer>Marketplace P&amp;L — Meesho &amp; Flipkart reconciliation &amp; MIS</footer>
 </div>
 <div id="chartHolder" style="position:absolute;left:-99999px;top:0;width:1px;height:1px;overflow:hidden"></div>
 <div id="drillModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(16,33,28,.45)">
-  <div style="position:absolute;top:5%;left:50%;transform:translateX(-50%);width:min(960px,94vw);max-height:88vh;display:flex;flex-direction:column;background:#fff;border-radius:10px;box-shadow:0 24px 60px rgba(0,0,0,.3);overflow:hidden">
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line);background:var(--cream)">
+  <div style="position:absolute;top:5%;left:50%;transform:translateX(-50%);width:min(960px,94vw);max-height:88vh;display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:10px;box-shadow:0 24px 60px rgba(0,0,0,.45);overflow:hidden">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line);background:var(--panel2,var(--cream))">
       <div><div id="drillTitle" style="font-family:var(--serif);font-weight:600;font-size:16px;color:var(--ink)"></div><div id="drillSub" style="font-size:12px;color:var(--muted);margin-top:2px"></div></div>
       <div style="display:flex;gap:8px;align-items:center">
         <button id="drillCsv" class="ghost go" style="padding:6px 12px;font-size:12px">⤓ CSV</button>
@@ -469,10 +668,21 @@ const FEE_LABELS={oSupport:'Support service charges',oGstSupport:'GST on support
 const sumCols = (row, idxs) => (idxs||[]).reduce((a,i)=>a+Math.abs(num(row[i])),0);
 const sumColsSigned = (row, idxs) => (idxs||[]).reduce((a,i)=>a+num(row[i]),0);
 let DETECTED_FEE_COLS = {}; // for debug panel
+/* Cockpit rail: highlight the section currently in view */
+(function(){
+  const links=[...document.querySelectorAll('.crail a')];
+  if(!links.length||!('IntersectionObserver' in window))return;
+  const map={};links.forEach(a=>{const id=a.getAttribute('href').slice(1);const el=document.getElementById(id);if(el)map[id]=a;});
+  const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.remove('act'));const a=map[e.target.id];if(a)a.classList.add('act');}});},{rootMargin:'-45% 0px -50% 0px'});
+  Object.keys(map).forEach(id=>{const el=document.getElementById(id);if(el)io.observe(el);});
+})();
 let DATA={settledFiles:[],pendingFile:null};   // each file: {id,name,orderRows,adRows,compRows}
+let AGEING=null;   // {start,end,total,asOf,buckets:[{key,note,rows,total}]} — for the pending-export button
 let SPAN={min:null,max:null};
 let COGS=loadCogs();
 let GST_RATE=loadGstRate();   // blanket GST % on sales (0 = use sheet/data rate)
+let RET_MIN=loadRetMin();     // min order units for a SKU to appear in the return-rate tables (PDF)
+let BLANKET_COGS=loadBlanketCogs();  // default per-unit COGS applied to SKUs with no specific cost
 let GSTSKU=loadGstSku();      // per-SKU GST% overrides {sku: rate}
 let SKU_SEARCH='';            // SKU table search filter
 let SKU_SORT='net_desc';      // SKU table sort
@@ -480,12 +690,20 @@ let uid=0;
 let PLATFORM_FILTER='all';   // 'all','meesho','flipkart'
 const FEE_GST=18;             // GST rate on Meesho services (commission/shipping/ads)
 
+/* Persistence policy: ONLY per-SKU COGS is remembered across sessions.
+   Everything else (uploaded files, GST settings, blanket COGS, etc.) is session-only,
+   so the tool never carries a previous client's data — yet known SKUs keep their cost. */
+try{['mp_gstsku','meesho_gstrate','mp_retmin','mp_blanketcogs'].forEach(k=>localStorage.removeItem(k));}catch(e){}
 function loadCogs(){try{return JSON.parse(localStorage.getItem('meesho_cogs')||'{}')}catch(e){return{}}}
 function saveCogs(){try{localStorage.setItem('meesho_cogs',JSON.stringify(COGS))}catch(e){}}
-function loadGstSku(){try{return JSON.parse(localStorage.getItem('mp_gstsku')||'{}')}catch(e){return{}}}
-function saveGstSku(){try{localStorage.setItem('mp_gstsku',JSON.stringify(GSTSKU))}catch(e){}}
-function loadGstRate(){try{const v=localStorage.getItem('meesho_gstrate');return v==null?0:parseFloat(v);}catch(e){return 0;}}
-function saveGstRate(){try{localStorage.setItem('meesho_gstrate',String(GST_RATE));}catch(e){}}
+function loadGstSku(){return {};}            // session-only
+function saveGstSku(){}                       // not persisted
+function loadGstRate(){return 0;}             // session-only
+function saveGstRate(){}                       // not persisted
+function loadRetMin(){return 50;}             // session-only default
+function saveRetMin(){}                        // not persisted
+function loadBlanketCogs(){return 0;}         // session-only
+function saveBlanketCogs(){}                   // not persisted
 
 const num=v=>{if(v==null||v==='')return 0;const n=parseFloat(String(v).replace(/,/g,''));return isNaN(n)?0:n};
 const inr=v=>{v=Math.round(v);return (v<0?'-₹':'₹')+Math.abs(v).toLocaleString('en-IN');};
@@ -514,6 +732,7 @@ document.querySelectorAll('.drop').forEach(d=>{  const inp=d.querySelector('.fin
 
 async function handleFile(file,dropKind){
   setErr('');
+  if(DEMO_MODE){DEMO_MODE=false;DATA.settledFiles=[];DATA.pendingFile=null;document.body.classList.remove('demo-on');const b=document.getElementById('demoBadge');if(b)b.style.display='none';}
   try{
     const fn=file.name.toUpperCase();
     let kind=dropKind;
@@ -899,6 +1118,10 @@ document.getElementById('quickSel').addEventListener('change',e=>{
   g.addEventListener('change',()=>{GST_RATE=g.value===''?0:parseFloat(g.value)||0;saveGstRate();
     if(CURRENT&&!document.getElementById('results').classList.contains('hidden'))render();});})();
 
+/* Return-rate tables minimum order-units threshold (used by the PDF). */
+(function(){const r=document.getElementById('retMinInput');if(!r)return;r.value=RET_MIN;
+  r.addEventListener('change',()=>{const v=parseInt(r.value);RET_MIN=(isNaN(v)||v<0)?0:v;r.value=RET_MIN;saveRetMin();});})();
+
 /* ---------- merge + dedup ---------- */
 function mergedOrders(){
   const seen=new Set(),rows=[];
@@ -936,6 +1159,26 @@ function dedupedRows(start,end){
   if(PLATFORM_FILTER!=='all')all=all.filter(r=>(r.platform||'meesho')===PLATFORM_FILTER);
   const settledSubs=new Set(all.filter(r=>r.src==='settled'&&r.sub).map(r=>r.sub));
   return all.filter(r=>!(r.src==='pending'&&r.sub&&settledSubs.has(r.sub)));
+}
+function settlementCycle(start,end){
+  // days from order date to money-in-bank, for settled rows that carry a payment date
+  const rows=dedupedRows(start,end).filter(r=>r.src==='settled'&&r.date&&r.payDate&&r.payDate>=r.date);
+  const dayDiff=(a,b)=>Math.round((Date.parse(b+'T00:00:00Z')-Date.parse(a+'T00:00:00Z'))/86400000);
+  const all=[],byPlat={meesho:[],flipkart:[]},byMonth={};let wDays=0,wVal=0;
+  for(const r of rows){const d=dayDiff(r.date,r.payDate);if(d<0||d>400)continue;
+    all.push(d);(byPlat[r.platform||'meesho']=byPlat[r.platform||'meesho']||[]).push(d);
+    const mk=r.date.slice(0,7);(byMonth[mk]=byMonth[mk]||[]).push(d);
+    const v=Math.abs(r.settlement)||0;wDays+=d*v;wVal+=v;}
+  const stats=arr=>{if(!arr||!arr.length)return null;const s=[...arr].sort((a,b)=>a-b);const sum=s.reduce((a,b)=>a+b,0);
+    const q=p=>s[Math.min(s.length-1,Math.round(p*(s.length-1)))];
+    return {n:s.length,avg:sum/s.length,median:q(0.5),p90:q(0.9),min:s[0],max:s[s.length-1]};};
+  const buckets=[['0–7 days',0],['8–15 days',0],['16–30 days',0],['31–45 days',0],['46+ days',0]];
+  all.forEach(d=>{const i=d<=7?0:d<=15?1:d<=30?2:d<=45?3:4;buckets[i][1]++;});
+  const months=Object.keys(byMonth).sort();
+  const minN=Math.max(5,Math.round(all.length*0.02));   // drop tiny-sample months from the trend
+  return {overall:stats(all),valueWeightedAvg:wVal>0?wDays/wVal:null,buckets,
+    meesho:stats(byPlat.meesho),flipkart:stats(byPlat.flipkart),
+    byMonth:months.filter(m=>byMonth[m].length>=minN).map(m=>({month:m,...(stats(byMonth[m])||{n:0,avg:0})}))};
 }
 function compute(start,end){
   const rows=dedupedRows(start,end);
@@ -979,10 +1222,12 @@ function compute(start,end){
   const list=Object.values(skus).map(s=>{
     s.net=s.settled+s.pending;s.costUnits=s.qDel+s.qExc+s.qShip;
     s.feeIncl=Math.abs(s.feeSigned);
-    s.cogsUnit=(COGS[s.sku]!=null&&COGS[s.sku]!=='')?num(COGS[s.sku]):null;
+    s.cogsUnitOwn=(COGS[s.sku]!=null&&COGS[s.sku]!=='')?num(COGS[s.sku]):null;   // SKU-specific override (shown in the input)
+    s.cogsUnit=s.cogsUnitOwn!=null?s.cogsUnitOwn:(BLANKET_COGS>0?BLANKET_COGS:null);  // effective cost used for profit
     s.avgSettle=s.costUnits>0?s.net/s.costUnits:0;
     s.cogsTotal=s.cogsUnit!=null?s.cogsUnit*s.costUnits:null;
     s.profit=s.cogsTotal!=null?s.net-s.cogsTotal:null;
+    s.profitPerUnit=(s.profit!=null&&s.costUnits>0)?s.profit/s.costUnits:null;
     const dispatched=s.qDel+s.qRet+s.qExc;       // goods that actually reached dispatch (excl RTO which never left properly)
     const totalOrdered=s.qDel+s.qRet+s.qRto+s.qExc;
     s.rtoRate=totalOrdered>0?s.qRto/totalOrdered:null;   // RTO as % of all attempted dispatches
@@ -1011,8 +1256,9 @@ function render(){
   document.getElementById('rangeLabel').textContent=fmtRange(start,end);
   const T=paintSummaries(list,adCost,adGst,compSheet);
   renderSku(list,T,adCost);
-  drawScreenCharts(T,list);
+  drawScreenCharts(T,list,start,end);
   renderReconciliation(list,T,start,end);
+  renderCycle(start,end);
   renderComparison(start,end);
   renderTriSummary(start,end);
   document.getElementById('exportBtn').disabled=false;
@@ -1038,16 +1284,16 @@ function renderTriSummary(start,end){
   const m=calc('meesho'),f=calc('flipkart');
   PLATFORM_FILTER='all';const a=calc('all');
   PLATFORM_FILTER=saved;
-  const tag=pf=>pf==='meesho'?{n:'Meesho',c:'#F43397',t:'#d63384',bg:'#fff5f8'}:pf==='flipkart'?{n:'Flipkart',c:'#2874F0',t:'#2874F0',bg:'#f0f5ff'}:{n:'Combined',c:'#10211C',t:'#10211C',bg:'#eef2f7'};
+  const tag=pf=>pf==='meesho'?{n:'Meesho',c:'#F43397',t:'#d63384'}:pf==='flipkart'?{n:'Flipkart',c:'#2874F0',t:'#2874F0'}:{n:'Combined',c:'#10211C',t:'var(--ink)'};
   const cardFor=(pf,s)=>{const tg=tag(pf);
-    if(!s)return `<div style="background:#fafafa;border:1px dashed var(--line);border-radius:8px;padding:18px;text-align:center;color:var(--muted);font-size:13px"><b style="color:${tg.t}">${tg.n}</b><br>No orders in this range</div>`;
-    const row=(l,v,sub)=>`<div style="display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05)"><span style="font-size:12px;color:var(--muted)">${l}</span><span style="font-family:var(--mono);font-size:13px;font-weight:600${sub?';color:'+sub:''}">${v}</span></div>`;
-    return `<div style="background:${tg.bg};border:1px solid ${tg.c}33;border-top:3px solid ${tg.c};border-radius:8px;padding:16px 18px">
+    if(!s)return `<div class="tri-empty"><b style="color:${tg.t}">${tg.n}</b><br>No orders in this range</div>`;
+    const row=(l,v,sub)=>`<div class="tri-row"><span style="font-size:12px;color:var(--muted)">${l}</span><span style="font-family:var(--mono);font-size:13px;font-weight:600${sub?';color:'+sub:''}">${v}</span></div>`;
+    return `<div class="tri-card tri-${pf}">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
         <svg width="20" height="20" viewBox="0 0 24 24"><rect width="24" height="24" rx="5" fill="${pf==='flipkart'?'#2874F0':pf==='meesho'?'#F43397':'#10211C'}"/><text x="12" y="16" text-anchor="middle" font-size="${pf==='flipkart'?9:10}" font-weight="700" fill="${pf==='flipkart'?'#FFE500':'#fff'}" font-family="system-ui">${pf==='flipkart'?'FK':pf==='meesho'?'M':'∑'}</text></svg>
         <span style="font-family:var(--serif);font-weight:600;font-size:16px;color:${tg.t}">${tg.n}</span>
       </div>
-      <div style="font-family:var(--serif);font-weight:600;font-size:26px;color:var(--ink);letter-spacing:-.01em">${inr(s.net)}</div>
+      <div class="tri-num">${inr(s.net)}</div>
       <div style="font-size:11px;color:var(--muted);margin-bottom:10px">net settlement · ${s.orders} orders · ${s.skus} SKUs</div>
       ${row('Settlement / unit',inr(s.perUnit),tg.t)}
       ${row('Received',inr(s.settled))}
@@ -1059,6 +1305,65 @@ function renderTriSummary(start,end){
       ${s.cogsKnown?row('Net profit',inr(s.profitEx),s.profitEx>=0?'var(--pos)':'var(--neg)'):''}
     </div>`;};
   host.innerHTML=cardFor('meesho',m)+cardFor('flipkart',f)+cardFor('all',a);
+}
+
+/* ---------- settlement cycle time ---------- */
+function renderCycle(start,end){
+  const panel=document.getElementById('cyclePanel');const host=document.getElementById('cycleContent');
+  if(!panel||!host)return;
+  const C=settlementCycle(start,end);
+  if(!C.overall||!C.overall.n){panel.classList.add('hidden');return;}
+  panel.classList.remove('hidden');
+  const d1=v=>v==null?'—':(Math.round(v*10)/10)+' d';
+  const o=C.overall;
+  let html='';
+
+  // platform comparison
+  if(C.meesho&&C.flipkart){
+    const faster=C.meesho.avg<=C.flipkart.avg?'Meesho':'Flipkart';
+    const gap=Math.abs(C.meesho.avg-C.flipkart.avg);
+    const mx=Math.max(C.meesho.avg,C.flipkart.avg)||1;
+    const bar=(name,st,col)=>`<div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px"><span style="font-weight:700;color:${col}">${name}</span><span style="font-family:var(--mono);color:var(--ink2)">${d1(st.avg)} avg · median ${st.median}d · ${st.n.toLocaleString('en-IN')} orders</span></div>
+      <div class="cyc-track" style="height:14px"><div style="height:100%;width:${(st.avg/mx*100).toFixed(1)}%;background:${col};border-radius:7px"></div></div></div>`;
+    html+=`<div class="cyc-card" style="margin-bottom:18px">
+      <div class="cyc-h">Average settlement time — Meesho vs Flipkart</div>
+      ${bar('Meesho',C.meesho,'#e0539b')}
+      ${bar('Flipkart',C.flipkart,'#3D86F0')}
+      <div style="font-size:12.5px;color:var(--muted);margin-top:6px"><b style="color:var(--ink)">${faster}</b> pays out faster by <b style="color:var(--ink)">${(Math.round(gap*10)/10)}</b> days on average.</div>
+    </div>`;
+  }
+
+  // distribution buckets
+  const totB=C.buckets.reduce((a,b)=>a+b[1],0)||1;
+  const maxB=Math.max(...C.buckets.map(b=>b[1]))||1;
+  html+=`<div class="cyc-card" style="margin-bottom:18px">
+    <div class="cyc-h">How fast orders settle (distribution)</div>
+    ${C.buckets.map(b=>`<div style="display:flex;align-items:center;gap:10px;margin-bottom:7px">
+      <div style="width:78px;font-size:12.5px;color:var(--muted)">${b[0]}</div>
+      <div class="cyc-track" style="flex:1;height:16px"><div style="height:100%;width:${(b[1]/maxB*100).toFixed(1)}%;background:var(--accent);border-radius:6px"></div></div>
+      <div style="width:96px;text-align:right;font-family:var(--mono);font-size:12.5px;color:var(--ink2)">${b[1].toLocaleString('en-IN')} (${(b[1]/totB*100).toFixed(0)}%)</div>
+    </div>`).join('')}
+  </div>`;
+
+  // monthly trend (is it worsening?)
+  if(C.byMonth.length>=2){
+    const mx=Math.max(...C.byMonth.map(m=>m.avg))||1;
+    const first=C.byMonth[0],last=C.byMonth[C.byMonth.length-1];
+    const dir=last.avg>first.avg+0.5?'worsening':(last.avg<first.avg-0.5?'improving':'stable');
+    const dcol=dir==='worsening'?'var(--neg)':(dir==='improving'?'var(--pos)':'var(--muted)');
+    const mlab=mk=>{const[y,m]=mk.split('-');return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+m-1]+" '"+y.slice(2);};
+    html+=`<div class="cyc-card">
+      <div class="cyc-h" style="margin-bottom:4px">Settlement time by order month</div>
+      <div style="font-size:12.5px;margin-bottom:12px;color:var(--ink2)">Trend is <b style="color:${dcol}">${dir}</b> — ${d1(first.avg)} in ${mlab(first.month)} → ${d1(last.avg)} in ${mlab(last.month)}.</div>
+      ${C.byMonth.map(m=>`<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+        <div style="width:66px;font-size:12.5px;color:var(--muted)">${mlab(m.month)}</div>
+        <div class="cyc-track" style="flex:1;height:14px"><div style="height:100%;width:${(m.avg/mx*100).toFixed(1)}%;background:var(--accent2);border-radius:6px"></div></div>
+        <div style="width:120px;text-align:right;font-family:var(--mono);font-size:12.5px;color:var(--ink2)">${d1(m.avg)} · ${m.n.toLocaleString('en-IN')} ord</div>
+      </div>`).join('')}
+    </div>`;
+  }
+  host.innerHTML=html;
 }
 
 /* ---------- cross-platform comparison ---------- */
@@ -1191,8 +1496,8 @@ function paintSummaries(list,adCost,adGst,compSheet){
   function feeBreakdownEx() {
     if(!T.hasFeeBreakdown) {
       const dcols = (DETECTED_FEE_COLS.headers||[]).join(', ') || '(no file loaded yet)';
-      return `<tr><td colspan="2" style="padding:10px 12px;background:#fff8e8;border:1px solid #e0c97a;border-radius:4px;font-size:12px;line-height:1.6">
-        <b style="color:#8a6800">⚠ Fee column breakdown not detected.</b> The total platform fees (ex-GST) above is still exact.</td></tr>`;
+      return `<tr><td colspan="2" style="padding:10px 12px;background:var(--tint-warn);border:1px solid var(--tint-warnbd);border-radius:4px;font-size:12px;line-height:1.6">
+        <b style="color:var(--accent2)">⚠ Fee column breakdown not detected.</b> The total platform fees (ex-GST) above is still exact.</td></tr>`;
     }
     const g=1+FEE_GST/100;
     const exOf=v=>v/g;                                  // strip embedded 18% GST (Meesho-style)
@@ -1230,7 +1535,7 @@ function paintSummaries(list,adCost,adGst,compSheet){
   // bank settlement − ad (incl GST) − COGS + TCS/TDS receivable − net GST payable (or + ITC credit)
   const taxRecv=Math.abs(T.tcs)+Math.abs(T.tds);
   const gstAdj=-T.netGst;   // netGst>0 = payable (reduce); netGst<0 = credit (add)
-  const cashProfit=T.net-T.adCost-(T.cogsKnown?T.cogs:0)+taxRecv+gstAdj;
+  const cashProfit=T.net-T.adCost-(T.cogsKnown?T.cogs:0)+taxRecv+gstAdj+T.compSheet;
   let cash=pl('Net bank settlement',inr(T.net))
     +pl('  ↳ Received',inr(T.settled),'sub')
     +pl('  ↳ Pending',inr(T.pending),'sub')
@@ -1239,8 +1544,9 @@ function paintSummaries(list,adCost,adGst,compSheet){
   else cash+=pl('Cost of goods (COGS)','not entered','sub');
   cash+=pl('Add: TCS + TDS receivable',inr(taxRecv),taxRecv>0?'pos':'');
   cash+=pl(gstAdj>=0?'Add: Net GST credit (ITC)':'Less: Net GST payable',inr(gstAdj),gstAdj<0?'neg':'pos');
+  if(Math.abs(T.compSheet)>0.5)cash+=pl((T.compSheet>=0?'Add: ':'Less: ')+'Compensation (recovery)',inr(T.compSheet),T.compSheet<0?'neg':'pos');
   if(T.cogsKnown)cash+=plTot('Cash profit',inr(cashProfit),cashProfit<0);
-  else cash+=plTot('Cash before COGS',inr(T.net-T.adCost+taxRecv+gstAdj));
+  else cash+=plTot('Cash before COGS',inr(T.net-T.adCost+taxRecv+gstAdj+T.compSheet));
   cash+=`<tr><td colspan="2" style="padding-top:10px;font-size:11px;color:var(--muted);line-height:1.5">Actual-money view: bank settlement minus ad spend (incl. GST), plus refundable TCS/TDS and the net GST position, minus product cost. This is the cash that ultimately reaches you after all tax adjustments.</td></tr>`;
   document.getElementById('cashPnlTable').innerHTML=cash;
   // highlight the profit row colour by sign
@@ -1288,25 +1594,27 @@ function plTot(l,v,neg){return `<tr class="total"><td>${l}</td><td class="amt ${
 
 let SCREEN_CHARTS=[];
 function scPanel(title){return `<div style="background:var(--card);border:1px solid var(--line);border-radius:6px;padding:14px 16px"><div style="font-family:var(--serif);font-weight:600;font-size:14px;margin-bottom:8px">${title}</div><canvas></canvas></div>`;}
-function drawScreenCharts(T,list){
+function drawScreenCharts(T,list,start,end){
   SCREEN_CHARTS.forEach(c=>{try{c.destroy()}catch(e){}});SCREEN_CHARTS=[];
   const host=document.getElementById('screenCharts');if(!host)return;
   const F="'Inter','Spectral',sans-serif";
+  const tr=computeTrends(start,end);
   host.innerHTML=scPanel('Settlement: received vs pending')+scPanel('Order status mix (units)')
-    +scPanel('Monthly net settlement & profit')+scPanel('Platform cost breakdown');
+    +scPanel((tr.gran==='week'?'Weekly':'Monthly')+' net settlement & profit')+scPanel('Platform cost breakdown');
   const cv=host.querySelectorAll('canvas');
-  const mk=(i,cfg)=>{cfg.options=Object.assign({responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{family:F,size:12}}}}},cfg.options||{});
+  const DARK=document.body.getAttribute('data-theme')==='dark';
+  const TXT=DARK?'#9fb1c2':'#5b6472', LEG=DARK?'#b9c6d2':'#33403a', SLICE=DARK?'#13212F':'#ffffff';
+  const mk=(i,cfg)=>{cfg.options=Object.assign({responsive:true,maintainAspectRatio:false,color:TXT,plugins:{legend:{labels:{color:LEG,font:{family:F,size:12}}}}},cfg.options||{});
     cv[i].parentElement.style.height='230px';cv[i].style.maxHeight='200px';SCREEN_CHARTS.push(new Chart(cv[i],cfg));};
   // 1 settlement doughnut
-  mk(0,{type:'doughnut',data:{labels:['Received','Pending'],datasets:[{data:[Math.max(0,T.settled),Math.max(0,T.pending)],backgroundColor:[HEX.emerald,HEX.gold],borderWidth:2,borderColor:'#fff'}]},
+  mk(0,{type:'doughnut',data:{labels:['Received','Pending'],datasets:[{data:[Math.max(0,T.settled),Math.max(0,T.pending)],backgroundColor:[HEX.emerald,HEX.gold],borderWidth:2,borderColor:SLICE}]},
     options:{cutout:'60%',plugins:{legend:{position:'bottom',labels:{font:{family:F,size:12}}},tooltip:{callbacks:{label:c=>c.label+': '+inr(c.raw)}}}}});
   // 2 status doughnut
   mk(1,{type:'doughnut',data:{labels:['Delivered','Cust return','RTO','Exchange','Shipped','Cancelled'],
-    datasets:[{data:[T.qDel,T.qRet,T.qRto,T.qExc,T.qShip,T.qCan],backgroundColor:[HEX.emerald,HEX.crimson,'#C77A45',HEX.teal,HEX.gold,HEX.slate],borderWidth:2,borderColor:'#fff'}]},
+    datasets:[{data:[T.qDel,T.qRet,T.qRto,T.qExc,T.qShip,T.qCan],backgroundColor:[HEX.emerald,HEX.crimson,'#C77A45',HEX.teal,HEX.gold,HEX.slate],borderWidth:2,borderColor:SLICE}]},
     options:{cutout:'60%',plugins:{legend:{position:'bottom',labels:{font:{family:F,size:11},boxWidth:10}}}}});
-  // 3 monthly trend
-  const tr=computeTrends();
-  mk(2,{type:'bar',data:{labels:tr.months.map(mLbl),datasets:[
+  // 3 monthly/weekly trend (selected period)
+  mk(2,{type:'bar',data:{labels:tr.months.map(tr.bucketLabel),datasets:[
     {type:'bar',label:'Net settlement',data:tr.months.map(m=>tr.byMonth[m].net),backgroundColor:HEX.emerald,borderRadius:3,order:2},
     {type:'line',label:'Profit (COGS entered)',data:tr.months.map(m=>tr.byMonth[m].hasCogs?tr.byMonth[m].net-tr.byMonth[m].cogs:null),borderColor:HEX.gold,backgroundColor:HEX.gold,borderWidth:2,tension:.3,pointRadius:3,order:1,spanGaps:true}]},
     options:{plugins:{legend:{position:'bottom',labels:{font:{family:F,size:11},boxWidth:10}}},scales:{y:{ticks:{callback:inrShort,font:{family:F,size:11}}},x:{ticks:{font:{family:F,size:11}}}}}});
@@ -1331,11 +1639,11 @@ function drawScreenCharts(T,list){
       feeCols.push(HEX.teal,'#5bb8c4',HEX.emerald,'#5bbf9a');
       if(T.adBase>0){feeLabels.push('Ad Spend (ex-GST)','GST on Ads');feeDat.push(Math.round(T.adBase),Math.round(T.adGst));feeCols.push(HEX.gold,'#d4b04a');}
     }
-    mk(3,{type:'doughnut',data:{labels:feeLabels,datasets:[{data:feeDat,backgroundColor:feeCols,borderWidth:2,borderColor:'#fff'}]},
+    mk(3,{type:'doughnut',data:{labels:feeLabels,datasets:[{data:feeDat,backgroundColor:feeCols,borderWidth:2,borderColor:SLICE}]},
       options:{cutout:'55%',plugins:{
         legend:{position:'bottom',labels:{font:{family:F,size:11},boxWidth:10}},
         tooltip:{callbacks:{label:c=>{const tot=feeDat.reduce((a,b)=>a+b,0);return c.label+': '+inr(c.raw)+' ('+(c.raw/tot*100).toFixed(1)+'%)';}}}},
-        title:{display:true,text:T.hasFeeBreakdown?'Platform cost breakdown (actual)':'Platform cost breakdown (estimated)',font:{family:F,size:13},color:'#0f172a',padding:{bottom:4}}}});
+        title:{display:true,text:T.hasFeeBreakdown?'Platform cost breakdown (actual)':'Platform cost breakdown (estimated)',font:{family:F,size:13},color:'#14201d',padding:{bottom:4}}}});
   }
 }
 
@@ -1351,8 +1659,9 @@ function renderSku(list,T,adCost){
   };
   const head=`<thead><tr>
     ${sortable('SKU','sku','l')}${sortable('Deliv','qDel')}${sortable('Ret','qRet')}<th>RTO</th><th>Exc</th><th>Ship</th><th>Can</th>
+    ${sortable('CTO %','cto')}${sortable('RTO %','rto')}
     <th>Received ₹</th><th>Pending ₹</th>${sortable('Net settle ₹','net')}
-    <th>TCS</th><th>TDS</th><th>GST%</th><th>COGS/unit</th><th>Total COGS</th>${sortable('Profit ₹','profit')}${sortable('Avg/unit','avg')}
+    <th>TCS</th><th>TDS</th><th>GST%</th><th>COGS/unit</th><th>Total COGS</th>${sortable('Profit ₹','profit')}${sortable('Profit/unit','ppu')}${sortable('Avg/unit','avg')}
   </tr></thead>`;
   // keep original index (for COGS/GST inputs → CURRENT.list) while filtering + sorting the view
   let view=list.map((s,idx)=>({s,idx}));
@@ -1360,27 +1669,30 @@ function renderSku(list,T,adCost){
   if(q)view=view.filter(o=>(o.s.sku||'').toLowerCase().includes(q)||(o.s.product||'').toLowerCase().includes(q));
   const [fld,dir]=SKU_SORT.split('_');
   const key=o=>{const s=o.s;switch(fld){case 'net':return s.net;case 'profit':return s.profit!=null?s.profit:-Infinity;
+    case 'ppu':return s.profitPerUnit!=null?s.profitPerUnit:-Infinity;
+    case 'cto':return s.custRate!=null?s.custRate:-Infinity;case 'rto':return s.rtoRate!=null?s.rtoRate:-Infinity;
     case 'avg':return s.avgSettle;case 'qDel':return s.qDel;case 'qRet':return s.qRet;case 'sku':return (s.sku||'').toLowerCase();default:return s.net;}};
   view.sort((a,b)=>{const ka=key(a),kb=key(b);let c;if(typeof ka==='string')c=ka<kb?-1:ka>kb?1:0;else c=ka-kb;return dir==='asc'?c:-c;});
+  const pctC=v=>v==null?'-':(v*100).toFixed(1)+'%';
+  const cogsPH=BLANKET_COGS>0?('blanket '+BLANKET_COGS):'—';
   const body=view.map(({s,idx})=>`<tr>
       <td class="l" title="${esc(s.product)}">${esc(s.sku)}</td>
 
       <td>${s.qDel||'-'}</td><td>${s.qRet||'-'}</td><td>${s.qRto||'-'}</td><td>${s.qExc||'-'}</td><td>${s.qShip||'-'}</td><td>${s.qCan||'-'}</td>
+      <td>${pctC(s.custRate)}</td><td>${pctC(s.rtoRate)}</td>
       <td>${inr(s.settled)}</td><td class="pending">${s.pending?inr(s.pending):'-'}</td>
       <td class="${s.net<0?'neg':''}">${inr(s.net)}</td>
       <td>${s.tcs?inr(Math.abs(s.tcs)):'-'}</td><td>${s.tds?inr(Math.abs(s.tds)):'-'}</td>
       <td><input class="gstin" type="number" inputmode="decimal" min="0" max="28" step="0.5" data-i="${idx}" value="${(GSTSKU[s.sku]!=null&&GSTSKU[s.sku]!=='')?GSTSKU[s.sku]:''}" placeholder="${s.gstRateUsed?s.gstRateUsed:'auto'}" title="Per-SKU GST% — overrides the blanket rate and the sheet rate. Blank = use blanket / Sales Report / data rate."></td>
-      <td><input class="cogsin" type="number" inputmode="decimal" min="0" step="any" data-i="${idx}" value="${s.cogsUnit!=null?s.cogsUnit:''}" placeholder="—"></td>
+      <td><input class="cogsin" type="number" inputmode="decimal" min="0" step="any" data-i="${idx}" value="${s.cogsUnitOwn!=null?s.cogsUnitOwn:''}" placeholder="${cogsPH}" title="Per-unit cost for this SKU. Blank = use the blanket COGS if set."></td>
       <td id="ct-${idx}">${s.cogsTotal!=null?inr(s.cogsTotal):'—'}</td>
       <td id="pf-${idx}" class="${s.profit!=null?(s.profit<0?'neg':'pos'):'est'}">${s.profit!=null?inr(s.profit):'—'}</td>
+      <td id="pu-${idx}" class="${s.profitPerUnit!=null?(s.profitPerUnit<0?'neg':'pos'):'est'}">${s.profitPerUnit!=null?inr(s.profitPerUnit):'—'}</td>
       <td>${inr(s.avgSettle)}</td>
     </tr>`).join('');
   const tbl=document.getElementById('skuTable');
   // footer reflects the filtered view
-  const fT=view.reduce((a,{s})=>{a.qDel+=s.qDel;a.qRet+=s.qRet;a.qRto+=s.qRto;a.qExc+=s.qExc;a.qShip+=s.qShip;a.qCan+=s.qCan;
-    a.settled+=s.settled;a.pending+=s.pending;a.net+=s.net;a.tcs+=s.tcs;a.tds+=s.tds;
-    if(s.cogsTotal!=null){a.cogs+=s.cogsTotal;a.cogsKnown=true;}return a;},
-    {qDel:0,qRet:0,qRto:0,qExc:0,qShip:0,qCan:0,settled:0,pending:0,net:0,tcs:0,tds:0,cogs:0,cogsKnown:false});
+  const fT=skuFootTotals(view.map(o=>o.s));
   tbl.innerHTML=head+'<tbody>'+body+'</tbody><tfoot id="skuFoot">'+footRow(view.map(o=>o.s),fT)+'</tfoot>';
   tbl.querySelectorAll('.cogsin').forEach(inp=>inp.addEventListener('input',e=>onCogsEdit(+e.target.dataset.i,e.target.value)));
   tbl.querySelectorAll('.gstin').forEach(inp=>inp.addEventListener('change',e=>onGstSkuEdit(+e.target.dataset.i,e.target.value)));
@@ -1390,15 +1702,34 @@ function renderSku(list,T,adCost){
     `COGS applies only to units where stock left you (<b>Delivered + Exchange + Shipped</b>); Returns &amp; RTO carry none (stock returns). `+
     `SKU <b>Profit = Net settlement − COGS</b>. <b>Ad cost (incl. GST)</b> is platform-wide so it’s deducted once in the summary: <b>Net profit = total settlement − COGS − ad cost</b>. The <b>Avg/unit</b> column shows average bank settlement per sold unit where no cost is entered.`;
 }
+function skuFootTotals(arr){
+  return arr.reduce((a,s)=>{a.qDel+=s.qDel;a.qRet+=s.qRet;a.qRto+=s.qRto;a.qExc+=s.qExc;a.qShip+=s.qShip;a.qCan+=s.qCan;
+    a.settled+=s.settled;a.pending+=s.pending;a.net+=s.net;a.tcs+=s.tcs;a.tds+=s.tds;a.costUnits+=s.costUnits;
+    if(s.cogsTotal!=null){a.cogs+=s.cogsTotal;a.cogsKnown=true;}
+    if(s.profit!=null){a.profitSum+=s.profit;a.profitUnits+=s.costUnits;}return a;},
+    {qDel:0,qRet:0,qRto:0,qExc:0,qShip:0,qCan:0,settled:0,pending:0,net:0,tcs:0,tds:0,cogs:0,cogsKnown:false,costUnits:0,profitSum:0,profitUnits:0});
+}
+function skuView(list){
+  const q=SKU_SEARCH.trim().toLowerCase();
+  return q?list.filter(s=>(s.sku||'').toLowerCase().includes(q)||(s.product||'').toLowerCase().includes(q)):list;
+}
 function footRow(list,T){
+  const disp=T.qDel+T.qRet+T.qExc, ordered=T.qDel+T.qRet+T.qRto+T.qExc;
+  const ctoF=disp>0?T.qRet/disp:null, rtoF=ordered>0?T.qRto/ordered:null;
+  const pctC=v=>v==null?'-':(v*100).toFixed(1)+'%';
+  const avgUnit=T.costUnits>0?T.net/T.costUnits:null;
+  const profUnit=(T.cogsKnown&&T.profitUnits>0)?T.profitSum/T.profitUnits:null;
   return `<tr>
     <td class="l">TOTAL · ${list.length} SKUs</td>
     <td>${T.qDel}</td><td>${T.qRet}</td><td>${T.qRto}</td><td>${T.qExc}</td><td>${T.qShip}</td><td>${T.qCan}</td>
+    <td>${pctC(ctoF)}</td><td>${pctC(rtoF)}</td>
     <td>${inr(T.settled)}</td><td class="pending">${inr(T.pending)}</td>
     <td class="${T.net<0?'neg':''}">${inr(T.net)}</td>
     <td>${inr(Math.abs(T.tcs))}</td><td>${inr(Math.abs(T.tds))}</td>
     <td></td><td></td><td>${T.cogsKnown?inr(T.cogs):'—'}</td>
-    <td class="${T.cogsKnown&&(T.net-T.cogs)<0?'neg':'pos'}">${T.cogsKnown?inr(T.net-T.cogs):'—'}</td><td></td>
+    <td class="${T.cogsKnown&&(T.net-T.cogs)<0?'neg':'pos'}">${T.cogsKnown?inr(T.net-T.cogs):'—'}</td>
+    <td class="${profUnit!=null?(profUnit<0?'neg':'pos'):''}">${profUnit!=null?inr(profUnit):'—'}</td>
+    <td>${avgUnit!=null?inr(avgUnit):'—'}</td>
   </tr>`;
 }
 function onGstSkuEdit(i,v){
@@ -1411,16 +1742,19 @@ function onSkuSearch(v){SKU_SEARCH=v;if(CURRENT)renderSku(CURRENT.list,null,CURR
 function setSkuSort(fld,dir){SKU_SORT=fld+'_'+dir;if(CURRENT)renderSku(CURRENT.list,null,CURRENT.adCost);}
 function onCogsEdit(i,v){
   const s=CURRENT.list[i];
-  if(v===''||isNaN(parseFloat(v))){delete COGS[s.sku];s.cogsUnit=null;}else{COGS[s.sku]=v;s.cogsUnit=parseFloat(v);}
+  if(v===''||isNaN(parseFloat(v))){delete COGS[s.sku];s.cogsUnitOwn=null;}else{COGS[s.sku]=v;s.cogsUnitOwn=parseFloat(v);}
   saveCogs();
+  s.cogsUnit=s.cogsUnitOwn!=null?s.cogsUnitOwn:(BLANKET_COGS>0?BLANKET_COGS:null);
   s.cogsTotal=s.cogsUnit!=null?s.cogsUnit*s.costUnits:null;
   s.profit=s.cogsTotal!=null?s.net-s.cogsTotal:null;
-  const ct=document.getElementById('ct-'+i),pf=document.getElementById('pf-'+i);
-  ct.textContent=s.cogsTotal!=null?inr(s.cogsTotal):'—';
-  pf.textContent=s.profit!=null?inr(s.profit):'—';
-  pf.className=s.profit!=null?(s.profit<0?'neg':'pos'):'est';
-  const T=paintSummaries(CURRENT.list,CURRENT.adCost);
-  document.getElementById('skuFoot').innerHTML=footRow(CURRENT.list,T);
+  s.profitPerUnit=(s.profit!=null&&s.costUnits>0)?s.profit/s.costUnits:null;
+  const ct=document.getElementById('ct-'+i),pf=document.getElementById('pf-'+i),pu=document.getElementById('pu-'+i);
+  if(ct)ct.textContent=s.cogsTotal!=null?inr(s.cogsTotal):'—';
+  if(pf){pf.textContent=s.profit!=null?inr(s.profit):'—';pf.className=s.profit!=null?(s.profit<0?'neg':'pos'):'est';}
+  if(pu){pu.textContent=s.profitPerUnit!=null?inr(s.profitPerUnit):'—';pu.className=s.profitPerUnit!=null?(s.profitPerUnit<0?'neg':'pos'):'est';}
+  paintSummaries(CURRENT.list,CURRENT.adCost,CURRENT.adGst,CURRENT.compSheet);
+  const view=skuView(CURRENT.list);
+  document.getElementById('skuFoot').innerHTML=footRow(view,skuFootTotals(view));
 }
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function setErr(m){document.getElementById('errBox').textContent=m}
@@ -1471,6 +1805,54 @@ function drillCsv(key){
   const blob=new Blob([lines.join('\n')],{type:'text/csv'});const url=URL.createObjectURL(blob);
   const a=document.createElement('a');a.href=url;a.download='drilldown_'+key+'.csv';a.click();URL.revokeObjectURL(url);
 }
+/* Export every pending (unsettled) order to a styled Excel workbook, oldest first, with age buckets. */
+async function exportAgeingXlsx(){
+  if(!AGEING||!AGEING.total){setErr('No pending settlements in the selected period to export.');return;}
+  const asOf=new Date(AGEING.asOf);
+  const rows=[];
+  AGEING.buckets.forEach(b=>b.rows.forEach(r=>{
+    const days=Math.floor((asOf-new Date(r.date))/864e5);
+    rows.push({sub:r.sub||'',date:r.date||'',days,bucket:b.key,platform:(r.platform||'').replace(/^./,c=>c.toUpperCase()),status:r.status||'',sku:r.sku||'',sale:Math.round(r.sale||0),pending:Math.round(r.settlement||0)});
+  }));
+  rows.sort((a,b)=>b.days-a.days);   // oldest / most urgent first
+  const fname='PendingSettlements_'+String(AGEING.start||'').replace(/-/g,'')+'_'+String(AGEING.end||'').replace(/-/g,'')+'.xlsx';
+  if(!window.ExcelJS){   // CSV fallback
+    const head=['Sub-order','Order date','Days pending','Age bucket','Platform','Status','SKU','Sale','Pending'];
+    const lines=[head.join(',')];
+    rows.forEach(r=>lines.push([r.sub,r.date,r.days,r.bucket,r.platform,'"'+String(r.status).replace(/"/g,'')+'"','"'+String(r.sku).replace(/"/g,'""')+'"',r.sale,r.pending].join(',')));
+    const blob=new Blob([lines.join('\n')],{type:'text/csv'});const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=fname.replace('.xlsx','.csv');a.click();URL.revokeObjectURL(u);return;
+  }
+  const wb=new ExcelJS.Workbook();const ws=wb.addWorksheet('Pending Settlements',{views:[{showGridLines:false,state:'frozen',ySplit:9}]});
+  const INK='FF13212F',W='FFFFFFFF',GOLD='FFB78A34',BAND='FFF4F6F8',RED='FFB23A2E',MUT='FF6B7682';
+  const money='#,##0;[Red]-#,##0';
+  const F=(o={})=>Object.assign({name:'Calibri',size:10},o);
+  const fill=c=>({type:'pattern',pattern:'solid',fgColor:{argb:c}});
+  const border={top:{style:'thin',color:{argb:'FFE2E5E9'}},bottom:{style:'thin',color:{argb:'FFE2E5E9'}},left:{style:'thin',color:{argb:'FFE2E5E9'}},right:{style:'thin',color:{argb:'FFE2E5E9'}}};
+  ws.columns=[{width:24},{width:13},{width:13},{width:12},{width:11},{width:14},{width:34},{width:13},{width:14}];
+  ws.mergeCells('A1:I1');const t=ws.getCell('A1');t.value='ECOM PROFIT — Pending Settlements (Ageing)';t.font=F({bold:true,size:15,color:{argb:INK}});ws.getRow(1).height=22;
+  ws.mergeCells('A2:I2');const sub=ws.getCell('A2');sub.value='Orders not yet settled · '+fmtDate(AGEING.start)+' to '+fmtDate(AGEING.end)+' · as of '+fmtDate(AGEING.asOf)+(typeof DEMO_MODE!=='undefined'&&DEMO_MODE?'   ·   DEMO / SAMPLE DATA':'');sub.font=F({color:{argb:MUT}});
+  ws.getCell('A4').value='Summary by age';ws.getCell('A4').font=F({bold:true,color:{argb:GOLD}});
+  AGEING.buckets.forEach((b,i)=>{const c1=ws.getCell(5,i*2+1);c1.value=b.key;c1.font=F({color:{argb:MUT},size:9});
+    const v=ws.getCell(6,i*2+1);v.value=Math.round(b.total);v.numFmt=money;v.font=F({bold:true,color:{argb:b.key==='60+ days'?RED:INK}});});
+  ws.getCell('H4').value='Total pending';ws.getCell('H4').font=F({color:{argb:MUT},size:9});
+  const gt=ws.getCell('I4');gt.value=Math.round(AGEING.total);gt.numFmt=money;gt.font=F({bold:true,size:12,color:{argb:INK}});gt.alignment={horizontal:'right'};
+  const head=['Sub-order','Order date','Days pending','Age bucket','Platform','Status','SKU','Sale','Pending'];
+  const hr=ws.getRow(9);head.forEach((h,i)=>{const cell=hr.getCell(i+1);cell.value=h;cell.font=F({bold:true,color:{argb:W}});cell.fill=fill(INK);cell.alignment={horizontal:(i>=7||i===2)?'right':'left',vertical:'middle'};cell.border=border;});hr.height=18;
+  rows.forEach((r,ri)=>{const row=ws.getRow(10+ri);
+    const od=r.date?new Date(r.date+'T00:00:00'):null;
+    const vals=[r.sub,od,r.days,r.bucket,r.platform,r.status,r.sku,r.sale,r.pending];
+    vals.forEach((v,i)=>{const cell=row.getCell(i+1);cell.value=v;cell.border=border;cell.font=F({color:{argb:r.bucket==='60+ days'?RED:'FF1F2A33'}});
+      cell.alignment={horizontal:(i>=7||i===2)?'right':'left'};
+      if(i>=7)cell.numFmt=money;if(i===1)cell.numFmt='dd-mmm-yyyy';});
+    if(ri%2)for(let i=1;i<=9;i++){const cell=row.getCell(i);if(!cell.fill||!cell.fill.fgColor)cell.fill=fill(BAND);}});
+  const tr=ws.getRow(10+rows.length);
+  for(let i=1;i<=9;i++){tr.getCell(i).fill=fill(INK);tr.getCell(i).border=border;}
+  tr.getCell(7).value='TOTAL — '+rows.length+' pending orders';tr.getCell(7).font=F({bold:true,color:{argb:W}});tr.getCell(7).alignment={horizontal:'right'};
+  tr.getCell(9).value=rows.reduce((a,r)=>a+r.pending,0);tr.getCell(9).numFmt=money;tr.getCell(9).font=F({bold:true,color:{argb:W}});tr.getCell(9).alignment={horizontal:'right'};
+  ws.autoFilter={from:{row:9,column:1},to:{row:9,column:9}};
+  const buf=await wb.xlsx.writeBuffer();const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+  const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=fname;a.click();URL.revokeObjectURL(u);
+}
 (function(){
   const close=()=>{document.getElementById('drillModal').style.display='none';};
   document.getElementById('drillClose').addEventListener('click',close);
@@ -1513,7 +1895,7 @@ function buildOtherReport(start,end,T){
       <div><div style="font-family:var(--serif);font-weight:600;font-size:14px;margin-bottom:6px">By type of charge</div>
         <table class="recon-file-tbl" style="width:100%;font-size:12px"><tbody>
           ${Object.entries(impact).filter(([k,v])=>Math.abs(v)>0.5).map(([k,v])=>`<tr><td class="l">${esc(k)}</td><td style="text-align:right;font-family:var(--mono);color:${v<0?'var(--pos)':'var(--neg)'}">${inr(v)}</td></tr>`).join('')}
-          <tr style="background:#eef4f1;font-weight:700"><td class="l">Total</td><td style="text-align:right;font-family:var(--mono)">${inr(otherTotal)}</td></tr>
+          <tr style="background:var(--tint-tot);font-weight:700"><td class="l">Total</td><td style="text-align:right;font-family:var(--mono)">${inr(otherTotal)}</td></tr>
         </tbody></table>
         <div style="font-size:11px;color:var(--muted);margin-top:5px">Positive = charge, negative = credit in your favour. These are the Meesho line-items outside core shipping/commission/fixed fees.</div>
       </div>
@@ -1597,25 +1979,34 @@ function renderReconciliation(list, T, start, end) {
   // Gap between what the data says and what T.net says (T.net = period settled+pending)
   const reconGap = periodReceivable - T.net;
 
-  // Pending aging
+  // Pending aging — across ALL files/platforms.
+  // Meesho keeps pending in a separate file; Flipkart keeps it inside its P&L (rows flagged src==='pending').
   const today = new Date().toISOString().slice(0,10);
   let age0=0,age7=0,age15=0,age30=0,ageOld=0;
   const ageRows={a0:[],a7:[],a15:[],a30:[],aOld:[]};
-  if (DATA.pendingFile) {
-    DATA.pendingFile.orderRows.filter(r=>r.date&&r.date>=start&&r.date<=end&&!(r.sub&&settledSubsGlobal.has(r.sub))).forEach(r=>{
-      const days = Math.floor((new Date(today)-new Date(r.date))/864e5);
-      if(days<=7){age0+=r.settlement;ageRows.a0.push(r);} else if(days<=14){age7+=r.settlement;ageRows.a7.push(r);}
-      else if(days<=30){age15+=r.settlement;ageRows.a15.push(r);} else if(days<=60){age30+=r.settlement;ageRows.a30.push(r);} else {ageOld+=r.settlement;ageRows.aOld.push(r);}
-    });
-  }
+  dedupedRows(start,end).filter(r=>r.src==='pending'&&r.date&&Math.abs(r.settlement)>0.5).forEach(r=>{
+    const days = Math.floor((new Date(today)-new Date(r.date))/864e5);
+    if(days<=7){age0+=r.settlement;ageRows.a0.push(r);} else if(days<=14){age7+=r.settlement;ageRows.a7.push(r);}
+    else if(days<=30){age15+=r.settlement;ageRows.a15.push(r);} else if(days<=60){age30+=r.settlement;ageRows.a30.push(r);} else {ageOld+=r.settlement;ageRows.aOld.push(r);}
+  });
+  const totalPendingAll = age0+age7+age15+age30+ageOld;
   DRILL.age0={title:'Pending 0–7 days',sub:'Orders placed in the last week, not yet settled',rows:ageRows.a0};
   DRILL.age7={title:'Pending 8–14 days',sub:'Should settle soon',rows:ageRows.a7};
   DRILL.age15={title:'Pending 15–30 days',sub:'Follow up if not settled',rows:ageRows.a15};
   DRILL.age30={title:'Pending 31–60 days',sub:'Likely return / dispute cases',rows:ageRows.a30};
   DRILL.ageOld={title:'Pending over 60 days',sub:'Raise dispute / escalate on Supplier Panel',rows:ageRows.aOld};
+  // keep the ageing breakdown available for the "Export pending to Excel" button
+  AGEING={start,end,total:totalPendingAll,asOf:today,buckets:[
+    {key:'0–7 days',note:'Recently shipped / in transit',rows:ageRows.a0,total:age0},
+    {key:'8–14 days',note:'Should settle soon',rows:ageRows.a7,total:age7},
+    {key:'15–30 days',note:'Follow up if not settled',rows:ageRows.a15,total:age15},
+    {key:'31–60 days',note:'Likely return / dispute cases',rows:ageRows.a30,total:age30},
+    {key:'60+ days',note:'Raise dispute / escalate',rows:ageRows.aOld,total:ageOld},
+  ]};
 
-  const bar_r = periodReceivable > 0 ? Math.max(0,(periodSettled/periodReceivable*100)).toFixed(1) : 0;
-  const bar_p = periodReceivable > 0 ? Math.max(0,(totalPending/periodReceivable*100)).toFixed(1) : 0;
+  const recvBar=Math.max(0,T.settled), pendBar=Math.max(0,totalPendingAll), totBar=recvBar+pendBar;
+  const bar_r = totBar > 0 ? (recvBar/totBar*100).toFixed(1) : 0;
+  const bar_p = totBar > 0 ? (pendBar/totBar*100).toFixed(1) : 0;
 
   // ── Economic (payment-basis) stats: rows actually PAID within [start,end] by PAYMENT date ──
   const hasPayDates = DATA.settledFiles.some(f=>f.orderRows.some(r=>r.payDate));
@@ -1637,7 +2028,7 @@ function renderReconciliation(list, T, start, end) {
   const feeOther = T.feeOther;
 
   // bridge-row helper
-  const BR=(l,v,o={})=>{o=o||{};const bg=o.tot?'background:#eef4f1;font-weight:700;':(o.head?'background:#f4f1e8;font-weight:600;':'');
+  const BR=(l,v,o={})=>{o=o||{};const bg=o.tot?'background:var(--tint-tot);font-weight:700;':(o.head?'background:var(--tint-head);font-weight:600;':'');
     const col=o.col?`color:${o.col};`:(v<0?'color:var(--neg);':'');const pad=o.ind?'padding-left:22px;color:var(--muted);':'';
     return `<tr style="${bg}"><td class="l" style="${pad}">${l}</td><td style="text-align:right;font-family:var(--mono);${col}">${o.txt!=null?o.txt:(v===''?'':inr(v))}</td></tr>`;};
   const reconA = T.sale - T.feeIncl - Math.abs(T.tcs) - Math.abs(T.tds) + T.comp; // should equal T.net
@@ -1668,7 +2059,7 @@ function renderReconciliation(list, T, start, end) {
     ${Math.abs(T.compSheet)>0.5?BR((T.compSheet>=0?'Add':'Less')+': Compensation (separate sheet)',T.compSheet):''}
     ${BR('= Net cash for period orders (after ads)',netCashA,{tot:1,col:netCashA>=0?'var(--pos)':'var(--neg)'})}
   </tbody></table></div>
-  <div style="font-size:12px;margin:0 0 22px;padding:7px 11px;border-radius:5px;background:${Math.abs(reconA-T.net)<=2?'#eef6f1':'#fdeeea'};color:${Math.abs(reconA-T.net)<=2?'var(--pos)':'var(--neg)'};border:1px solid ${Math.abs(reconA-T.net)<=2?'#cfe6da':'#f0c9c0'}">
+  <div style="font-size:12px;margin:0 0 22px;padding:7px 11px;border-radius:5px;background:${Math.abs(reconA-T.net)<=2?'var(--tint-pos)':'var(--tint-neg)'};color:${Math.abs(reconA-T.net)<=2?'var(--pos)':'var(--neg)'};border:1px solid ${Math.abs(reconA-T.net)<=2?'var(--tint-posbd)':'var(--tint-negbd)'}">
     ${Math.abs(reconA-T.net)<=2?'✓':'⚠'} Reconciliation: sales − fees − TCS − TDS ± comp = <b>${inr(reconA)}</b> vs bank settlement <b>${inr(T.net)}</b> (diff ${inr(reconA-T.net)}). Advertising sits outside per-order settlement, so it is deducted after.
   </div>
 
@@ -1684,7 +2075,7 @@ function renderReconciliation(list, T, start, end) {
     ${BR('Less: Advertising deducted in window',-T.adCost)}
     ${BR('= Net cash received (after ads)',netCashB,{tot:1,col:netCashB>=0?'var(--pos)':'var(--neg)'})}
   </tbody></table></div>
-  <div style="font-size:12px;margin:0 0 22px;padding:7px 11px;border-radius:5px;background:#f4f1e8;color:var(--muted);border:1px solid var(--line)">
+  <div style="font-size:12px;margin:0 0 22px;padding:7px 11px;border-radius:5px;background:var(--tint-head);color:var(--muted);border:1px solid var(--line)">
     ${hasPayDates?`The gap between the two methods is pure <b>timing</b>: the accrual method counts orders you placed (incl. ${inr(T.pending)} still pending); the cash method counts only money already settled. Over a full year the two converge.`:`No <b>Payment Date</b> column was found, so this cash view uses <b>all settlements</b> in your uploaded payment files (it can't be sub-filtered by payment date). Re-download a Meesho payment file that includes "Payment Date" for date-windowed cash reporting.`}
   </div>
 `;
@@ -1698,7 +2089,7 @@ function renderReconciliation(list, T, start, end) {
     <thead><tr><th class="l">Line item</th><th>Amount ₹</th><th class="l">Notes</th></tr></thead>
     <tbody>
       <tr><td class="l">Gross sale amount (incl. GST + shipping)</td><td>${inr(T.sale)}</td><td class="l" style="color:var(--muted)">Sum of all sale amounts, current period</td></tr>
-      <tr style="background:#f9f4f4"><td class="l" style="color:var(--neg);font-weight:600">Less: Total platform fees (incl. GST)</td><td style="color:var(--neg);font-weight:600">${inr(-T.feeIncl)}</td><td class="l" style="color:var(--muted)">Derived: sale − settlement − TCS − TDS + comp. This is always exact.</td></tr>
+      <tr style="background:var(--tint-feerow)"><td class="l" style="color:var(--neg);font-weight:600">Less: Total platform fees (incl. GST)</td><td style="color:var(--neg);font-weight:600">${inr(-T.feeIncl)}</td><td class="l" style="color:var(--muted)">Derived: sale − settlement − TCS − TDS + comp. This is always exact.</td></tr>
       ${T.hasFeeBreakdown&&T.shippingIncl>0.5?`<tr><td class="l" style="padding-left:20px;color:var(--muted)">  ↳ Shipping charges</td><td style="color:var(--neg)">${inr(-T.shippingIncl)}</td><td class="l" style="color:var(--muted)">Forward logistics</td></tr>`:''}
       ${T.hasFeeBreakdown&&T.commissionIncl>0.5?`<tr><td class="l" style="padding-left:20px;color:var(--muted)">  ↳ Commission</td><td style="color:var(--neg)">${inr(-T.commissionIncl)}</td><td class="l" style="color:var(--muted)">Marketplace commission</td></tr>`:''}
       ${T.hasFeeBreakdown&&T.returnShipping>0.5?`<tr><td class="l" style="padding-left:20px;color:var(--muted)">  ↳ Return shipping</td><td style="color:var(--neg)">${inr(-T.returnShipping)}</td><td class="l" style="color:var(--muted)">Reverse logistics charge</td></tr>`:''}
@@ -1707,7 +2098,7 @@ function renderReconciliation(list, T, start, end) {
       ${T.hasFeeBreakdown&&T.offerAdj>0.5?`<tr><td class="l" style="padding-left:20px;color:var(--muted)">  ↳ Offer adjustments</td><td style="color:var(--neg)">${inr(-T.offerAdj)}</td><td class="l" style="color:var(--muted)">Seller offer contributions</td></tr>`:''}
       ${T.hasFeeBreakdown&&T.gstOnFees>0.5?`<tr><td class="l" style="padding-left:20px;color:var(--muted)">  ↳ GST on platform fees</td><td style="color:var(--neg)">${inr(-T.gstOnFees)}</td><td class="l" style="color:var(--muted)">Claimable as ITC</td></tr>`:''}
       ${T.hasFeeBreakdown&&(T.feeOther>1)?`<tr><td class="l" style="padding-left:20px;color:var(--muted)">  ↳ Other support, waivers &amp; adjustments</td><td style="color:var(--neg)">${inr(-T.feeOther)}</td><td class="l" style="color:var(--muted)">Support-service fees, waivers, GST compensation &amp; per-order adjustments</td></tr>`:''}
-      ${!T.hasFeeBreakdown?`<tr><td colspan="3" style="padding:8px 10px;background:#fff8e8;border:1px solid #e0c97a;font-size:12px;line-height:1.6"><b style="color:#8a6800">⚠ Fee column breakdown not detected.</b> Columns in your file: <span style="font-family:monospace;font-size:11px">${(DETECTED_FEE_COLS.headers||[]).slice(0,20).join(', ')}</span>. Total fees above are always mathematically exact (derived from settlement formula).</td></tr>`:''}
+      ${!T.hasFeeBreakdown?`<tr><td colspan="3" style="padding:8px 10px;background:var(--tint-warn);border:1px solid var(--tint-warnbd);font-size:12px;line-height:1.6"><b style="color:var(--accent2)">⚠ Fee column breakdown not detected.</b> Columns in your file: <span style="font-family:monospace;font-size:11px">${(DETECTED_FEE_COLS.headers||[]).slice(0,20).join(', ')}</span>. Total fees above are always mathematically exact (derived from settlement formula).</td></tr>`:''}
       <tr><td class="l" style="color:#2c7680">Less: TCS (Tax Collected at Source)</td><td style="color:#2c7680">${inr(Math.abs(T.tcs))}</td><td class="l" style="color:var(--muted)">Refundable via GST return</td></tr>
       <tr><td class="l" style="color:#2c7680">Less: TDS (Tax Deducted at Source)</td><td style="color:#2c7680">${inr(Math.abs(T.tds))}</td><td class="l" style="color:var(--muted)">Refundable via ITR / Form 26AS</td></tr>
       ${Math.abs(T.comp)>0.5?`<tr><td class="l">${T.comp>=0?'Add':'Less'}: Compensation &amp; recovery (net)</td><td ${T.comp<0?'style="color:var(--neg)"':''}>${inr(T.comp)}</td><td class="l" style="color:var(--muted)">Meesho claims / compensations</td></tr>`:''}
@@ -1715,15 +2106,16 @@ function renderReconciliation(list, T, start, end) {
     <tfoot><tr>
       <td class="l">= Net settlement (current-period orders)</td>
       <td>${inr(T.net)}</td>
-      <td class="l" style="font-family:var(--body);font-weight:400;color:var(--muted)">Settled ${inr(periodSettled)} · Pending ${inr(Math.max(0,totalPending))}</td>
+      <td class="l" style="font-family:var(--body);font-weight:400;color:var(--muted)">Settled ${inr(T.settled)} · Pending ${inr(Math.max(0,totalPendingAll))}</td>
     </tr></tfoot>
   </table></div>`;
 
   // Pending aging
-  if (pendingRec && totalPending > 0) {
+  if (totalPendingAll > 0) {
     const ab=(key,lbl,val,col,note,n)=>`<div class="aging-bucket" ${n>0?`onclick="showDrill('${key}')" style="cursor:pointer" title="Click to list ${n} order(s)"`:''}><div class="ab">${lbl}</div><div class="av" style="color:${col}">${inr(val)}</div><div class="ac">${note}${n>0?` · <b>${n}</b> orders ▸`:''}</div></div>`;
     html += `
-    <div class="recon-section-hd" style="margin-top:22px"><span class="tag">aging</span> Pending Amount — Age of Orders <span style="font-weight:400;font-size:11px;color:var(--muted);text-transform:none;letter-spacing:0">(click a bucket to list orders)</span></div>
+    <div class="recon-section-hd" style="margin-top:22px;display:flex;align-items:center;gap:12px;flex-wrap:wrap"><span><span class="tag">aging</span> Pending Amount — Age of Orders <span style="font-weight:400;font-size:11px;color:var(--muted);text-transform:none;letter-spacing:0">(click a bucket to list orders)</span></span>
+      <button class="ghost" type="button" onclick="exportAgeingXlsx()" style="margin-left:auto;font-size:12.5px;padding:7px 14px">⬇ Export pending to Excel</button></div>
     <div class="recon-aging">
       ${ab('age0','0–7 days',age0,'var(--pos)','Recently shipped / in transit',ageRows.a0.length)}
       ${ab('age7','8–14 days',age7,'#5a9e7a','Should settle soon',ageRows.a7.length)}
@@ -1742,9 +2134,291 @@ function renderReconciliation(list, T, start, end) {
   host.innerHTML = html;
 }
 
+/* ---------- DEMO / sample-data mode ---------- */
+let DEMO_MODE=false;
+function genDemoData(){
+  let seed=20260615;const rnd=()=>{seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff;};
+  const ri=(a,b)=>a+Math.floor(rnd()*(b-a+1));
+  const months=[];for(let m=0;m<12;m++){months.push(new Date(Date.UTC(2025,3+m,1)).toISOString().slice(0,7));}
+  const day=(mk,d)=>mk+'-'+String(d).padStart(2,'0');
+  const addLag=(iso,lag)=>{const dt=new Date(iso+'T00:00:00Z');dt.setUTCDate(dt.getUTCDate()+lag);return dt.toISOString().slice(0,10);};
+  const cat=[['Cotton Kurti',5],['Coord Set',5],['Anarkali Gown',5],['Palazzo Pants',5],['Printed Saree',5],['Lehenga Choli',12],['Denim Jacket',12],['Running Shoes',18],['Laptop Backpack',18],['Sunglasses',18],['Wall Clock',12],['Cotton Bedsheet',5],['Cushion Cover',5],['Steel Bottle',18],['Yoga Mat',12]];
+  const mkSkus=(prefix,n)=>{const a=[];for(let i=0;i<n;i++){const c=cat[ri(0,cat.length-1)];
+    a.push({sku:prefix+'_'+c[0].replace(/[^A-Za-z]/g,'').toUpperCase().slice(0,8)+'_'+(101+i),product:c[0],gst:c[1],
+      price:ri(199,1499),fee:0.16+rnd()*0.16,pop:ri(6,40)});}return a;};
+  const buildFile=(platform,prefix,skus)=>{
+    const orderRows=[],adRows=[],compRows=[];
+    months.forEach((mkk,mi)=>{
+      const growth=1+mi*0.06;let monthSale=0;
+      skus.forEach(s=>{
+        const baseU=Math.max(1,Math.round(s.pop*growth*(0.7+rnd()*0.6)));
+        const dDate=day(mkk,ri(3,25));const isLast=mi===months.length-1;const pendFrac=isLast?0.45:0;
+        const mkRow=(units,status,settledFlag)=>{
+          if(units<=0)return;
+          const sale=(status==='Delivered'||status==='Exchange')?Math.round(s.price*units):0;
+          let feeS=0,tcs=0,tds=0,retShip=0;
+          if(sale>0){feeS=-Math.round(s.fee*sale);const taxable=sale/(1+s.gst/100);tcs=-Math.round(taxable*0.01);tds=-Math.round(taxable*0.001);}
+          if(status==='Return'){retShip=-Math.round(s.price*units*0.12);feeS=retShip;}
+          if(status==='RTO'){retShip=-Math.round(s.price*units*0.16);feeS=retShip;}
+          const settlement=sale+feeS+tcs+tds;
+          const gstOnFees=platform==='flipkart'?Math.round(Math.abs(feeS)*18/118):0;
+          const comm=Math.round(feeS*0.7),ship=Math.round(feeS*0.2),coll=feeS-comm-ship;
+          orderRows.push({sub:prefix+'-'+mkk+'-'+s.sku+'-'+status+(settledFlag?'':'-P'),txn:'',sku:s.sku,product:s.product,
+            date:dDate,payDate:settledFlag?addLag(dDate,platform==='flipkart'?ri(11,14):ri(13,17)):null,
+            status,qty:units,settlement,sale,tcs,tds,comp:0,productGst:s.gst,src:settledFlag?'settled':'pending',
+            shippingIncl:ship,commissionIncl:comm,collectionFee:coll,penaltyIncl:0,
+            returnShipping:(status==='Return'||status==='RTO')?retShip:0,shippingGst:0,commissionGst:0,
+            gstOnFees,offerAdj:0,otherFkFees:0,itcExplicit:gstOnFees,_hasFeeBreakdown:true,platform});
+          monthSale+=sale;};
+        const pendU=Math.round(baseU*pendFrac),setU=baseU-pendU;
+        mkRow(setU,'Delivered',true);if(pendU>0)mkRow(pendU,'Delivered',false);
+        if(rnd()<0.5)mkRow(ri(1,Math.max(1,Math.round(baseU*0.10))),'Return',true);
+        if(rnd()<0.4)mkRow(ri(1,Math.max(1,Math.round(baseU*0.08))),'RTO',true);
+        if(rnd()<0.2)mkRow(ri(1,2),'Exchange',true);
+        if(rnd()<0.1)mkRow(ri(1,2),'Cancelled',true);
+      });
+      const adTotal=Math.round(monthSale*(0.05+rnd()*0.04)),adGstV=Math.round(adTotal*18/118);
+      adRows.push({date:day(mkk,26),total:adTotal,gst:adGstV,type:'ads'});
+      if(rnd()<0.5)compRows.push({date:day(mkk,20),program:'SPF recovery',type:'recovery',amount:Math.round(monthSale*0.004)});
+    });
+    return {orderRows,adRows,compRows};
+  };
+  return [
+    {id:9001,name:'DEMO — Meesho (Apr 25–Mar 26).xlsx',kind:'settled',platform:'meesho',isSettlement:false,...buildFile('meesho','MSH',mkSkus('MSH',16))},
+    {id:9002,name:'DEMO — Flipkart (Apr 25–Mar 26).xlsx',kind:'settled',platform:'flipkart',isSettlement:false,...buildFile('flipkart','FK',mkSkus('FK',14))}
+  ];
+}
+function loadDemo(){
+  const files=genDemoData();
+  // Move the demo's pending (unsettled) orders into a dedicated pending-payments file,
+  // so the Settlement & Ageing section and the "Export pending to Excel" button populate.
+  const pendRows=[];
+  files.forEach(f=>{const keep=[];f.orderRows.forEach(r=>{if(r.src==='pending')pendRows.push(r);else keep.push(r);});f.orderRows=keep;});
+  DATA.settledFiles=files;
+  DATA.pendingFile=pendRows.length?{id:9003,name:'DEMO — Pending payouts.xlsx',kind:'pending',platform:'meesho',isSettlement:false,orderRows:pendRows,adRows:[],compRows:[]}:null;
+  DEMO_MODE=true;uid=9100;
+  document.body.classList.add('demo-on');
+  let badge=document.getElementById('demoBadge');
+  if(!badge){badge=document.createElement('div');badge.id='demoBadge';badge.className='demo-badge';
+    badge.innerHTML='DEMO — sample data &nbsp;·&nbsp; <span style="opacity:.85">upload your own files to replace it</span>';
+    document.body.appendChild(badge);}
+  badge.style.display='block';
+  renderFileList();afterLoad();
+  const ss=document.getElementById('startDate'),ee=document.getElementById('endDate');
+  if(SPAN.min){ss.value=SPAN.min;ee.value=SPAN.max;}
+  document.getElementById('quickSel').value='custom';
+  render();
+  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
 /* ---------- export ---------- */
-document.getElementById('exportBtn').addEventListener('click',exportXlsx);
-function exportXlsx(){
+document.getElementById('exportBtn').addEventListener('click',()=>{exportXlsx().catch(e=>{console.error(e);alert('Excel export failed: '+e.message);});});
+(function(){const b=document.getElementById('demoBtn');if(b)b.addEventListener('click',loadDemo);})();
+/* Theme toggle (dark / light) */
+(function(){
+  const btn=document.getElementById('themeToggle');if(!btn)return;
+  const setLabel=()=>{const dark=document.body.getAttribute('data-theme')==='dark';btn.textContent=dark?'☀  Light theme':'🌙  Dark theme';};
+  setLabel();
+  btn.addEventListener('click',()=>{
+    const dark=document.body.getAttribute('data-theme')==='dark';
+    const next=dark?'light':'dark';
+    document.body.setAttribute('data-theme',next);
+    try{localStorage.setItem('mp_theme',next);}catch(e){}
+    setLabel();
+    // charts bake in theme colours at creation — redraw if a report is showing
+    if(typeof CURRENT!=='undefined'&&CURRENT&&!document.getElementById('results').classList.contains('hidden'))render();
+  });
+})();
+/* Blanket COGS — default per-unit cost for SKUs with no specific cost entered. */
+(function(){const g=document.getElementById('blanketCogsInput');if(!g)return;g.value=BLANKET_COGS>0?BLANKET_COGS:'';
+  g.addEventListener('change',()=>{const v=parseFloat(g.value);BLANKET_COGS=(isNaN(v)||v<0)?0:v;g.value=BLANKET_COGS>0?BLANKET_COGS:'';saveBlanketCogs();
+    if(CURRENT&&!document.getElementById('results').classList.contains('hidden'))render();});})();
+/* Bulk COGS — apply a per-unit cost to every SKU matching the current search term. */
+(function(){const btn=document.getElementById('bulkCogsBtn');if(!btn)return;
+  btn.addEventListener('click',()=>{
+    const inp=document.getElementById('bulkCogsInput'),msg=document.getElementById('bulkCogsMsg');
+    if(!CURRENT){if(msg)msg.textContent='Generate the report first.';return;}
+    const v=parseFloat(inp.value);
+    const matches=skuView(CURRENT.list);
+    if(!matches.length){if(msg)msg.textContent='No SKUs match the search.';return;}
+    if(inp.value===''){ // blank = clear COGS for matches
+      matches.forEach(s=>{delete COGS[s.sku];});
+    }else if(isNaN(v)||v<0){if(msg)msg.textContent='Enter a valid cost (or blank to clear).';return;}
+    else{matches.forEach(s=>{COGS[s.sku]=v;});}
+    saveCogs();render();
+    if(msg)msg.textContent=(inp.value===''?'Cleared COGS on ':'Applied ₹'+v+'/unit to ')+matches.length+' SKU'+(matches.length>1?'s':'')+(SKU_SEARCH.trim()?' matching “'+SKU_SEARCH.trim()+'”':'')+'.';
+  });})();
+
+async function exportXlsx(){
+  if(!CURRENT)return;
+  if(typeof ExcelJS==='undefined'){return exportXlsxLegacy();}   // fallback if styling lib didn't load
+  const {start,end,list,adCost,adGst,compSheet}=CURRENT;const T=totals(list,adCost,adGst,compSheet);
+  const r2=x=>Math.round(x*100)/100;
+  const pfs=[...new Set([...DATA.settledFiles,...(DATA.pendingFile?[DATA.pendingFile]:[])].map(f=>(f.platform||'meesho').toUpperCase()))].join(' + ');
+  const genIST=(()=>{try{return new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Kolkata',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date()).replace(',','')+' IST';}catch(e){return '';}})();
+
+  // palette (ARGB)
+  const INK='FF11202E',GOLD='FFB78A34',EMER='FF147A5E',TEAL='FF2C7680',SLATE='FF46617A',CRIM='FFB23A2E',
+        BAND='FFF7F8FA',MIST='FFF1EFE7',LINE='FFE6E9EC',W='FFFFFFFF',MUT='FF6A7480',INK2='FF2A3742',
+        POSBG='FFEAF6EE',NEGBG='FFFBECEC',POS='FF0F5C4D';
+  const money='#,##0;[Red]-#,##0', pctf='0.0%';
+  const wb=new ExcelJS.Workbook();wb.creator='Ecom Profit · Wealthcore Softech Private Limited';wb.created=new Date();
+  const thin={style:'thin',color:{argb:LINE}};
+  const border={top:thin,left:thin,bottom:thin,right:thin};
+  const fill=argb=>({type:'pattern',pattern:'solid',fgColor:{argb}});
+  const F=(o)=>Object.assign({name:'Calibri',size:10,color:{argb:INK2}},o);
+
+  // ---- branded header drawn on a sheet ----
+  function header(ws,subtitle){
+    ws.mergeCells('A1:A4');
+    try{const id=wb.addImage({base64:LOGO_SOFT.split(',')[1],extension:'png'});ws.addImage(id,{tl:{col:0.15,row:0.35},ext:{width:42,height:42}});}catch(e){}
+    ws.mergeCells('B1:F1');const t=ws.getCell('B1');t.value='ECOM PROFIT';t.font=F({size:16,bold:true,color:{argb:GOLD}});t.alignment={vertical:'middle'};
+    ws.mergeCells('B2:F2');const c=ws.getCell('B2');c.value='WEALTHCORE SOFTECH PRIVATE LIMITED';c.font=F({size:10,bold:true,color:{argb:INK}});
+    ws.mergeCells('B3:F3');const s=ws.getCell('B3');s.value=(subtitle||'Marketplace P&L Report')+'   ·   '+pfs+' Seller MIS'+(PLATFORM_FILTER!=='all'?'  ('+PLATFORM_FILTER.toUpperCase()+' only)':'')+(DEMO_MODE?'   ·   DEMO / SAMPLE DATA':'');s.font=F({size:9.5,color:{argb:DEMO_MODE?GOLD:SLATE}});
+    ws.mergeCells('B4:F4');const p=ws.getCell('B4');p.value=fmtDate(start)+'  to  '+fmtDate(end)+(genIST?('   ·   Generated '+genIST):'');p.font=F({size:8.5,color:{argb:MUT}});
+    ws.getRow(1).height=20;ws.getRow(2).height=14;ws.getRow(3).height=14;ws.getRow(4).height=13;
+    // gold rule on row 5
+    for(let col=1;col<=6;col++){const cc=ws.getCell(5,col);cc.fill=fill(GOLD);}ws.getRow(5).height=3;
+  }
+  const sectTitle=(ws,row,cL,cR,text,argb)=>{ws.mergeCells(row,cL,row,cR);const c=ws.getCell(row,cL);
+    c.value=text;c.font=F({bold:true,size:10,color:{argb:W}});c.fill=fill(argb);c.alignment={vertical:'middle',indent:1};ws.getRow(row).height=18;};
+  const kv=(ws,row,cL,cV,label,val,o)=>{o=o||{};
+    const l=ws.getCell(row,cL);l.value=label;l.font=F({bold:!!o.bold,color:{argb:o.lc||INK2},size:o.bold?10.5:10});l.alignment={indent:1};
+    const v=ws.getCell(row,cV);
+    if(o.text!=null){v.value=o.text;v.numFmt='General';}else{v.value=val;v.numFmt=o.fmt||money;}
+    v.font=F({bold:!!o.bold,color:{argb:o.vc||INK},size:o.bold?10.5:10});v.alignment={horizontal:'right'};
+    const bg=o.band;if(bg){l.fill=fill(bg);v.fill=fill(bg);}
+    l.border={bottom:thin};v.border={bottom:thin};ws.getRow(row).height=15;};
+
+  /* ============ SHEET 1 — SUMMARY (two-up P&L) ============ */
+  const ws=wb.addWorksheet('Summary',{views:[{showGridLines:false}]});
+  ws.columns=[{width:6},{width:34},{width:18},{width:4},{width:34},{width:18}];
+  header(ws,'Profit & Loss Report');
+  let R=7;
+  const ecoStart=R;
+  sectTitle(ws,R,2,3,'ECONOMIC  P&L  (EX-GST)',INK);
+  const cashStart=R; sectTitle(ws,R,5,6,'CASH  PROFIT & LOSS',TEAL); R++;
+  // economic rows (col B/C) and cash rows (col E/F) in parallel
+  const eco=[['Net sales (ex-GST)',T.saleExGst],['Less: Platform fees (ex-GST)',-T.feeBase]];
+  if(T.adCost>0||T.adBase>0)eco.push(['Less: Advertising (ex-GST)',-T.adBase]);
+  eco.push(['Less: COGS',T.cogsKnown?-T.cogs:null,{text:T.cogsKnown?null:'—'}]);
+  if(Math.abs(T.compTotal)>0.5)eco.push([(T.compTotal>=0?'Add':'Less')+': Compensation',T.compTotal]);
+  const ecoProfit=T.saleExGst-T.feeBase-T.adBase+T.compTotal-(T.cogsKnown?T.cogs:0);
+  eco.push([T.cogsKnown?'Net profit (economic)':'Contribution',T.cogsKnown?ecoProfit:(T.saleExGst-T.feeBase-T.adBase+T.compTotal),{tot:true,pos:ecoProfit>=0}]);
+  const taxRecv=Math.abs(T.tcs)+Math.abs(T.tds),gstAdj=-T.netGst;const cashProfit=T.net-T.adCost-(T.cogsKnown?T.cogs:0)+taxRecv+gstAdj+T.compSheet;
+  const cash=[['Net bank settlement',T.net]];
+  if(T.adCost>0)cash.push(['Less: Advertising (incl GST)',-T.adCost]);
+  cash.push(['Less: COGS',T.cogsKnown?-T.cogs:null,{text:T.cogsKnown?null:'—'}]);
+  if(taxRecv>0)cash.push(['Add: TCS + TDS receivable',taxRecv]);
+  if(Math.abs(gstAdj)>0.5)cash.push([gstAdj>=0?'Add: Net GST credit':'Less: Net GST payable',gstAdj]);
+  if(Math.abs(T.compSheet)>0.5)cash.push([(T.compSheet>=0?'Add':'Less')+': Compensation (recovery)',T.compSheet]);
+  cash.push([T.cogsKnown?'Cash profit':'Cash before COGS',T.cogsKnown?cashProfit:(T.net-T.adCost+taxRecv+gstAdj+T.compSheet),{tot:true,pos:cashProfit>=0}]);
+  const nRows=Math.max(eco.length,cash.length);
+  for(let i=0;i<nRows;i++){
+    if(eco[i]){const o=eco[i][2]||{};kv(ws,R+i,2,3,eco[i][0],eco[i][1],{bold:o.tot,band:o.tot?(o.pos?POSBG:NEGBG):null,vc:o.tot?(o.pos?POS:CRIM):INK,text:o.text});}
+    if(cash[i]){const o=cash[i][2]||{};kv(ws,R+i,5,6,cash[i][0],cash[i][1],{bold:o.tot,band:o.tot?(o.pos?POSBG:NEGBG):null,vc:o.tot?(o.pos?POS:CRIM):INK,text:o.text});}
+  }
+  R+=nRows+1;
+
+  // costs as % of net sales
+  const baseS=T.saleExGst>0?T.saleExGst:1;
+  sectTitle(ws,R,2,6,'COSTS AS % OF NET SALES (EX-GST)',SLATE);R++;
+  const cp=[['Platform fees',T.feeBase/baseS]];if(T.adCost>0||T.adBase>0)cp.push(['Advertising',T.adBase/baseS]);
+  if(T.cogsKnown)cp.push(['COGS',T.cogs/baseS]);if(T.outputGst>0)cp.push(['Output GST / gross',T.sale>0?T.outputGst/T.sale:0]);
+  cp.forEach((p,i)=>{const col=2+(i%2)*3;const row=R+Math.floor(i/2);kv(ws,row,col,col+1,p[0],p[1],{fmt:pctf});});
+  R+=Math.ceil(cp.length/2)+1;
+
+  // GST position + Refundable two-up
+  const gstStart=R;
+  sectTitle(ws,R,2,3,'GST POSITION',TEAL);sectTitle(ws,R,5,6,'REFUNDABLE TAXES (TCS / TDS)',GOLD);R++;
+  const gst=[['Output GST on sales',T.outputGst],['Less: ITC on fees',-T.itcFees],['Less: ITC on advertising',-T.itcAds],[T.netGst>=0?'Net GST payable':'Net ITC credit',Math.abs(T.netGst),{tot:true}]];
+  const ref=[['TCS deducted (refundable)',Math.abs(T.tcs)],['TDS deducted (refundable)',Math.abs(T.tds)],['Total refundable',Math.abs(T.tcs)+Math.abs(T.tds),{tot:true}]];
+  const gn=Math.max(gst.length,ref.length);
+  for(let i=0;i<gn;i++){if(gst[i]){const o=gst[i][2]||{};kv(ws,R+i,2,3,gst[i][0],gst[i][1],{bold:o.tot,band:o.tot?MIST:null});}
+    if(ref[i]){const o=ref[i][2]||{};kv(ws,R+i,5,6,ref[i][0],ref[i][1],{bold:o.tot,band:o.tot?MIST:null});}}
+  R+=gn+1;
+
+  // Units & Returns
+  sectTitle(ws,R,2,6,'UNITS & RETURNS',SLATE);R++;
+  const disp=T.qDel+T.qRet+T.qExc,den=T.qDel+T.qRet+T.qRto+T.qExc;
+  const ur=[['Delivered',T.qDel],['Customer returns (CTO)',T.qRet],['RTO',T.qRto],['Exchange',T.qExc],['Shipped / in process',T.qShip],['Cancelled',T.qCan]];
+  ur.forEach((u,i)=>{const col=2+(i%2)*3;kv(ws,R+Math.floor(i/2),col,col+1,u[0],u[1],{fmt:'#,##0'});});
+  R+=Math.ceil(ur.length/2);
+  kv(ws,R,2,3,'Customer return %',disp>0?T.qRet/disp:0,{fmt:pctf,bold:true,band:MIST});
+  kv(ws,R,5,6,'RTO %',den>0?T.qRto/den:0,{fmt:pctf,bold:true,band:MIST});R+=2;
+
+  // footer note
+  ws.mergeCells(R,2,R,6);const fn=ws.getCell(R,2);fn.value='Generated by Ecom Profit · Wealthcore Softech Private Limited — figures in ₹. GST is pass-through; TCS/TDS are refundable.';fn.font=F({italic:true,size:8,color:{argb:MUT}});
+
+  /* ============ SHEET 2 — SKU P&L ============ */
+  const s2=wb.addWorksheet('SKU P&L',{views:[{showGridLines:false,state:'frozen',ySplit:6}]});
+  s2.columns=[{width:30},{width:30},{width:9},{width:9},{width:8},{width:9},{width:9},{width:9},{width:8},{width:8},{width:14},{width:12},{width:14},{width:11},{width:11},{width:11},{width:13},{width:14},{width:14},{width:13}];
+  header(s2,'SKU-level Profit & Loss');
+  const skuHead=['SKU','Product','Delivered','Cust Return','RTO','Exchange','Shipped','Cancelled','CTO %','RTO %','Received (Bank)','Pending','Net Settlement','TCS','TDS','COGS/unit','Total COGS','Profit (ex-ads)','Avg Sett./unit','Profit / unit'];
+  const hr=s2.getRow(7);skuHead.forEach((h,i)=>{const c=hr.getCell(i+1);c.value=h;c.font=F({bold:true,color:{argb:W},size:9.5});c.fill=fill(INK);c.alignment={vertical:'middle',horizontal:i<2?'left':'right',wrapText:true};c.border=border;});hr.height=26;
+  list.forEach((s,ri)=>{
+    const row=s2.getRow(8+ri);
+    const vals=[s.sku,s.product||'',s.qDel,s.qRet,s.qRto,s.qExc,s.qShip,s.qCan,
+      s.custRate!=null?s.custRate:null,s.rtoRate!=null?s.rtoRate:null,
+      r2(s.settled),r2(s.pending),r2(s.net),r2(Math.abs(s.tcs)),r2(Math.abs(s.tds)),
+      s.cogsUnit!=null?s.cogsUnit:null,s.cogsTotal!=null?r2(s.cogsTotal):null,s.profit!=null?r2(s.profit):null,r2(s.avgSettle),s.profitPerUnit!=null?r2(s.profitPerUnit):null];
+    vals.forEach((v,i)=>{const c=row.getCell(i+1);c.value=v;c.border=border;
+      c.font=F({size:9.5,color:{argb:(i===17||i===19)&&s.profit!=null?(s.profit>=0?POS:CRIM):INK2},bold:i===12});
+      if(i<2){c.alignment={horizontal:'left'};}else{c.alignment={horizontal:'right'};}
+      if(i===8||i===9)c.numFmt=pctf;else if(i>=10&&i!==15)c.numFmt=money;else if(i===15)c.numFmt='#,##0.00';else if(i>=2&&i<=7)c.numFmt='#,##0';});
+    if(ri%2===1)for(let i=1;i<=skuHead.length;i++){const c=row.getCell(i);if(!c.fill||!c.fill.fgColor)c.fill=fill(BAND);}
+  });
+  // totals row
+  const tr=s2.getRow(8+list.length);const unitsTot=T.qDel+T.qExc+T.qShip;const profitTotX=list.reduce((a,s)=>a+(s.profit||0),0);
+  const tvals=['TOTAL','',T.qDel,T.qRet,T.qRto,T.qExc,T.qShip,T.qCan,null,null,r2(T.settled),r2(T.pending),r2(T.net),r2(Math.abs(T.tcs)),r2(Math.abs(T.tds)),null,T.cogsKnown?r2(T.cogs):null,T.cogsKnown?r2(profitTotX):null,unitsTot>0?r2(T.net/unitsTot):null,(T.cogsKnown&&unitsTot>0)?r2(profitTotX/unitsTot):null];
+  tvals.forEach((v,i)=>{const c=tr.getCell(i+1);c.value=v;c.font=F({bold:true,color:{argb:W},size:9.5});c.fill=fill(SLATE);c.border=border;c.alignment={horizontal:i<2?'left':'right'};if(i>=10&&i!==15&&i!==8&&i!==9)c.numFmt=money;else if(i>=2&&i<=7)c.numFmt='#,##0';});
+  tr.height=16;
+  s2.autoFilter={from:{row:7,column:1},to:{row:7,column:skuHead.length}};
+
+  /* ============ SHEET 3 — SETTLEMENT CYCLE ============ */
+  const C=settlementCycle(start,end);
+  if(C.overall&&C.overall.n){
+    const s4=wb.addWorksheet('Settlement Cycle',{views:[{showGridLines:false}]});
+    s4.columns=[{width:6},{width:28},{width:16},{width:16},{width:14},{width:14}];
+    header(s4,'Settlement Cycle Time');let r=7;
+    sectTitle(s4,r,2,6,'AVERAGE SETTLEMENT TIME — MEESHO vs FLIPKART',INK);r++;
+    if(C.meesho){kv(s4,r,2,3,'Meesho — avg days',r2(C.meesho.avg),{fmt:'0.0',vc:'FFD63384'});kv(s4,r,5,6,'orders',C.meesho.n,{fmt:'#,##0'});r++;}
+    if(C.flipkart){kv(s4,r,2,3,'Flipkart — avg days',r2(C.flipkart.avg),{fmt:'0.0',vc:'FF2874F0'});kv(s4,r,5,6,'orders',C.flipkart.n,{fmt:'#,##0'});r++;}
+    r++;
+    sectTitle(s4,r,2,6,'HOW FAST ORDERS SETTLE (DISTRIBUTION)',TEAL);r++;
+    const totB=C.buckets.reduce((a,b)=>a+b[1],0)||1;
+    C.buckets.forEach(b=>{kv(s4,r,2,3,b[0],b[1],{fmt:'#,##0'});kv(s4,r,5,6,'share',b[1]/totB,{fmt:pctf});r++;});
+    r++;
+    if(C.byMonth.length>=2){sectTitle(s4,r,2,6,'SETTLEMENT TIME BY ORDER MONTH',GOLD);r++;
+      C.byMonth.forEach(m=>{kv(s4,r,2,3,mLbl(m.month)+' — avg days',r2(m.avg),{fmt:'0.0'});kv(s4,r,5,6,'orders',m.n,{fmt:'#,##0'});r++;});}
+  }
+
+  /* ============ SHEET 4 — PAYMENT RECONCILIATION ============ */
+  const s3=wb.addWorksheet('Reconciliation',{views:[{showGridLines:false}]});
+  s3.columns=[{width:40},{width:12},{width:13},{width:15},{width:14},{width:14},{width:12},{width:12},{width:16},{width:16},{width:12}];
+  const recHead=['File','Kind','Period Orders','Prior Orders','Period Sale ₹','Period Fees ₹','TCS ₹','TDS ₹','Period Settle ₹','Prior Settle ₹','Status'];
+  const hr3=s3.getRow(1);recHead.forEach((h,i)=>{const c=hr3.getCell(i+1);c.value=h;c.font=F({bold:true,color:{argb:W},size:9.5});c.fill=fill(INK);c.alignment={horizontal:i?'right':'left',wrapText:true,vertical:'middle'};c.border=border;});hr3.height=24;
+  const settledSubsX=new Set(DATA.settledFiles.flatMap(sf=>sf.orderRows.filter(r=>r.sub).map(r=>r.sub)));
+  const fStatsX=rows=>{const s={sale:0,sett:0,tcs:0,tds:0,comp:0,n:rows.length};rows.forEach(r=>{s.sale+=r.sale;s.sett+=r.settlement;s.tcs+=Math.abs(r.tcs);s.tds+=Math.abs(r.tds);s.comp+=r.comp;});s.fee=Math.abs(s.sett-s.sale+s.tcs+s.tds-s.comp);return s;};
+  let rr=2;
+  const addRec=(name,kind,iS,oS,status)=>{const row=s3.getRow(rr);const vals=[name,kind,iS.n,oS?oS.n:0,r2(iS.sale),r2(iS.fee),r2(iS.tcs),r2(iS.tds),r2(iS.sett),oS?r2(oS.sett):0,status];
+    vals.forEach((v,i)=>{const c=row.getCell(i+1);c.value=v;c.border=border;c.font=F({size:9.5});c.alignment={horizontal:i?'right':'left'};if(i>=4&&i<=9)c.numFmt=money;else if(i>=2&&i<=3)c.numFmt='#,##0';});
+    if(rr%2===0)for(let i=1;i<=recHead.length;i++)row.getCell(i).fill=fill(BAND);rr++;};
+  DATA.settledFiles.forEach(f=>{const inR=f.orderRows.filter(r=>r.date&&r.date>=start&&r.date<=end);const outR=f.orderRows.filter(r=>r.date&&!(r.date>=start&&r.date<=end));addRec(f.name,'Settled',fStatsX(inR),fStatsX(outR),'Received');});
+  if(DATA.pendingFile){const f=DATA.pendingFile;const uR=f.orderRows.filter(r=>r.date&&r.date>=start&&r.date<=end&&!(r.sub&&settledSubsX.has(r.sub)));if(uR.length)addRec(f.name,'Pending',fStatsX(uR),null,'Pending');}
+  s3.autoFilter={from:{row:1,column:1},to:{row:1,column:recHead.length}};
+  s3.views=[{showGridLines:false,state:'frozen',ySplit:1}];
+
+  // download
+  const buf=await wb.xlsx.writeBuffer();
+  const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;
+  a.download='EcomProfit_PnL_'+start+'_to_'+end+(PLATFORM_FILTER!=='all'?'_'+PLATFORM_FILTER:'')+'.xlsx';
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
+}
+
+/* legacy plain export (fallback if ExcelJS unavailable) */
+function exportXlsxLegacy(){
   if(!CURRENT)return;const {start,end,list,adCost,adGst,compSheet}=CURRENT;const T=totals(list,adCost,adGst,compSheet);
   const r2=x=>Math.round(x*100)/100;
   const summary=[
@@ -1824,12 +2498,20 @@ function fyQuarter(d){const y=fyStart(d),m=+d.slice(5,7);const fy=y+'-'+String((
   const q=(m>=4&&m<=6)?'Q1':(m>=7&&m<=9)?'Q2':(m>=10&&m<=12)?'Q3':'Q4';return{label:q+' FY'+fy,ord:y*4+({Q1:1,Q2:2,Q3:3,Q4:4})[q]};}
 const mLbl=mk=>{const[y,m]=mk.split('-');return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+m-1]+" '"+y.slice(2);};
 
-function computeTrends(){
-  const rows=dedupedRows(SPAN.min,SPAN.max);
-  const cogsOf=sku=>(COGS[sku]!=null&&COGS[sku]!=='')?num(COGS[sku]):null;
+function computeTrends(start,end){
+  const lo=start||SPAN.min, hi=end||SPAN.max;
+  const rows=dedupedRows(lo,hi);
+  const cogsOf=sku=>(COGS[sku]!=null&&COGS[sku]!=='')?num(COGS[sku]):(BLANKET_COGS>0?BLANKET_COGS:null);
+  // granularity: weekly if the SELECTED order period spans under ~2 months (by duration), else monthly
+  const spanDays=(Date.parse(hi)-Date.parse(lo))/864e5;
+  const gran=(isFinite(spanDays)&&spanDays<62)?'week':'month';
+  const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const weekStart=d=>{const dt=new Date(d+'T00:00:00Z');const day=(dt.getUTCDay()+6)%7;dt.setUTCDate(dt.getUTCDate()-day);return dt.toISOString().slice(0,10);};
+  const keyOf=r=>gran==='week'?weekStart(r.date):r.date.slice(0,7);
+  const bucketLabel=k=>gran==='week'?(()=>{const p=k.split('-');return (+p[2])+' '+MON[+p[1]-1];})():mLbl(k);
   const byMonth={},byQ={},bySkuMonth={},bySkuMonthU={},bySkuMonthRet={},bySkuMonthDen={},skuTot={};
   for(const r of rows){
-    const mk=r.date.slice(0,7);
+    const mk=keyOf(r);
     const m=byMonth[mk]||(byMonth[mk]={net:0,cogs:0,hasCogs:false,sale:0});
     m.net+=r.settlement;m.sale+=r.sale;
     const cu=cogsOf(r.sku),units=['Delivered','Exchange','Shipped'].includes(r.status)?r.qty:0;
@@ -1843,9 +2525,9 @@ function computeTrends(){
     skuTot[r.sku]=(skuTot[r.sku]||0)+r.settlement;
   }
   const months=Object.keys(byMonth).sort();
-  const quarters=Object.keys(byQ).sort((a,b)=>byQ[a].ord-byQ[b].ord);
+  const quarters=gran==='month'?Object.keys(byQ).sort((a,b)=>byQ[a].ord-byQ[b].ord):[];
   const topSkus=Object.keys(skuTot).sort((a,b)=>skuTot[b]-skuTot[a]).slice(0,5);
-  return {months,byMonth,quarters,byQ,bySkuMonth,bySkuMonthU,bySkuMonthRet,bySkuMonthDen,topSkus};
+  return {months,byMonth,quarters,byQ,bySkuMonth,bySkuMonthU,bySkuMonthRet,bySkuMonthDen,topSkus,gran,bucketLabel};
 }
 
 /* chart → PNG */
@@ -1925,16 +2607,25 @@ async function buildPdf(pfOverride){
     const start=document.getElementById('startDate').value||SPAN.min;
     const end=document.getElementById('endDate').value||SPAN.max;
     const c=compute(start,end);const list=c.list,adCost=c.adCost,adGst=c.adGst,compSheet=c.compSheet;
-    const T=totals(list,adCost,adGst,compSheet);const tr=computeTrends();
+    const T=totals(list,adCost,adGst,compSheet);const tr=computeTrends(start,end);
     const gen=(()=>{try{return new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Kolkata',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date()).replace(',','')+' IST';}catch(e){return fmtDate(new Date().toISOString().slice(0,10));}})();
 
     const setText=(c)=>doc.setTextColor(c[0],c[1],c[2]);
     const setFill=(c)=>doc.setFillColor(c[0],c[1],c[2]);
     const setDraw=(c)=>doc.setDrawColor(c[0],c[1],c[2]);
-    const footer=(n)=>{setDraw(PAL.line);doc.setLineWidth(0.3);doc.line(M,H-11,W-M,H-11);
+    const watermark=()=>{if(!DEMO_MODE)return;
+      let gs=null;try{gs=new doc.GState({opacity:0.10});}catch(e){}
+      if(gs)try{doc.setGState(gs);}catch(e){gs=null;}
+      doc.setFont('Inter','bold');doc.setFontSize(80);
+      doc.setTextColor(gs?120:233,gs?120:228,gs?120:216);   // 10% mid-grey if opacity works, else faint solid
+      try{doc.text('DEMO',W/2,H/2+8,{align:'center',angle:32});}catch(e){doc.text('DEMO',W/2,H/2,{align:'center'});}
+      if(gs)try{doc.setGState(new doc.GState({opacity:1}));}catch(e){}};
+    const footer=(n)=>{
+      watermark();   // faint, drawn last so it sits as a wash over content but never gets hidden by charts
+      setDraw(PAL.line);doc.setLineWidth(0.3);doc.line(M,H-11,W-M,H-11);
       setFill(PAL.gold);doc.circle(M+1,H-7.7,0.9,'F');
       doc.setFont('Inter','bold');doc.setFontSize(7.4);setText(PAL.ink);doc.text('Ecom Profit',M+3.5,H-7);
-      doc.setFont('Inter','normal');setText(PAL.muted);doc.text('  ·  '+pfLabel+' MIS   |   '+fmtDate(start)+' to '+fmtDate(end),M+3.5+doc.getTextWidth('Ecom Profit'),H-7);
+      doc.setFont('Inter','normal');setText(PAL.muted);doc.text('  ·  WEALTHCORE SOFTECH PRIVATE LIMITED   |   '+fmtDate(start)+' to '+fmtDate(end),M+3.5+doc.getTextWidth('Ecom Profit'),H-7);
       doc.setFont('Inter','normal');doc.setFontSize(7.4);setText(PAL.muted);doc.text('Page '+String(n).padStart(2,'0'),W-M,H-7,{align:'right'});};
     const newPage=()=>{footer(page);doc.addPage();page++;y=M+4;};
     const ensure=(need)=>{if(y+need>H-16)newPage();};
@@ -1967,30 +2658,32 @@ async function buildPdf(pfOverride){
     setFill(PAL.ink);doc.rect(0,0,W,52,'F');
     setFill(PAL.navy);doc.rect(0,46,W,6,'F');
     setFill(PAL.gold);doc.rect(0,52,W,1.4,'F');
-    setText(PAL.gold);doc.setFont('Inter','bold');doc.setFontSize(8.2);
-    doc.text('E C O M   P R O F I T',M,15);
-    setText([170,180,190]);doc.setFont('Inter','normal');doc.setFontSize(7.6);
-    doc.text(pfLabel+' SELLER MIS'+(PLATFORM_FILTER!=='all'?'  ·  '+PLATFORM_FILTER.toUpperCase()+' ONLY':''),W-M,15,{align:'right'});
-    setText(PAL.white);doc.setFont('Inter','bold');doc.setFontSize(25);doc.text('Profit & Loss Report',M,31);
+    // logo on a small white chip (logo art has a white background)
+    try{setFill(PAL.white);doc.roundedRect(M,7.5,13,13,2,2,'F');doc.addImage(LOGO_SOFT,'PNG',M+1.4,8.9,10.2,10.2);}catch(e){}
+    setText(PAL.gold);doc.setFont('Inter','bold');doc.setFontSize(9);
+    doc.text('E C O M   P R O F I T',M+17,15.5);
+    setText([205,212,220]);doc.setFont('Inter','bold');doc.setFontSize(12);
+    doc.text(pfLabel+' SELLER MIS'+(PLATFORM_FILTER!=='all'?'  ·  '+PLATFORM_FILTER.toUpperCase()+' ONLY':''),W-M,15.5,{align:'right'});
+    setText(PAL.white);doc.setFont('Inter','bold');doc.setFontSize(25);doc.text('Profit & Loss Report',M,33);
     doc.setFont('Inter','normal');doc.setFontSize(9.5);setText([196,204,212]);
-    doc.text(fmtDate(start)+'   to   '+fmtDate(end),M,40.5);
+    doc.text(fmtDate(start)+'   to   '+fmtDate(end),M,41.5);
     setText([150,160,170]);doc.setFontSize(7.8);
-    doc.text('Generated '+gen+'   ·   '+list.length+' SKUs   ·   '+T.orders+' sub-orders',M,46);
+    doc.text('Generated '+gen+'   ·   '+list.length+' SKUs   ·   '+T.orders+' sub-orders'+(DEMO_MODE?'   ·   SAMPLE DATA':''),M,46.5);
     y=62;
 
     // hero KPI strip (5) — values auto-fit so they never spill past the card border
     const realiz=T.net>0?T.settled/T.net:0;const margin=T.saleExGst>0&&T.cogsKnown?T.profitEx/T.saleExGst:null;
     const perUnitH=T.net/Math.max(1,T.qDel+T.qExc+T.qShip);
-    const hero=[['NET SETTLEMENT',RsShort(T.net),'received + pending',PAL.emerald],
-      ['SETTLEMENT / UNIT',RsShort(perUnitH),'avg bank value per pc',PAL.gold],
-      [T.cogsKnown?'NET PROFIT':'CONTRIBUTION',RsShort(T.cogsKnown?T.profitEx:T.saleExGst-T.feeBase-T.adBase+T.compTotal),T.cogsKnown?'economic, ex-GST':'enter COGS for profit',T.cogsKnown?(T.profitEx>=0?PAL.emerald:PAL.crimson):PAL.slate],
+    const hero=[['NET SETTLEMENT',RsK(T.net),'received + pending',PAL.emerald],
+      ['SETTLEMENT / UNIT',RsK(perUnitH),'avg bank value per pc',PAL.gold],
+      [T.cogsKnown?'NET PROFIT':'CONTRIBUTION',RsK(T.cogsKnown?T.profitEx:T.saleExGst-T.feeBase-T.adBase+T.compTotal),T.cogsKnown?'economic, ex-GST':'enter COGS for profit',T.cogsKnown?(T.profitEx>=0?PAL.emerald:PAL.crimson):PAL.slate],
       [T.cogsKnown?'NET MARGIN':'REALIZED',T.cogsKnown?pct(margin):pct0(realiz),T.cogsKnown?'profit / ex-GST sales':'settlement in bank',PAL.teal],
-      [T.netGst>=0?'NET GST':'ITC ACCRUED',RsShort(Math.abs(T.netGst)),T.netGst>=0?'payable to govt':'net credit',PAL.slate]];
+      [T.netGst>=0?'NET GST':'ITC ACCRUED',RsK(Math.abs(T.netGst)),T.netGst>=0?'payable to govt':'net credit',PAL.slate]];
     const hgap=4.5,hw=(CW-4*hgap)/5,hh=31;
     hero.forEach((k,i)=>{const x=M+i*(hw+hgap);setFill(PAL.white);setDraw(PAL.line);doc.setLineWidth(0.4);doc.roundedRect(x,y,hw,hh,2.2,2.2,'FD');
       setFill(k[3]);doc.roundedRect(x,y,hw,2.4,1.1,1.1,'F');setFill(k[3]);doc.rect(x,y+1.2,hw,1.2,'F');
       doc.setFont('Inter','bold');doc.setFontSize(6.6);setText(PAL.muted);doc.text(k[0],x+3.5,y+8.5);
-      const vs=fitSize(k[1],hw-7,13,'Fraunces','normal');doc.setFont('Fraunces','normal');doc.setFontSize(vs);setText(k[3]);doc.text(String(k[1]),x+3.5,y+18.5);
+      const vs=fitSize(k[1],hw-7,12.5,'Inter','bold');doc.setFont('Inter','bold');doc.setFontSize(vs);setText(k[3]);doc.text(String(k[1]),x+3.5,y+18,{baseline:'alphabetic'});
       doc.setFont('Inter','normal');doc.setFontSize(6.4);setText(PAL.muted);
       const sub=doc.splitTextToSize(k[2],hw-7);doc.text(sub,x+3.5,y+25);});
     y+=hh+11;
@@ -2034,14 +2727,14 @@ async function buildPdf(pfOverride){
         // 8 metric cards (2 rows x 4) with winner highlight + proportional bar
         const MPINK=[156,31,106],FBLUE=[40,116,240];
         const metrics=[
-          {k:'Net sales',m:pm.sale,f:pf.sale,fmt:RsShort,lower:false},
-          {k:'Net settlement',m:pm.net,f:pf.net,fmt:RsShort,lower:false},
-          {k:'Settlement / unit',m:pm.perUnit,f:pf.perUnit,fmt:RsShort,lower:false},
+          {k:'Net sales',m:pm.sale,f:pf.sale,fmt:RsK,lower:false},
+          {k:'Net settlement',m:pm.net,f:pf.net,fmt:RsK,lower:false},
+          {k:'Settlement / unit',m:pm.perUnit,f:pf.perUnit,fmt:RsK,lower:false},
           {k:'RTO %',m:pm.rto,f:pf.rto,fmt:v=>v.toFixed(1)+'%',lower:true},
           {k:'Customer return %',m:pm.cto,f:pf.cto,fmt:v=>v.toFixed(1)+'%',lower:true},
           {k:'Platform fees %',m:pm.feePct,f:pf.feePct,fmt:v=>v.toFixed(1)+'%',lower:true},
           {k:'Ad fees %',m:pm.adPct,f:pf.adPct,fmt:v=>v.toFixed(1)+'%',lower:true},
-          {k:'Profit',m:pm.profit,f:pf.profit,fmt:RsShort,lower:false}];
+          {k:'Profit',m:pm.profit,f:pf.profit,fmt:RsK,lower:false}];
         const cols=4,gap=5,cw=(CW-(cols-1)*gap)/cols,ch=34;
         metrics.forEach((mt,i)=>{const col=i%cols,row=Math.floor(i/cols),x=M+col*(cw+gap),yy=y+row*(ch+gap);
           const mWin=mt.lower?(mt.m<mt.f):(mt.m>mt.f);const fWin=mt.lower?(mt.f<mt.m):(mt.f>mt.m);
@@ -2051,14 +2744,14 @@ async function buildPdf(pfOverride){
           // Meesho row
           if(mWin){setFill([252,240,247]);doc.roundedRect(x+2,yy+7.5,cw-4,7.2,1,1,'F');}
           doc.setFont('Inter','bold');doc.setFontSize(6.8);setText(MPINK);doc.text('MEESHO',x+3.5,yy+12.2);
-          {const fsz=fitSize(mt.fmt(mt.m),vw,10.5,'Fraunces','normal');doc.setFont('Fraunces','normal');doc.setFontSize(fsz);setText(mWin?MPINK:PAL.ink2);doc.text(String(mt.fmt(mt.m)),x+cw-3.5,yy+12.4,{align:'right'});}
+          {const fsz=fitSize(mt.fmt(mt.m),vw,10,'Inter','bold');doc.setFont('Inter','bold');doc.setFontSize(fsz);setText(mWin?MPINK:PAL.ink2);doc.text(String(mt.fmt(mt.m)),x+cw-3.5,yy+12.4,{align:'right'});}
           // proportional bar
           const tot=Math.abs(mt.m)+Math.abs(mt.f)||1;const mp=Math.max(0.05,Math.min(0.95,Math.abs(mt.m)/tot));
           setFill(MPINK);doc.rect(x+3.5,yy+16.6,(cw-7)*mp,1.8,'F');setFill(FBLUE);doc.rect(x+3.5+(cw-7)*mp,yy+16.6,(cw-7)*(1-mp),1.8,'F');
           // Flipkart row
           if(fWin){setFill([237,243,253]);doc.roundedRect(x+2,yy+19.8,cw-4,7.2,1,1,'F');}
           doc.setFont('Inter','bold');doc.setFontSize(6.8);setText(FBLUE);doc.text('FLIPKART',x+3.5,yy+24.5);
-          {const fsz=fitSize(mt.fmt(mt.f),vw,10.5,'Fraunces','normal');doc.setFont('Fraunces','normal');doc.setFontSize(fsz);setText(fWin?FBLUE:PAL.ink2);doc.text(String(mt.fmt(mt.f)),x+cw-3.5,yy+24.7,{align:'right'});}
+          {const fsz=fitSize(mt.fmt(mt.f),vw,10,'Inter','bold');doc.setFont('Inter','bold');doc.setFontSize(fsz);setText(fWin?FBLUE:PAL.ink2);doc.text(String(mt.fmt(mt.f)),x+cw-3.5,yy+24.7,{align:'right'});}
           doc.setFont('Inter','normal');doc.setFontSize(5.6);setText(PAL.muted);doc.text(mt.lower?'lower is better':'higher is better',x+3.5,yy+30.8);
         });
         y+=2*(ch+gap)+5;
@@ -2145,13 +2838,14 @@ async function buildPdf(pfOverride){
       didParseCell:d=>{if(d.section==='body'){const l=d.row.raw[0];if(l.startsWith('Net profit')||l==='Contribution'){d.cell.styles.fontStyle='bold';d.cell.styles.fontSize=9;d.cell.styles.fillColor=econProfit>=0?[233,246,238]:[251,235,235];if(d.column.index===1)d.cell.styles.textColor=econProfit>=0?PAL.emDk:PAL.crimson;}}}});
     const econEnd=doc.lastAutoTable.finalY;
     const taxRecv=Math.abs(T.tcs)+Math.abs(T.tds), gstAdj=-T.netGst;
-    const cashProfit=T.net-T.adCost-(T.cogsKnown?T.cogs:0)+taxRecv+gstAdj;
+    const cashProfit=T.net-T.adCost-(T.cogsKnown?T.cogs:0)+taxRecv+gstAdj+T.compSheet;
     const cashRows=[['Net bank settlement',RsK(T.net)]];
     if(hasAds)cashRows.push(['Less: Advertising (incl. GST)','-'+RsK(T.adCost)]);
     cashRows.push(['Less: COGS',T.cogsKnown?'-'+RsK(T.cogs):'—']);
     if(taxRecv>0)cashRows.push(['Add: TCS + TDS receivable','+'+RsK(taxRecv)]);
     if(Math.abs(gstAdj)>0.5)cashRows.push([gstAdj>=0?'Add: Net GST credit':'Less: Net GST payable',(gstAdj>=0?'+':'-')+RsK(Math.abs(gstAdj))]);
-    cashRows.push([T.cogsKnown?'Cash profit':'Cash before COGS',T.cogsKnown?RsK(cashProfit):RsK(T.net-T.adCost+taxRecv+gstAdj)]);
+    if(Math.abs(T.compSheet)>0.5)cashRows.push([(T.compSheet>=0?'Add':'Less')+': Compensation (recovery)',(T.compSheet>=0?'+':'-')+RsK(Math.abs(T.compSheet))]);
+    cashRows.push([T.cogsKnown?'Cash profit':'Cash before COGS',T.cogsKnown?RsK(cashProfit):RsK(T.net-T.adCost+taxRecv+gstAdj+T.compSheet)]);
     doc.autoTable({startY:py0,margin:{left:M+colW2+9,right:M},theme:'grid',
       head:[['Cash Profit & Loss','Amount']],body:cashRows,
       styles:{font:'Inter',fontSize:8.5,cellPadding:{top:2.9,bottom:2.9,left:3.4,right:3.4},textColor:PAL.ink2,lineColor:[233,235,238]},
@@ -2236,14 +2930,14 @@ async function buildPdf(pfOverride){
     doc.addImage(dnStatus.url,'PNG',M+halfd+6,y,halfd,halfd*dnStatus.ratio);
     y+=halfd*dnSettle.ratio+8;
 
-    // ---- Trend analysis: monthly always; quarterly only if >= 2 full quarters (kept together) ----
-    ensure(tr.quarters.length>=2?150:90);heading('Trend Analysis','Across all loaded data · Indian FY (Apr–Mar)');
+    // ---- Trend analysis: monthly (or weekly if <2 months of data); quarterly only if >= 2 full quarters ----
+    ensure(tr.quarters.length>=2?150:90);heading('Trend Analysis',tr.gran==='week'?'By week · data spans under 2 months':'Across all loaded data · Indian FY (Apr–Mar)');
     const mNet=tr.months.map(m=>tr.byMonth[m].net);
     const mProf=tr.months.map(m=>tr.byMonth[m].hasCogs?tr.byMonth[m].net-tr.byMonth[m].cogs:null);
-    const monthChart=chartImg({type:'bar',data:{labels:tr.months.map(mLbl),
+    const monthChart=chartImg({type:'bar',data:{labels:tr.months.map(tr.bucketLabel),
       datasets:[{type:'bar',label:'Net settlement',data:mNet,backgroundColor:HEX.emerald,borderRadius:3,order:2,barPercentage:0.6,categoryPercentage:0.7},
         {type:'line',label:'Profit (COGS entered)',data:mProf,borderColor:HEX.gold,backgroundColor:HEX.gold,borderWidth:2.5,tension:.35,pointRadius:3.5,pointBackgroundColor:HEX.gold,order:1,spanGaps:true}]},
-      options:{plugins:{legend:legendPlug(13),title:titlePlug('Monthly net settlement & profit')},
+      options:{plugins:{legend:legendPlug(13),title:titlePlug((tr.gran==='week'?'Weekly':'Monthly')+' net settlement & profit')},
         scales:{y:{grace:'14%',ticks:{callback:inrShort,font:{family:FNUM,size:13},color:'#5B6472',maxTicksLimit:6},grid:{color:'rgba(17,32,46,0.06)'},border:{display:false}},x:{grid:{display:false},border:{display:false},ticks:{font:{family:FTITLE,size:13},color:'#11202E',autoSkip:false,maxRotation:0}}}}},
       1080,420,[barLabels(v=>inrShort(v),{size:12,color:'#0E7B5B'})]);
     addImg(monthChart,CW);y-=3;
@@ -2254,6 +2948,54 @@ async function buildPdf(pfOverride){
           scales:{y:{grace:'14%',ticks:{callback:inrShort,font:{family:FNUM,size:13},color:'#5B6472',maxTicksLimit:6},grid:{color:'rgba(17,32,46,0.06)'},border:{display:false}},x:{grid:{display:false},border:{display:false},ticks:{font:{family:FTITLE,size:13},color:'#11202E',maxRotation:0}}}}},
         1080,360,[barLabels(v=>inrShort(v),{size:13,color:'#2E7D8A'})]);
       addImg(qChart,CW);
+    }
+
+    /* ============ SETTLEMENT CYCLE TIME ============ */
+    {
+      const C=settlementCycle(start,end);
+      if(C.overall&&C.overall.n){
+        const need=70+(C.byMonth.length>=2?(8+C.byMonth.length*5):0)+(C.meesho&&C.flipkart?22:0);
+        ensure(Math.min(need,150));
+        heading('Settlement Cycle Time','Days from order to money-in-bank — how long working capital stays locked');
+        const o=C.overall,d1=v=>v==null?'—':(Math.round(v*10)/10)+' d';
+
+        // platform comparison bars
+        if(C.meesho&&C.flipkart){
+          const mx=Math.max(C.meesho.avg,C.flipkart.avg)||1;
+          const faster=C.meesho.avg<=C.flipkart.avg?'Meesho':'Flipkart';const gap=Math.abs(C.meesho.avg-C.flipkart.avg);
+          ensure(26);
+          doc.setFont('Inter','bold');doc.setFontSize(9);setText(PAL.ink);doc.text('Average settlement time — Meesho vs Flipkart',M,y+2);y+=5;
+          const drawB=(name,st,col)=>{doc.setFont('Inter','bold');doc.setFontSize(8);setText(col);doc.text(name,M,y+3.2);
+            doc.setFont('Inter','normal');setText(PAL.muted);doc.text(d1(st.avg)+' avg · median '+st.median+'d · '+st.n.toLocaleString('en-IN')+' orders',W-M,y+3.2,{align:'right'});
+            setFill(PAL.mist);doc.roundedRect(M,y+4.5,CW,3.2,1,1,'F');setFill(col);doc.roundedRect(M,y+4.5,CW*(st.avg/mx),3.2,1,1,'F');y+=10;};
+          drawB('Meesho',C.meesho,[214,51,132]);drawB('Flipkart',C.flipkart,[40,116,240]);
+          doc.setFont('Inter','normal');doc.setFontSize(8);setText(PAL.muted);
+          doc.text(faster+' pays out faster by '+(Math.round(gap*10)/10)+' days on average.',M,y+1);y+=6;
+        }
+
+        // distribution
+        const totB=C.buckets.reduce((a,b)=>a+b[1],0)||1,maxB=Math.max(...C.buckets.map(b=>b[1]))||1;
+        ensure(8+C.buckets.length*5.5);
+        doc.setFont('Inter','bold');doc.setFontSize(9);setText(PAL.ink);doc.text('How fast orders settle (distribution)',M,y+2);y+=5;
+        C.buckets.forEach(b=>{doc.setFont('Inter','normal');doc.setFontSize(8);setText(PAL.muted);doc.text(b[0],M,y+3);
+          setFill(PAL.mist);doc.roundedRect(M+26,y,CW-26-30,3.2,1,1,'F');setFill(PAL.emerald);doc.roundedRect(M+26,y,(CW-26-30)*(b[1]/maxB),3.2,1,1,'F');
+          doc.setFont('Inter','normal');setText(PAL.ink2);doc.text(b[1].toLocaleString('en-IN')+' ('+(b[1]/totB*100).toFixed(0)+'%)',W-M,y+3,{align:'right'});y+=5.4;});
+        y+=3;
+
+        // monthly trend
+        if(C.byMonth.length>=2){
+          const mx=Math.max(...C.byMonth.map(m=>m.avg))||1;const first=C.byMonth[0],last=C.byMonth[C.byMonth.length-1];
+          const dir=last.avg>first.avg+0.5?'worsening':(last.avg<first.avg-0.5?'improving':'stable');
+          const dcol=dir==='worsening'?PAL.crimson:(dir==='improving'?PAL.emDk:PAL.muted);
+          ensure(8+C.byMonth.length*5.5);
+          doc.setFont('Inter','bold');doc.setFontSize(9);setText(PAL.ink);doc.text('Settlement time by order month',M,y+2);
+          doc.setFont('Inter','normal');setText(dcol);doc.text('  ('+dir+')',M+doc.getTextWidth('Settlement time by order month')+2,y+2);y+=5;
+          C.byMonth.forEach(m=>{doc.setFont('Inter','normal');doc.setFontSize(8);setText(PAL.muted);doc.text(mLbl(m.month),M,y+3);
+            setFill(PAL.mist);doc.roundedRect(M+26,y,CW-26-34,3.2,1,1,'F');setFill(PAL.gold);doc.roundedRect(M+26,y,(CW-26-34)*(m.avg/mx),3.2,1,1,'F');
+            doc.setFont('Inter','normal');setText(PAL.ink2);doc.text(d1(m.avg)+' · '+m.n.toLocaleString('en-IN')+' ord',W-M,y+3,{align:'right'});y+=5.4;});
+          y+=3;
+        }
+      }
     }
 
     /* ============ PAGE — SKU PERFORMANCE & RANKINGS (before per-unit trend) ============ */
@@ -2290,13 +3032,13 @@ async function buildPdf(pfOverride){
     /* ============ PER-UNIT SETTLEMENT TREND — one chart per top-5 SKU ============ */
     if(tr.topSkus.length){
       ensure(70);
-      heading('Per-Unit Settlement Trend','Average bank settlement per sold unit — one chart per top-5 SKU');
+      heading('Per-Unit Settlement Trend',(tr.gran==='week'?'By week':'By month')+' · average bank settlement per sold unit — one chart per top-5 SKU');
       tr.topSkus.forEach((sku,idx)=>{
         const ms=tr.months;
         const settle=ms.map(m=>{const u=(tr.bySkuMonthU[sku]||{})[m]||0,nv=(tr.bySkuMonth[sku]||{})[m]||0;return u>0?Math.round(nv/u):null;});
         ensure(58);
         doc.setFont('Inter','bold');doc.setFontSize(10.5);setText(PAL.ink);doc.text(`${idx+1}. ${sku.length>52?sku.slice(0,52)+'…':sku}`,M,y+1);y+=3.5;
-        const img=chartImg({type:'line',data:{labels:ms.map(mLbl),datasets:[{label:'Settlement / unit (₹)',data:settle,
+        const img=chartImg({type:'line',data:{labels:ms.map(tr.bucketLabel),datasets:[{label:'Settlement / unit (₹)',data:settle,
           borderColor:CAT[idx],backgroundColor:CAT[idx],borderWidth:2.6,tension:.3,pointRadius:3.4,pointBackgroundColor:CAT[idx],spanGaps:true,fill:false}]},
           options:{plugins:{legend:{display:false},title:titlePlug('')},
             scales:{y:{ticks:{callback:inrShort,font:{family:FNUM,size:13},color:'#5B6472'},grid:{color:'rgba(16,33,28,0.07)'},border:{display:false}},
@@ -2309,14 +3051,14 @@ async function buildPdf(pfOverride){
     /* ============ SETTLEMENT vs RETURNS — one clear chart per top-5 SKU ============ */
     if(tr.topSkus.length){
       ensure(72);
-      heading('Settlement vs Returns — Top 5 SKUs','For each SKU: bars = settlement per unit (₹), line = customer-return %');
+      heading('Settlement vs Returns — Top 5 SKUs',(tr.gran==='week'?'By week':'By month')+' · bars = settlement per unit (₹), line = customer-return %');
       tr.topSkus.forEach((sku,idx)=>{
         const ms=tr.months;
         const settle=ms.map(m=>{const u=(tr.bySkuMonthU[sku]||{})[m]||0,nv=(tr.bySkuMonth[sku]||{})[m]||0;return u>0?Math.round(nv/u):null;});
         const retp=ms.map(m=>{const d=(tr.bySkuMonthDen[sku]||{})[m]||0,rt=(tr.bySkuMonthRet[sku]||{})[m]||0;return d>0?+(rt/d*100).toFixed(1):null;});
         ensure(58);
         doc.setFont('Inter','bold');doc.setFontSize(10.5);setText(PAL.ink);doc.text(`${idx+1}. ${sku.length>52?sku.slice(0,52)+'…':sku}`,M,y+1);y+=3.5;
-        const img=chartImg({type:'bar',data:{labels:ms.map(mLbl),datasets:[
+        const img=chartImg({type:'bar',data:{labels:ms.map(tr.bucketLabel),datasets:[
             {type:'bar',label:'Settlement / unit (₹)',data:settle,backgroundColor:HEX.emerald,borderRadius:3,yAxisID:'y',order:2,barPercentage:0.55,categoryPercentage:0.7},
             {type:'line',label:'Customer return %',data:retp,borderColor:HEX.crimson,backgroundColor:HEX.crimson,borderWidth:2.6,tension:.3,pointRadius:3.4,pointBackgroundColor:HEX.crimson,yAxisID:'y1',order:1,spanGaps:true}]},
           options:{plugins:{legend:legendPlug(12),title:titlePlug('')},
@@ -2328,28 +3070,29 @@ async function buildPdf(pfOverride){
       });
     }
 
-    /* ============ RETURN RATE BY SKU — two tables (highest RTO% / CTO%), SKUs with >50 units only ============ */
+    /* ============ RETURN RATE BY SKU — two tables (highest RTO% / CTO%), min order-units threshold ============ */
     {
-      const MINU=50;
-      const rtoList=list.filter(s=>{const u=s.qDel+s.qRet+s.qRto+s.qExc;return u>MINU&&s.rtoRate>0;})
+      const MINU=(typeof RET_MIN==='number'&&RET_MIN>=0)?RET_MIN:50;
+      const rtoList=list.filter(s=>{const u=s.qDel+s.qRet+s.qRto+s.qExc;return u>=MINU&&s.rtoRate>0;})
         .map(s=>({sku:s.sku,units:s.qRto,rate:s.rtoRate})).sort((a,b)=>b.rate-a.rate).slice(0,5);
-      const ctoList=list.filter(s=>{const u=s.qDel+s.qRet+s.qExc;return u>MINU&&s.custRate>0;})
+      const ctoList=list.filter(s=>{const u=s.qDel+s.qRet+s.qExc;return u>=MINU&&s.custRate>0;})
         .map(s=>({sku:s.sku,units:s.qRet,rate:s.custRate})).sort((a,b)=>b.rate-a.rate).slice(0,5);
       if(rtoList.length||ctoList.length){
         ensure(20);heading('Return Rate by SKU','Highest-risk SKUs by return type');
         doc.setFont('Inter','normal');doc.setFontSize(7.8);setText(PAL.muted);
-        doc.text('Note: only SKUs with more than 50 order units are shown, so the percentages are statistically meaningful.',M,y);y+=6;
+        doc.text(MINU>0?('Note: only SKUs with at least '+MINU+' order units are ranked, so the percentages are statistically meaningful.')
+          :'Note: all SKUs with returns are ranked (no minimum-orders filter applied).',M,y);y+=6;
         const ry0=y;const sn=s=>s.length>26?s.slice(0,26)+'…':s;
         doc.autoTable({startY:ry0,margin:{left:M,right:M+colW2+9},theme:'grid',
           head:[['Top 5 — Highest RTO %','Units ret.','RTO %']],
-          body:rtoList.length?rtoList.map(r=>[sn(r.sku),String(r.units),(r.rate*100).toFixed(1)+'%']):[['No SKU over 50 units with RTO','','']],
+          body:rtoList.length?rtoList.map(r=>[sn(r.sku),String(r.units),(r.rate*100).toFixed(1)+'%']):[['No SKU over '+MINU+' units with RTO','','']],
           styles:{font:'Inter',fontSize:8.4,cellPadding:{top:2.7,bottom:2.7,left:3.2,right:3.2},textColor:PAL.ink2,lineColor:[233,235,238]},
           headStyles:{fillColor:[199,122,69],textColor:PAL.white,fontSize:8,fontStyle:'bold',cellPadding:{top:3.2,bottom:3.2,left:3.2,right:3.2}},
           columnStyles:{1:{halign:'right',cellWidth:20},2:{halign:'right',cellWidth:20,fontStyle:'bold',textColor:[199,122,69]}}});
         const re1=doc.lastAutoTable.finalY;
         doc.autoTable({startY:ry0,margin:{left:M+colW2+9,right:M},theme:'grid',
           head:[['Top 5 — Highest Customer Return %','Units ret.','CTO %']],
-          body:ctoList.length?ctoList.map(r=>[sn(r.sku),String(r.units),(r.rate*100).toFixed(1)+'%']):[['No SKU over 50 units with returns','','']],
+          body:ctoList.length?ctoList.map(r=>[sn(r.sku),String(r.units),(r.rate*100).toFixed(1)+'%']):[['No SKU over '+MINU+' units with returns','','']],
           styles:{font:'Inter',fontSize:8.4,cellPadding:{top:2.7,bottom:2.7,left:3.2,right:3.2},textColor:PAL.ink2,lineColor:[233,235,238]},
           headStyles:{fillColor:PAL.crimson,textColor:PAL.white,fontSize:8,fontStyle:'bold',cellPadding:{top:3.2,bottom:3.2,left:3.2,right:3.2}},
           columnStyles:{1:{halign:'right',cellWidth:20},2:{halign:'right',cellWidth:20,fontStyle:'bold',textColor:PAL.crimson}}});
@@ -2362,20 +3105,25 @@ async function buildPdf(pfOverride){
     heading('Full SKU Detail','Every SKU in the selected period — with portfolio totals');
     const unitsTot=T.qDel+T.qExc+T.qShip;
     const profitTot=list.reduce((a,s)=>a+(s.profit!=null?s.profit:0),0);
+    const pctp=v=>v==null?'—':(v*100).toFixed(1)+'%';
+    const dispD=T.qDel+T.qRet+T.qExc, ordD=T.qDel+T.qRet+T.qRto+T.qExc;
     const footRowD=['TOTAL — '+list.length+' SKUs',T.qDel,T.qRet,T.qRto,T.qExc,T.qShip,T.qCan,
-      RsK(T.net),RsK(unitsTot>0?T.net/unitsTot:0),T.cogsKnown?RsK(T.cogs):'—',T.cogsKnown?RsK(profitTot):'—'];
-    tbl(['SKU','Del','CTO','RTO','Exc','Ship','Can','Net ₹','₹/unit','COGS','Profit'],
-      list.map(s=>[skuName(s),s.qDel,s.qRet,s.qRto,s.qExc,s.qShip,s.qCan,RsK(s.net),
-        RsK(s.avgSettle),s.cogsTotal!=null?RsK(s.cogsTotal):'—',s.profit!=null?RsK(s.profit):'—']),
+      pctp(dispD>0?T.qRet/dispD:null),pctp(ordD>0?T.qRto/ordD:null),
+      RsK(T.net),RsK(unitsTot>0?T.net/unitsTot:0),T.cogsKnown?RsK(T.cogs):'—',T.cogsKnown?RsK(profitTot):'—',T.cogsKnown&&unitsTot>0?RsK(profitTot/unitsTot):'—'];
+    tbl(['SKU','Del','Ret','RTO','Exc','Ship','Can','CTO%','RTO%','Net ₹','₹/unit','COGS','Profit','Profit/u'],
+      list.map(s=>[skuName(s),s.qDel,s.qRet,s.qRto,s.qExc,s.qShip,s.qCan,pctp(s.custRate),pctp(s.rtoRate),RsK(s.net),
+        RsK(s.avgSettle),s.cogsTotal!=null?RsK(s.cogsTotal):'—',s.profit!=null?RsK(s.profit):'—',s.profitPerUnit!=null?RsK(s.profitPerUnit):'—']),
       {foot:[footRowD],
-       styles:{font:'Inter',fontSize:7.4,cellPadding:1.7,textColor:PAL.ink2,lineColor:[235,237,240],lineWidth:0.1},
-       headStyles:{fillColor:PAL.ink,textColor:PAL.white,fontSize:7,fontStyle:'bold'},alternateRowStyles:{fillColor:[248,249,250]},
-       footStyles:{fillColor:[236,239,234],textColor:PAL.ink,fontStyle:'bold',fontSize:7.3,lineColor:[210,214,205]},
-       columnStyles:{0:{cellWidth:40},1:{halign:'right'},2:{halign:'right'},3:{halign:'right'},4:{halign:'right'},5:{halign:'right'},6:{halign:'right'},7:{halign:'right',fontStyle:'bold'},8:{halign:'right',fillColor:[244,241,232],fontStyle:'bold',textColor:PAL.gold},9:{halign:'right'},10:{halign:'right'}},
-       didParseCell:d=>{if(d.section==='body'){if(d.column.index===10){const v=String(d.row.raw[10]);if(v.startsWith('-₹'))d.cell.styles.textColor=PAL.crimson;else if(v!=='—')d.cell.styles.textColor=PAL.emDk;}}
-         if(d.section==='foot'&&d.column.index===8){d.cell.styles.textColor=PAL.gold;}}});
+       styles:{font:'Inter',fontSize:6.6,cellPadding:1.4,textColor:PAL.ink2,lineColor:[235,237,240],lineWidth:0.1},
+       headStyles:{fillColor:PAL.ink,textColor:PAL.white,fontSize:6.4,fontStyle:'bold'},alternateRowStyles:{fillColor:[248,249,250]},
+       footStyles:{fillColor:[236,239,234],textColor:PAL.ink,fontStyle:'bold',fontSize:6.5,lineColor:[210,214,205]},
+       columnStyles:{0:{cellWidth:30},1:{halign:'right'},2:{halign:'right'},3:{halign:'right'},4:{halign:'right'},5:{halign:'right'},6:{halign:'right'},7:{halign:'right'},8:{halign:'right'},9:{halign:'right',fontStyle:'bold'},10:{halign:'right',fillColor:[244,241,232],fontStyle:'bold',textColor:PAL.gold},11:{halign:'right'},12:{halign:'right'},13:{halign:'right'}},
+       didParseCell:d=>{if(d.section==='body'){
+           if(d.column.index===12){const v=String(d.row.raw[12]);if(v.startsWith('-₹'))d.cell.styles.textColor=PAL.crimson;else if(v!=='—')d.cell.styles.textColor=PAL.emDk;}
+           if(d.column.index===13){const v=String(d.row.raw[13]);if(v.startsWith('-₹'))d.cell.styles.textColor=PAL.crimson;else if(v!=='—')d.cell.styles.textColor=PAL.emDk;}}
+         if(d.section==='foot'&&d.column.index===10){d.cell.styles.textColor=PAL.gold;}}});
     doc.setFont('Inter','normal');doc.setFontSize(7.5);setText(PAL.muted);
-    doc.text('CTO = customer return · RTO = return to origin · Exc = exchange · Can = cancelled. ₹/unit = bank settlement per sold unit. Profit = net settlement − COGS (before platform-wide ad cost).',M,Math.min(y+1,H-14));
+    doc.text('CTO% = customer returns ÷ dispatched · RTO% = RTO ÷ all orders · ₹/unit = bank settlement per sold unit · Profit/u = profit per sold unit (before platform-wide ad cost).',M,Math.min(y+1,H-14));
 
     footer(page);
     const pfTag=pfOverride?('_'+pfOverride.charAt(0).toUpperCase()+pfOverride.slice(1)):'';

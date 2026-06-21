@@ -1,9 +1,9 @@
-import Link from "next/link";
 import { requireUser, getSubscriptionState } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { paiseToInr } from "@/lib/money";
+import { PendingLink } from "@/components/app/PendingLink";
 
-export const metadata = { title: "Dashboard — Ecom Profit" };
+export const metadata = { title: "Dashboard - Ecom Profit" };
 
 function StatusBadge({ active, label }: { active: boolean; label: string }) {
   return (
@@ -53,39 +53,49 @@ export default async function DashboardPage() {
             <Field label="Price" value={`${paiseToInr(sub.plan.amountPaise)} + GST`} />
             <Field
               label="Renews / expires"
-              value={sub.currentPeriodEnd?.toLocaleDateString("en-IN") ?? "—"}
+              value={sub.currentPeriodEnd?.toLocaleDateString("en-IN") ?? "-"}
             />
           </div>
         ) : (
           <p className="mt-3 text-sm text-muted">
             {sub
-              ? "Your subscription is not active. Renew to regain access to the app."
-              : "You don't have a subscription yet. Choose a plan to unlock the analytics tool."}
+              ? "Your subscription isn't active. You can still explore the demo with sample data. Renew to upload and analyse your own Flipkart & Meesho files."
+              : "You don't have a subscription yet. Try the demo with sample data, then choose a plan to upload and analyse your own Flipkart & Meesho files."}
           </p>
         )}
 
         <div className="mt-5 flex flex-wrap gap-3">
           {isActive ? (
-            <Link
-              href="/app"
-              className="rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-white hover:bg-accent-dark"
-            >
-              Open the app
-            </Link>
+            <>
+              <PendingLink
+                href="/app"
+                className="rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-on-accent hover:bg-accent-dark"
+              >
+                Open the app
+              </PendingLink>
+              <PendingLink
+                href="/billing"
+                className="rounded-lg border border-ink px-5 py-2.5 text-sm font-semibold text-ink hover:bg-ink hover:text-paper"
+              >
+                Manage billing
+              </PendingLink>
+            </>
           ) : (
-            <Link
-              href="/billing"
-              className="rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-white hover:bg-accent-dark"
-            >
-              {sub ? "Renew now" : "Choose a plan"}
-            </Link>
+            <>
+              <PendingLink
+                href="/app"
+                className="rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-on-accent hover:bg-accent-dark"
+              >
+                Open the demo
+              </PendingLink>
+              <PendingLink
+                href="/billing"
+                className="rounded-lg border border-ink px-5 py-2.5 text-sm font-semibold text-ink hover:bg-ink hover:text-paper"
+              >
+                {sub ? "Renew now" : "Choose a plan"}
+              </PendingLink>
+            </>
           )}
-          <Link
-            href="/billing"
-            className="rounded-lg border border-ink px-5 py-2.5 text-sm font-semibold text-ink hover:bg-ink hover:text-paper"
-          >
-            Manage billing
-          </Link>
         </div>
       </div>
 

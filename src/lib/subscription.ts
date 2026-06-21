@@ -5,7 +5,7 @@ import { nextInvoiceNumber } from "@/lib/invoice/number";
 
 // State-code -> readable name for place-of-supply on invoices.
 function stateName(code?: string | null): string {
-  if (!code) return env.SELLER_STATE_CODE ? `State ${env.SELLER_STATE_CODE}` : "—";
+  if (!code) return env.SELLER_STATE_CODE ? `State ${env.SELLER_STATE_CODE}` : "-";
   return `State ${code}`;
 }
 
@@ -22,7 +22,7 @@ export interface ActivationResult {
 
 // Idempotently mark a payment paid, extend the subscription window, and issue
 // a GST invoice. Safe to call multiple times for the same gateway payment
-// (webhook + redirect can both fire) — only the first call mutates state.
+// (webhook + redirect can both fire); only the first call mutates state.
 export async function activatePaidPayment(opts: {
   gatewayPaymentId: string;
   gatewayOrderId: string;

@@ -1,6 +1,6 @@
 import { LegalLayout, H2 } from "@/components/marketing/LegalLayout";
 
-export const metadata = { title: "Privacy Policy — Ecom Profit" };
+export const metadata = { title: "Privacy Policy - Ecom Profit" };
 
 export default function PrivacyPage() {
   return (
@@ -37,8 +37,8 @@ export default function PrivacyPage() {
 
       <H2>4. Sharing</H2>
       <p>
-        We share data only with processors necessary to run the Service — our payment gateways
-        (Stripe, Razorpay), email provider, and hosting/database providers — under appropriate
+        We share data only with processors necessary to run the Service: our payment gateways
+        (Stripe, Razorpay), email provider, and hosting/database providers, under appropriate
         safeguards. We do not sell your personal data.
       </p>
 

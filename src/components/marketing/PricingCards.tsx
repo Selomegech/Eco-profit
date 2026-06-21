@@ -51,12 +51,55 @@ const Check = () => (
   </svg>
 );
 
+// The demo build (sample data, no upload) is free for any logged-in user.
+// Listed first so prospects can try the product before picking a paid plan.
+const freePerks = [
+  "Full dashboard with realistic sample data",
+  "SKU-level P&L, returns and fee breakdowns",
+  "PDF & Excel report previews",
+  "Flipkart & Meesho support",
+];
+
 // `ctaHref` lets the same cards point to /register on the landing page and to
 // /billing for logged-in users.
 export function PricingCards({ ctaHref = "/register" }: { ctaHref?: string }) {
+  // The free tier has no plan to select, so it skips the `?plan=` query.
+  const freeHref = ctaHref === "/register" ? "/register" : "/app";
+  const freeLabel = ctaHref === "/register" ? "Start free" : "Open the demo";
   return (
-    <div className="price-grid">
-      {PLANS.map((plan) => {
+    <>
+      <div className="free-card">
+        <div className="free-main">
+          <div className="free-head">
+            <span className="free-name">Free</span>
+            <span className="free-tag">Demo</span>
+          </div>
+          <p className="free-desc">
+            Explore the full tool with a year of realistic sample data. No card
+            required. Upgrade to any plan below to upload and analyse your own
+            Flipkart &amp; Meesho files.
+          </p>
+        </div>
+        <ul className="free-perks">
+          {freePerks.map((p) => (
+            <li key={p}>
+              <Check />
+              {p}
+            </li>
+          ))}
+        </ul>
+        <div className="free-cta">
+          <div className="free-price">
+            <span className="cur">₹</span>
+            <span className="amt">0</span>
+          </div>
+          <Link href={freeHref} className="btn btn-sm btn-ghost">
+            {freeLabel}
+          </Link>
+        </div>
+      </div>
+      <div className="price-grid">
+        {PLANS.map((plan) => {
         const perMonthRupees = Math.round(plan.amountPaise / intervalMonths(plan.interval) / 100);
         const perks = perksByCode[plan.code] ?? defaultPerks;
         return (
@@ -87,6 +130,7 @@ export function PricingCards({ ctaHref = "/register" }: { ctaHref?: string }) {
           </div>
         );
       })}
-    </div>
+      </div>
+    </>
   );
 }

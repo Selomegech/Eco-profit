@@ -7,7 +7,7 @@ import { env } from "@/lib/env";
 // We compare the Origin's host against the host the request was actually
 // served on (x-forwarded-host behind Netlify's proxy, else Host) as well as
 // the configured APP_URL. This keeps the check correct across the custom
-// domain, the *.netlify.app URL, and preview deploys — instead of failing
+// domain, the *.netlify.app URL, and preview deploys, instead of failing
 // whenever the browsing domain differs from APP_URL.
 export function sameOrigin(req: Request): boolean {
   const origin = req.headers.get("origin");
@@ -28,7 +28,7 @@ export function sameOrigin(req: Request): boolean {
   try {
     allowed.add(new URL(env.APP_URL).host);
   } catch {
-    /* APP_URL misconfigured — fall back to request host only */
+    /* APP_URL misconfigured, fall back to request host only */
   }
 
   return allowed.has(originHost);

@@ -15,7 +15,7 @@ export function Footer() {
             </Link>
             <p>
               Know your real profit. Grow smarter. Profit intelligence for Flipkart &amp; Meesho
-              sellers — settlement reconciliation, SKU-level P&amp;L and GST-ready reports.
+              sellers, with settlement reconciliation, SKU-level P&amp;L and GST-ready reports.
             </p>
           </div>
           <div className="foot-col">

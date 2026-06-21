@@ -69,7 +69,7 @@ export function AccountForm({ initial }: { initial: Initial }) {
             <option value="">Select state…</option>
             {GST_STATES.map((s) => (
               <option key={s.code} value={s.code}>
-                {s.code} — {s.name}
+                {s.code} - {s.name}
               </option>
             ))}
           </select>
@@ -89,7 +89,7 @@ export function AccountForm({ initial }: { initial: Initial }) {
       <button
         type="submit"
         disabled={saving}
-        className="rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-white hover:bg-accent-dark disabled:opacity-50"
+        className="rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-on-accent hover:bg-accent-dark disabled:opacity-50"
       >
         {saving ? "Saving…" : "Save details"}
       </button>

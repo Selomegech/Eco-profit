@@ -2,11 +2,25 @@ import { Suspense } from "react";
 import { requireUser, getSubscriptionState } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { paiseToInr } from "@/lib/money";
-import { PLANS } from "@/lib/plans";
+import { PLANS, intervalMonths } from "@/lib/plans";
 import { BillingClient } from "./BillingClient";
 import { CancelSubscription } from "./CancelSubscription";
 
-export const metadata = { title: "Billing — Ecom Profit" };
+export const metadata = { title: "Billing - Ecom Profit" };
+
+// Cadence note shown under the per-month figure, mirroring the landing page
+// pricing cards. Prices are GST-exclusive.
+function billingNote(interval: string, amountPaise: number): string {
+  const total = paiseToInr(amountPaise);
+  switch (interval) {
+    case "HALFYEARLY":
+      return `${total} every 6 months · + 18% GST`;
+    case "ANNUAL":
+      return `${total} per year · + 18% GST`;
+    default:
+      return `billed monthly · + 18% GST`;
+  }
+}
 
 export default async function BillingPage() {
   const user = await requireUser();
@@ -20,7 +34,8 @@ export default async function BillingPage() {
   const plans = PLANS.map((p) => ({
     code: p.code,
     name: p.name,
-    price: paiseToInr(p.amountPaise),
+    perMonth: Math.round(p.amountPaise / intervalMonths(p.interval) / 100),
+    note: billingNote(p.interval, p.amountPaise),
     interval: p.interval,
     highlight: !!p.highlight,
     blurb: p.blurb,

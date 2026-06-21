@@ -65,10 +65,10 @@ export function AdminUsers({ rows }: { rows: Row[] }) {
                 {!r.verified && <span className="ml-2 text-xs text-accent2">unverified</span>}
               </td>
               <td className="py-2.5">{r.role}</td>
-              <td className="py-2.5">{r.planName ?? "—"}</td>
-              <td className="py-2.5">{r.status ?? "—"}</td>
+              <td className="py-2.5">{r.planName ?? "-"}</td>
+              <td className="py-2.5">{r.status ?? "-"}</td>
               <td className="py-2.5 text-muted">
-                {r.periodEnd ? new Date(r.periodEnd).toLocaleDateString("en-IN") : "—"}
+                {r.periodEnd ? new Date(r.periodEnd).toLocaleDateString("en-IN") : "-"}
               </td>
               <td className="py-2.5">
                 {r.subscriptionId ? (
@@ -90,7 +90,7 @@ export function AdminUsers({ rows }: { rows: Row[] }) {
                     />
                   </div>
                 ) : (
-                  <span className="text-muted">—</span>
+                  <span className="text-muted">-</span>
                 )}
               </td>
             </tr>

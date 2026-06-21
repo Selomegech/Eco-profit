@@ -1,6 +1,6 @@
 import { LegalLayout, H2 } from "@/components/marketing/LegalLayout";
 
-export const metadata = { title: "Refund Policy — Ecom Profit" };
+export const metadata = { title: "Refund Policy - Ecom Profit" };
 
 export default function RefundPage() {
   return (

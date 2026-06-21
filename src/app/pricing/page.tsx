@@ -2,7 +2,7 @@ import { Nav } from "@/components/marketing/Nav";
 import { Footer } from "@/components/marketing/Footer";
 import { PricingCards } from "@/components/marketing/PricingCards";
 
-export const metadata = { title: "Pricing — Ecom Profit" };
+export const metadata = { title: "Pricing - Ecom Profit" };
 
 export default function PricingPage() {
   return (

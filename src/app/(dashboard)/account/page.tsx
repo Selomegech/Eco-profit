@@ -2,7 +2,7 @@ import { requireUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { AccountForm } from "./AccountForm";
 
-export const metadata = { title: "Account — Ecom Profit" };
+export const metadata = { title: "Account - Ecom Profit" };
 
 export default async function AccountPage() {
   const user = await requireUser();
@@ -23,7 +23,7 @@ export default async function AccountPage() {
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <div>
             <div className="text-xs uppercase tracking-wider text-muted">Name</div>
-            <div className="mt-1 font-medium">{dbUser.name ?? "—"}</div>
+            <div className="mt-1 font-medium">{dbUser.name ?? "-"}</div>
           </div>
           <div>
             <div className="text-xs uppercase tracking-wider text-muted">Email</div>

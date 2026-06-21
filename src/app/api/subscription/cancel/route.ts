@@ -5,7 +5,7 @@ import { clientIp, rateLimit } from "@/lib/ratelimit";
 import { sameOrigin, json, badRequest, unauthorized, tooMany } from "@/lib/http";
 
 // User-facing cancellation. There is no auto-renew in this system, so cancelling
-// does NOT revoke access immediately — the buyer keeps what they paid for until
+// does NOT revoke access immediately; the buyer keeps what they paid for until
 // the end of the current period (matching our Terms: "you keep access until the
 // end of your current period; we simply won't renew"). We record `cancelledAt`
 // and leave the row ACTIVE; the daily cron flips it to EXPIRED once

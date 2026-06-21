@@ -2,7 +2,7 @@ import { z } from "zod";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { env } from "@/lib/env";
-// Stripe and Razorpay are paused (commented out below) — kept here so the
+// Stripe and Razorpay are paused (commented out below) but kept here so the
 // client can switch them back on later without re-wiring anything.
 // import { stripe, stripeConfigured } from "@/lib/payments/stripe";
 // import { razorpay, razorpayConfigured } from "@/lib/payments/razorpay";
@@ -14,7 +14,7 @@ import { sameOrigin, json, badRequest, unauthorized, tooMany } from "@/lib/http"
 
 const schema = z.object({
   planCode: z.string().min(1),
-  // Stripe / Razorpay temporarily disabled — only PhonePe is accepted.
+  // Stripe / Razorpay temporarily disabled. Only PhonePe is accepted.
   gateway: z.enum(["PHONEPE"]),
 });
 
@@ -82,7 +82,7 @@ export async function POST(req: Request) {
     return json({ gateway: "PHONEPE", url: init.redirectUrl });
   }
 
-  // ── Stripe (paused — kept for future re-enable) ────────────────────────────
+  // ── Stripe (paused, kept for future re-enable) ────────────────────────────
   // if (parsed.data.gateway === "STRIPE") {
   //   if (!stripeConfigured()) return badRequest("Stripe is not configured");
   //   const checkout = await stripe().checkout.sessions.create({
@@ -96,7 +96,7 @@ export async function POST(req: Request) {
   //         price_data: {
   //           currency: plan.currency.toLowerCase(),
   //           unit_amount: grossPaise,
-  //           product_data: { name: `${env.APP_NAME} — ${plan.name}` },
+  //           product_data: { name: `${env.APP_NAME} - ${plan.name}` },
   //         },
   //       },
   //     ],
@@ -111,7 +111,7 @@ export async function POST(req: Request) {
   //   return json({ gateway: "STRIPE", url: checkout.url });
   // }
 
-  // ── Razorpay (paused — kept for future re-enable) ──────────────────────────
+  // ── Razorpay (paused, kept for future re-enable) ──────────────────────────
   // if (parsed.data.gateway === "RAZORPAY") {
   //   if (!razorpayConfigured()) return badRequest("Razorpay is not configured");
   //   const order = await razorpay().orders.create({
@@ -131,7 +131,7 @@ export async function POST(req: Request) {
   //     amount: grossPaise,
   //     currency: plan.currency,
   //     keyId: env.RAZORPAY_KEY_ID,
-  //     name: `${env.APP_NAME} — ${plan.name}`,
+  //     name: `${env.APP_NAME} - ${plan.name}`,
   //     prefill: { email: session.user.email, name: session.user.name ?? "" },
   //   });
   // }

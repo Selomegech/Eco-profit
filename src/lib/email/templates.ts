@@ -39,6 +39,18 @@ export function verifyEmailTemplate(link: string) {
   };
 }
 
+export function passwordResetTemplate(link: string) {
+  return {
+    subject: `Reset your ${BRAND} password`,
+    html: shell(
+      "Reset your password",
+      `<p>We received a request to reset the password for your ${BRAND} account. Click below to choose a new one.</p>
+       <p>${button(link, "Reset password")}</p>
+       <p style="font-size:13px;color:${MUTED}">This link expires in 1 hour and can be used once. If you didn't request this, you can safely ignore this email - your password won't change.</p>`,
+    ),
+  };
+}
+
 export function welcomeTemplate(name: string) {
   return {
     subject: `Welcome to ${BRAND}`,
@@ -57,7 +69,7 @@ export function paymentConfirmedTemplate(opts: {
   invoiceNumber: string;
 }) {
   return {
-    subject: `Payment received — ${BRAND} ${opts.planName}`,
+    subject: `Payment received - ${BRAND} ${opts.planName}`,
     html: shell(
       "Payment confirmed",
       `<p>Thank you. Your <b>${opts.planName}</b> subscription is now active.</p>
