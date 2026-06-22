@@ -2,10 +2,11 @@
 
 import { useEffect } from "react";
 
-// All the landing-page scroll choreography in one place. Everything here is
-// one-shot (IntersectionObserver fires once, then unobserves); there is NO
-// requestAnimationFrame loop, particle canvas, or mousemove handler, which is
-// what made the original static HTML feel janky. Pure CSS handles the rest.
+// All the landing-page scroll choreography in one place. The scroll work is
+// one-shot (IntersectionObserver fires once, then unobserves) - no persistent
+// rAF loop or particle canvas, which is what made the original HTML feel janky.
+// The one pointer effect (hero dashboard tilt) is desktop-only and rAF-throttled
+// to a single transform write per frame. Pure CSS handles everything else.
 function smoothPath(pts: number[][]) {
   let d = `M ${pts[0][0]} ${pts[0][1]}`;
   for (let i = 0; i < pts.length - 1; i++) {
@@ -172,6 +173,45 @@ export function ScrollFX() {
         c2: "#00E5FF",
         animate: !reduced,
       });
+
+    // hero dashboard cursor tilt. The original HTML wrote `style.transform` on
+    // every mousemove, which is what made it feel janky. Here we only track a
+    // pointer-fine desktop with motion allowed, coalesce to one transform write
+    // per frame via rAF, and let the CSS .3s ease-out smooth the follow.
+    const finePointer = window.matchMedia("(pointer: fine)").matches;
+    const heroSection = document.querySelector<HTMLElement>(".hero");
+    const dashMain = document.querySelector<HTMLElement>(".dash-main");
+    if (!reduced && finePointer && heroSection && dashMain) {
+      let raf = 0;
+      let cx = 0;
+      let cy = 0;
+      const onMove = (e: MouseEvent) => {
+        cx = e.clientX;
+        cy = e.clientY;
+        if (raf) return; // a frame is already scheduled; just update coords
+        raf = requestAnimationFrame(() => {
+          raf = 0;
+          const r = dashMain.getBoundingClientRect();
+          const rx = ((cy - r.top - r.height / 2) / r.height) * -6 + 4;
+          const ry = ((cx - r.left - r.width / 2) / r.width) * 8 - 9;
+          dashMain.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
+        });
+      };
+      const onLeave = () => {
+        if (raf) {
+          cancelAnimationFrame(raf);
+          raf = 0;
+        }
+        dashMain.style.transform = ""; // ease back to the CSS resting tilt
+      };
+      heroSection.addEventListener("mousemove", onMove, { passive: true });
+      heroSection.addEventListener("mouseleave", onLeave);
+      cleanups.push(() => {
+        if (raf) cancelAnimationFrame(raf);
+        heroSection.removeEventListener("mousemove", onMove);
+        heroSection.removeEventListener("mouseleave", onLeave);
+      });
+    }
 
     return () => cleanups.forEach((fn) => fn());
   }, []);
