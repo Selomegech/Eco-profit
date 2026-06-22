@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { inputClass, labelClass, primaryBtn } from "@/components/AuthShell";
 import { PasswordInput } from "@/components/PasswordInput";
@@ -34,7 +34,13 @@ export function LoginForm() {
     }
     // Keep the button in its loading state through navigation; the dashboard
     // route's loading.tsx then takes over until the page is ready.
-    const dest = plan ? `/billing?plan=${plan}` : callbackUrl || "/dashboard";
+    // Admins skip the user dashboard and land on the admin panel. An explicit
+    // plan or callbackUrl (e.g. a deep link they were bounced from) still wins.
+    const session = await getSession();
+    const isAdmin = session?.user?.role === "ADMIN";
+    const dest = plan
+      ? `/billing?plan=${plan}`
+      : callbackUrl || (isAdmin ? "/admin" : "/dashboard");
     router.push(dest);
     router.refresh();
   }

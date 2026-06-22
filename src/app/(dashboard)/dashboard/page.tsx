@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { requireUser, getSubscriptionState } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { paiseToInr } from "@/lib/money";
@@ -19,6 +20,8 @@ function StatusBadge({ active, label }: { active: boolean; label: string }) {
 
 export default async function DashboardPage() {
   const user = await requireUser();
+  // The user dashboard is customer-only; send admins to their panel.
+  if (user.role === "ADMIN") redirect("/admin");
   const { sub, isActive } = await getSubscriptionState(user.id);
 
   const invoices = await prisma.invoice.findMany({

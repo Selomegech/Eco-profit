@@ -12,13 +12,17 @@ export default async function DashboardLayout({
   const user = await requireUser();
   const isAdmin = user.role === "ADMIN";
 
-  const links = [
-    { href: "/dashboard", label: "Overview" },
-    { href: "/app", label: "Open app" },
-    { href: "/billing", label: "Billing" },
-    { href: "/account", label: "Account" },
-    ...(isAdmin ? [{ href: "/admin", label: "Admin" }] : []),
-  ];
+  // Admins are not customers - they get only the admin area, no user-facing
+  // Overview/App/Billing/Account links.
+  const links = isAdmin
+    ? [{ href: "/admin", label: "Admin" }]
+    : [
+        { href: "/dashboard", label: "Overview" },
+        { href: "/app", label: "Open app" },
+        { href: "/billing", label: "Billing" },
+        { href: "/account", label: "Account" },
+      ];
+  const homeHref = isAdmin ? "/admin" : "/dashboard";
 
   return (
     <div className="relative flex min-h-screen flex-col">
@@ -36,7 +40,7 @@ export default async function DashboardLayout({
       <header className="border-b border-line bg-card">
         <div className="flex items-center justify-between px-8 py-3">
           <div className="flex items-center gap-6">
-            <Link href="/dashboard" className="logo">
+            <Link href={homeHref} className="logo">
               <span className="brand-badge">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/brand/logo_icon.png" alt="Ecom Profit" className="brand-logo-icon" />
