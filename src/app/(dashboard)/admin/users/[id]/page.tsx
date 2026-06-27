@@ -12,27 +12,28 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
   await requireAdmin();
   const { id } = await params;
 
-  const user = await prisma.user.findUnique({
-    where: { id },
-    include: {
-      subscriptions: {
-        orderBy: { createdAt: "desc" },
-        include: { plan: { select: { name: true } } },
+  const [user, plans] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id },
+      include: {
+        subscriptions: {
+          orderBy: { createdAt: "desc" },
+          include: { plan: { select: { name: true } } },
+        },
+        payments: {
+          orderBy: { createdAt: "desc" },
+          take: 20,
+          include: { invoice: { select: { id: true, number: true } } },
+        },
       },
-      payments: {
-        orderBy: { createdAt: "desc" },
-        take: 20,
-        include: { invoice: { select: { id: true, number: true } } },
-      },
-    },
-  });
+    }),
+    prisma.plan.findMany({
+      where: { isActive: true },
+      orderBy: { sortOrder: "asc" },
+      select: { id: true, name: true, amountPaise: true, durationDays: true },
+    }),
+  ]);
   if (!user) notFound();
-
-  const plans = await prisma.plan.findMany({
-    where: { isActive: true },
-    orderBy: { sortOrder: "asc" },
-    select: { id: true, name: true, amountPaise: true, durationDays: true },
-  });
 
   const info: Array<[string, string]> = [
     ["Name", user.name ?? "-"],

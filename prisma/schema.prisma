@@ -174,7 +174,10 @@ model Invoice {
   buyerName     String
   buyerGstin    String?
   buyerState    String?
+  buyerAddress  String?
   placeOfSupply String
+  periodStart   DateTime
+  periodEnd     DateTime
 
   // All money in paise.
   subtotalPaise Int

@@ -5,7 +5,13 @@ export interface InvoicePdfData {
   number: string;
   issuedAt: Date;
   seller: { name: string; gstin: string; address: string; email: string; stateCode: string };
-  buyer: { name: string; email: string; gstin?: string | null; state?: string | null };
+  buyer: {
+    name: string;
+    email: string;
+    gstin?: string | null;
+    state?: string | null;
+    address?: string | null;
+  };
   placeOfSupply: string;
   lineDescription: string;
   sac: string;
@@ -60,12 +66,14 @@ export function renderInvoicePdf(data: InvoicePdfData): Promise<Buffer> {
     // Bill to
     doc.fillColor(MUTED).font("Helvetica-Bold").fontSize(9).text("BILL TO", left, 165);
     doc.fillColor(INK).font("Helvetica").fontSize(11).text(data.buyer.name, left, 178);
-    doc.fontSize(9).fillColor(MUTED).text(data.buyer.email, left, doc.y + 2);
+    doc.fontSize(9).fillColor(MUTED);
+    if (data.buyer.address) doc.text(data.buyer.address, left, doc.y + 2, { width: 300 });
+    doc.text(data.buyer.email, left, doc.y + 2);
     if (data.buyer.gstin) doc.text(`GSTIN: ${data.buyer.gstin}`, left, doc.y + 1);
     doc.text(`Place of supply: ${data.placeOfSupply}`, left, doc.y + 1);
 
     // Line item table
-    const tableTop = 250;
+    const tableTop = Math.max(250, doc.y + 16);
     doc.rect(left, tableTop, right - left, 22).fill(ACCENT);
     doc.fillColor("#ffffff").font("Helvetica-Bold").fontSize(9);
     doc.text("Description", left + 8, tableTop + 6);
@@ -75,11 +83,12 @@ export function renderInvoicePdf(data: InvoicePdfData): Promise<Buffer> {
     const rowY = tableTop + 30;
     doc.fillColor(INK).font("Helvetica").fontSize(10);
     doc.text(data.lineDescription, left + 8, rowY, { width: 260 });
+    const descriptionBottom = doc.y;
     doc.text(data.sac, 320, rowY);
     doc.text(paiseToInr(data.subtotalPaise), 400, rowY, { width: 137, align: "right" });
 
     // Totals block
-    let ty = rowY + 40;
+    let ty = Math.max(rowY + 40, descriptionBottom + 16);
     const labelX = 330;
     const valX = 400;
     const line = (label: string, value: string, bold = false) => {

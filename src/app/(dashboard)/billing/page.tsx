@@ -24,12 +24,13 @@ function billingNote(interval: string, amountPaise: number): string {
 
 export default async function BillingPage() {
   const user = await requireUser();
-  const { sub, isActive } = await getSubscriptionState(user.id);
-
-  const invoices = await prisma.invoice.findMany({
-    where: { userId: user.id },
-    orderBy: { issuedAt: "desc" },
-  });
+  const [{ sub, isActive }, invoices] = await Promise.all([
+    getSubscriptionState(user.id),
+    prisma.invoice.findMany({
+      where: { userId: user.id },
+      orderBy: { issuedAt: "desc" },
+    }),
+  ]);
 
   const plans = PLANS.map((p) => ({
     code: p.code,

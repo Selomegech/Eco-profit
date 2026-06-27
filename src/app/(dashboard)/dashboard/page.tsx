@@ -22,13 +22,15 @@ export default async function DashboardPage() {
   const user = await requireUser();
   // The user dashboard is customer-only; send admins to their panel.
   if (user.role === "ADMIN") redirect("/admin");
-  const { sub, isActive } = await getSubscriptionState(user.id);
 
-  const invoices = await prisma.invoice.findMany({
-    where: { userId: user.id },
-    orderBy: { issuedAt: "desc" },
-    take: 5,
-  });
+  const [{ sub, isActive }, invoices] = await Promise.all([
+    getSubscriptionState(user.id),
+    prisma.invoice.findMany({
+      where: { userId: user.id },
+      orderBy: { issuedAt: "desc" },
+      take: 5,
+    }),
+  ]);
 
   return (
     <div className="space-y-8">

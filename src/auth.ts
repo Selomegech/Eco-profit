@@ -24,11 +24,13 @@ const providers: Provider[] = [
 
       const email = parsed.data.email.toLowerCase();
 
-      // Throttle credential attempts per email to blunt brute force.
-      const rl = await rateLimit({ key: `login:${email}`, limit: 10, windowSeconds: 300 });
+      // Throttle credential attempts per email to blunt brute force. Runs
+      // alongside the user lookup since the two are independent.
+      const [rl, user] = await Promise.all([
+        rateLimit({ key: `login:${email}`, limit: 10, windowSeconds: 300 }),
+        prisma.user.findUnique({ where: { email } }),
+      ]);
       if (!rl.ok) return null;
-
-      const user = await prisma.user.findUnique({ where: { email } });
       if (!user || !user.passwordHash) return null;
 
       // Require verified email before allowing login.
