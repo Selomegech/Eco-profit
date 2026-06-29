@@ -34,6 +34,7 @@ export function AdminUserActions({
   const [busy, setBusy] = useState<string | null>(null);
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
   const [planId, setPlanId] = useState(plans[0]?.id ?? "");
+  const [amountRupees, setAmountRupees] = useState("");
 
   async function call(key: string, url: string, body: Record<string, unknown>, okText: string) {
     setBusy(key);
@@ -100,11 +101,11 @@ export function AdminUserActions({
       {plans.length > 0 && (
         <div className="mt-5 border-t border-line pt-5">
           <div className="text-xs uppercase tracking-wider text-muted">Grant a plan</div>
-          <div className="mt-2 flex gap-2">
+          <div className="mt-2">
             <select
               value={planId}
               onChange={(e) => setPlanId(e.target.value)}
-              className="flex-1 rounded-lg border border-line bg-paper px-3 py-2 text-sm text-ink outline-none focus:border-accent"
+              className="w-full rounded-lg border border-line bg-paper px-3 py-2 text-sm text-ink outline-none focus:border-accent"
             >
               {plans.map((p) => (
                 <option key={p.id} value={p.id}>
@@ -112,9 +113,11 @@ export function AdminUserActions({
                 </option>
               ))}
             </select>
+          </div>
+
+          <div className="mt-2 flex gap-2">
             <Btn
-              label="Grant"
-              compact
+              label="Grant free"
               busy={busy === "GRANT_PLAN"}
               onClick={() =>
                 call(
@@ -125,6 +128,45 @@ export function AdminUserActions({
                 )
               }
             />
+          </div>
+
+          <div className="mt-3">
+            <div className="text-xs uppercase tracking-wider text-muted">
+              Record a manual payment
+            </div>
+            <p className="mt-1 text-xs text-muted">
+              For payments taken outside the gateway (bank transfer, UPI, cash). Generates a real
+              GST invoice and grants access, same as a normal payment.
+            </p>
+            <div className="mt-2 flex gap-2">
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                value={amountRupees}
+                onChange={(e) => setAmountRupees(e.target.value)}
+                placeholder="Amount ₹ (excl. GST, defaults to plan price)"
+                className="flex-1 rounded-lg border border-line bg-paper px-3 py-2 text-sm text-ink outline-none focus:border-accent"
+              />
+              <Btn
+                label="Record payment"
+                compact
+                busy={busy === "MANUAL_PAYMENT"}
+                onClick={() =>
+                  call(
+                    "MANUAL_PAYMENT",
+                    "/api/admin/subscription",
+                    {
+                      action: "MANUAL_PAYMENT",
+                      userId,
+                      planId,
+                      ...(amountRupees ? { amountRupees: Number(amountRupees) } : {}),
+                    },
+                    "Payment recorded and invoice issued.",
+                  )
+                }
+              />
+            </div>
           </div>
         </div>
       )}

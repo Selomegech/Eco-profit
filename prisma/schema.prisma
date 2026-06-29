@@ -39,6 +39,7 @@ enum Gateway {
   STRIPE
   RAZORPAY
   PHONEPE
+  MANUAL
 }
 
 enum PaymentStatus {

@@ -4,11 +4,16 @@ import { audit } from "@/lib/audit";
 import { clientIp } from "@/lib/ratelimit";
 import { json, badRequest } from "@/lib/http";
 import { requireAdminApi } from "@/lib/admin-auth";
+import { activatePaidPayment } from "@/lib/subscription";
+import { emailPaymentConfirmation } from "@/lib/invoice/send";
+import { rupeesToPaise } from "@/lib/money";
 
 const DAY = 24 * 60 * 60 * 1000;
 
-// Two shapes: act on an existing subscription (CANCEL/GRANT_30/EXPIRE), or
-// grant a fresh plan to a user by id (GRANT_PLAN). zod discriminates on action.
+// Three shapes: act on an existing subscription (CANCEL/GRANT_30/EXPIRE),
+// grant a fresh plan for free (GRANT_PLAN), or record a manual/offline
+// payment (MANUAL_PAYMENT) - e.g. the client took payment by bank transfer
+// or UPI outside the gateway and wants the same invoice + access flow.
 const schema = z.union([
   z.object({
     action: z.enum(["CANCEL", "GRANT_30", "EXPIRE"]),
@@ -18,6 +23,13 @@ const schema = z.union([
     action: z.literal("GRANT_PLAN"),
     userId: z.string().min(1),
     planId: z.string().min(1),
+  }),
+  z.object({
+    action: z.literal("MANUAL_PAYMENT"),
+    userId: z.string().min(1),
+    planId: z.string().min(1),
+    // Rupees actually received; defaults to the plan's list price if omitted.
+    amountRupees: z.number().positive().optional(),
   }),
 ]);
 
@@ -58,6 +70,68 @@ export async function POST(req: Request) {
       meta: { subscriptionId: sub.id, targetUser: userId, planId },
     });
     return json({ ok: true });
+  }
+
+  // Record an offline payment (bank transfer, UPI, cash, etc.) and run it
+  // through the exact same activation + GST invoice path as a real gateway
+  // payment, so billing history and invoices stay consistent either way.
+  if (parsed.data.action === "MANUAL_PAYMENT") {
+    const { userId, planId, amountRupees } = parsed.data;
+    const [user, plan] = await Promise.all([
+      prisma.user.findUnique({ where: { id: userId } }),
+      prisma.plan.findUnique({ where: { id: planId } }),
+    ]);
+    if (!user) return badRequest("User not found");
+    if (!plan) return badRequest("Plan not found");
+
+    // Reuse the user's existing subscription row so renewals stack, same as
+    // the regular checkout flow.
+    let subscription = await prisma.subscription.findFirst({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+    });
+    subscription = subscription
+      ? await prisma.subscription.update({ where: { id: subscription.id }, data: { planId } })
+      : await prisma.subscription.create({ data: { userId, planId, status: "PENDING" } });
+
+    const payment = await prisma.payment.create({
+      data: {
+        userId,
+        subscriptionId: subscription.id,
+        gateway: "MANUAL",
+        status: "CREATED",
+        // GST-exclusive base, same convention as plan.amountPaise.
+        amountPaise: amountRupees ? rupeesToPaise(amountRupees) : plan.amountPaise,
+        currency: plan.currency,
+      },
+    });
+    await prisma.payment.update({ where: { id: payment.id }, data: { gatewayOrderId: payment.id } });
+
+    const result = await activatePaidPayment({
+      gatewayOrderId: payment.id,
+      gatewayPaymentId: payment.id,
+    });
+
+    await audit({
+      action: "ADMIN_MANUAL_PAYMENT",
+      userId: gate.userId,
+      ip,
+      meta: { paymentId: payment.id, targetUser: userId, planId, invoice: result.invoiceNumber },
+    });
+
+    try {
+      await emailPaymentConfirmation({
+        invoiceId: result.invoiceId,
+        toEmail: result.userEmail,
+        planName: result.planName,
+        totalPaise: result.totalPaise,
+        validTill: result.validTill,
+      });
+    } catch (e) {
+      console.error("manual payment invoice email failed", e);
+    }
+
+    return json({ ok: true, invoiceNumber: result.invoiceNumber });
   }
 
   const sub = await prisma.subscription.findUnique({ where: { id: parsed.data.subscriptionId } });
