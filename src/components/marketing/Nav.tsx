@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ThemeToggle } from "./ThemeToggle";
 import { NavScroll } from "./NavScroll";
+import { MobileMenuToggle } from "./MobileMenuToggle";
 
 const links = [
   { href: "/#problem", label: "Why" },
@@ -14,6 +15,7 @@ export function Nav() {
   return (
     <nav className="site-nav" id="nav">
       <NavScroll />
+      <MobileMenuToggle />
       <div className="bar">
         <Link href="/" className="logo">
           <span className="brand-badge">
@@ -44,10 +46,23 @@ export function Nav() {
           <Link href="/login" className="btn btn-primary btn-sm">
             Log in
           </Link>
-          <Link href="/#features" className="menu-btn" aria-label="Menu">
+          <button type="button" id="menu-toggle" className="menu-btn" aria-label="Menu" aria-expanded="false">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             </svg>
+          </button>
+        </div>
+      </div>
+
+      <div className="mobile-menu" id="mobile-menu">
+        {links.map((l) => (
+          <a key={l.href} href={l.href}>
+            {l.label}
+          </a>
+        ))}
+        <div className="mobile-menu-cta">
+          <Link href="/register" className="btn btn-ghost btn-sm">
+            View Demo
           </Link>
         </div>
       </div>

@@ -2017,6 +2017,43 @@ body.fx-on .reveal.in {
 [data-theme="light"] .menu-btn {
   color: var(--text);
 }
+.mobile-menu {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  max-width: var(--maxw);
+  margin: 6px auto 0;
+  padding: 14px 24px 18px;
+  background: rgba(11, 15, 25, 0.95);
+  backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+}
+[data-theme="light"] .mobile-menu {
+  background: rgba(255, 255, 255, 0.97);
+}
+.site-nav.menu-open .mobile-menu {
+  display: flex;
+}
+.mobile-menu a {
+  color: var(--muted);
+  font-size: 15px;
+  font-weight: 500;
+  padding: 10px 4px;
+  border-bottom: 1px solid var(--border);
+}
+.mobile-menu a:hover {
+  color: var(--text);
+}
+.mobile-menu-cta {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
+.mobile-menu-cta .btn {
+  justify-content: center;
+  width: 60%;
+}
 
 /* ---------- footer (marketing) ---------- */
 .site-foot {
