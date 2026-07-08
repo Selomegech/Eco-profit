@@ -32,7 +32,7 @@ export default function RefundPage() {
 
       <H2>4. How to Request</H2>
       <p>
-        Email [billing@ecomprofit.example] from your registered address with your invoice number.
+        Email <a href="mailto:info.wealthcoresoftech@gmail.com" className="text-accent underline">info.wealthcoresoftech@gmail.com</a> from your registered address with your invoice number.
         Approved refunds are returned to the original payment method via the original gateway within
         5–10 business days.
       </p>

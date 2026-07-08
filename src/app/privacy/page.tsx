@@ -6,7 +6,7 @@ export default function PrivacyPage() {
   return (
     <LegalLayout title="Privacy Policy" updated="15 June 2026">
       <p>
-        This Privacy Policy explains how Ecom Profit, operated by [Company Legal Name], handles your
+        This Privacy Policy explains how Ecom Profit, operated by Wealthcore Softech Private Limited, handles your
         information. We are committed to data minimisation: the marketplace files you analyse are
         processed entirely in your browser and are never transmitted to or stored on our servers.
       </p>
@@ -58,7 +58,7 @@ export default function PrivacyPage() {
       <H2>7. Your Rights</H2>
       <p>
         You may access, correct or delete your account information, and contact us with privacy
-        requests at [privacy@ecomprofit.example].
+        requests at <a href="mailto:info.wealthcoresoftech@gmail.com" className="text-accent underline">info.wealthcoresoftech@gmail.com</a>.
       </p>
 
       <H2>8. Cookies</H2>

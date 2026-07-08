@@ -7,8 +7,8 @@ export default function TermsPage() {
     <LegalLayout title="Terms of Service" updated="15 June 2026">
       <p>
         These Terms of Service (&quot;Terms&quot;) govern your access to and use of Ecom Profit (the
-        &quot;Service&quot;), operated by [Company Legal Name] (&quot;we&quot;, &quot;us&quot;). By
-        creating an account or using the Service you agree to these Terms.
+        &quot;Service&quot;), operated by Wealthcore Softech Private Limited (&quot;we&quot;,
+        &quot;us&quot;). By creating an account or using the Service you agree to these Terms.
       </p>
 
       <H2>1. The Service</H2>
@@ -78,7 +78,7 @@ export default function TermsPage() {
       </p>
 
       <H2>11. Contact</H2>
-      <p>Questions about these Terms: [support@ecomprofit.example].</p>
+      <p>Questions about these Terms: <a href="mailto:info.wealthcoresoftech@gmail.com" className="text-accent underline">info.wealthcoresoftech@gmail.com</a>.</p>
     </LegalLayout>
   );
 }

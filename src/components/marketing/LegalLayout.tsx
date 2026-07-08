@@ -19,11 +19,6 @@ export function LegalLayout({
         <div className="prose-legal mt-8 space-y-5 text-[15px] leading-relaxed text-ink/85">
           {children}
         </div>
-        <p className="mt-12 rounded-lg border border-line bg-card p-4 text-xs text-muted">
-          This document is a template provided for convenience and is not legal advice. Please have
-          it reviewed by a qualified professional and replace the placeholder company details before
-          going live.
-        </p>
       </main>
       <Footer />
     </>
