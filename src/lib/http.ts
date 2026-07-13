@@ -53,3 +53,18 @@ export function forbidden(): NextResponse {
 export function tooMany(): NextResponse {
   return NextResponse.json({ error: "Too many requests" }, { status: 429 });
 }
+
+// Wraps a route handler so any uncaught exception returns a JSON 500 instead
+// of an empty response body, which would crash the client's res.json() call.
+export function withErrorHandler(
+  handler: (req: Request, ctx?: unknown) => Promise<NextResponse>,
+): (req: Request, ctx?: unknown) => Promise<NextResponse> {
+  return async (req, ctx) => {
+    try {
+      return await handler(req, ctx);
+    } catch (err) {
+      console.error("[api] unhandled error:", err);
+      return NextResponse.json({ error: "Service temporarily unavailable. Please try again." }, { status: 500 });
+    }
+  };
+}
