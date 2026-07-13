@@ -3,9 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
-// Only PhonePe is active. Stripe and Razorpay are paused but their handling is
-// kept (commented) below so they can be switched back on later.
-type Gateway = "PHONEPE";
+type Gateway = "RAZORPAY";
 
 interface PlanView {
   code: string;
@@ -23,13 +21,66 @@ export function BillingClient({ plans }: { plans: PlanView[] }) {
   const status = params.get("status");
 
   const [selected, setSelected] = useState(preselect ?? plans.find((p) => p.highlight)?.code ?? plans[0]?.code);
-  const gateway: Gateway = "PHONEPE";
+  const gateway: Gateway = "RAZORPAY";
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (preselect) setSelected(preselect);
   }, [preselect]);
+
+  function openRazorpay(opts: {
+    orderId: string;
+    amount: number;
+    currency: string;
+    keyId: string;
+    name: string;
+    prefill: { email: string; name: string };
+  }): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const rzp = new (window as any).Razorpay({
+          key: opts.keyId,
+          amount: opts.amount,
+          currency: opts.currency,
+          name: opts.name,
+          order_id: opts.orderId,
+          prefill: opts.prefill,
+          theme: { color: "#7c3aed" },
+          handler: async (response: {
+            razorpay_order_id: string;
+            razorpay_payment_id: string;
+            razorpay_signature: string;
+          }) => {
+            try {
+              const verifyRes = await fetch("/api/razorpay/verify", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(response),
+              });
+              const verifyData = await verifyRes.json().catch(() => ({}));
+              if (!verifyRes.ok) throw new Error((verifyData as { error?: string }).error ?? "Verification failed");
+              window.location.href = "/billing?status=success";
+            } catch (e) {
+              reject(e);
+            }
+          },
+          modal: {
+            ondismiss: () => {
+              setLoading(false);
+              resolve();
+            },
+          },
+        });
+        rzp.open();
+      };
+      script.onerror = () => reject(new Error("Failed to load Razorpay SDK"));
+      document.body.appendChild(script);
+    });
+  }
 
   async function startCheckout() {
     setError(null);
@@ -40,12 +91,12 @@ export function BillingClient({ plans }: { plans: PlanView[] }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ planCode: selected, gateway }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "Could not start checkout");
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error((data as { error?: string }).error ?? "Could not start checkout");
 
-      // PhonePe: redirect the buyer to the hosted payment page.
-      if (data.gateway === "PHONEPE" && data.url) {
-        window.location.href = data.url;
+      // Razorpay: open the hosted checkout popup.
+      if (data.gateway === "RAZORPAY") {
+        await openRazorpay(data);
         return;
       }
 
@@ -97,10 +148,8 @@ export function BillingClient({ plans }: { plans: PlanView[] }) {
       <h2 className="mt-6 font-serif text-xl font-semibold">Payment method</h2>
       <div className="mt-3 flex flex-wrap gap-3">
         <div className="rounded-lg border border-accent bg-accent/5 px-5 py-2.5 text-sm font-semibold text-accent">
-          PhonePe (UPI / Cards / Netbanking)
+          Razorpay (UPI / Cards / Netbanking)
         </div>
-        {/* Stripe and Razorpay are paused. To re-enable, restore the gateway
-            selector here and the matching branches in /api/checkout. */}
       </div>
 
       {error && <p className="mt-4 text-sm text-neg">{error}</p>}
@@ -110,7 +159,7 @@ export function BillingClient({ plans }: { plans: PlanView[] }) {
         disabled={loading || !selected}
         className="mt-6 rounded-lg bg-accent px-6 py-3 text-sm font-semibold text-on-accent transition hover:bg-accent-dark disabled:opacity-50"
       >
-        {loading ? "Redirecting to PhonePe…" : "Proceed to payment"}
+        {loading ? "Opening Razorpay…" : "Proceed to payment"}
       </button>
       <p className="mt-3 text-xs text-muted">
         Prices shown are exclusive of tax. 18% GST is added at checkout and you&apos;ll receive a
