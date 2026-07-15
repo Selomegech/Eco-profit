@@ -849,26 +849,68 @@ function parseWorkbook(data,kind){
 }
 
 /* ---------- Flipkart parser ---------- */
+// Build the Flipkart "Orders P&L" column map from the two header rows, by NAME.
+// Flipkart changes this layout between exports; fixed indices silently read the wrong columns.
+function fkColMap(aoa){
+  const h0=aoa[0]||[],h1=aoa[1]||[];
+  const n=Math.max(h0.length,h1.length);
+  const N=s=>String(s==null?'':s).toLowerCase().replace(/\s+/g,' ').trim();
+  const cols=[];let g='';
+  for(let c=0;c<n;c++){
+    const a=String(h0[c]==null?'':h0[c]).trim(); if(a)g=a;   // forward-fill the group header
+    cols.push({grp:N(g),sub:N(h1[c])});
+  }
+  // a "value" column = group matches, no sub-header, and not a *(Breakup)* group
+  const byGrp=re=>{for(let c=0;c<n;c++){const x=cols[c];if(!x.sub&&!/breakup/.test(x.grp)&&re.test(x.grp))return c;}return -1;};
+  const bySub=re=>{for(let c=0;c<n;c++){if(cols[c].sub&&re.test(cols[c].sub))return c;}return -1;};
+  const byBoth=(gre,sre)=>{for(let c=0;c<n;c++){if(gre.test(cols[c].grp)&&sre.test(cols[c].sub))return c;}return -1;};
+  const allBoth=(gre,sre)=>{const o=[];for(let c=0;c<n;c++){if(gre.test(cols[c].grp)&&sre.test(cols[c].sub))o.push(c);}return o;};
+
+  const F={
+    date:byGrp(/^order date/), orderId:byGrp(/^order id/), itemId:byGrp(/^order item id/),
+    sku:byGrp(/^sku name/), channel:byGrp(/^channel of sale/), status:byGrp(/^order status/),
+    grossUnits:byGrp(/^gross units/), netUnits:byGrp(/^net units/),
+    rto:bySub(/rto \(logistics return\)/), rvp:bySub(/rvp \(customer return\)/), cancelled:bySub(/^cancelled units/),
+    estNetSales:byGrp(/^estimated net sales/), accNetSales:byGrp(/^accounted net sales/),
+    commissionFee:bySub(/^commission fee/), collectionFee:bySub(/^collection fee/),
+    fixedFee:bySub(/^fixed fee/), pickPackFee:bySub(/^pick and pack fee/),
+    fwdShipFee:bySub(/^forward shipping fee/), offerAdj:bySub(/^offer adjust/),
+    revShipFee:bySub(/^reverse shipping fee/), noCostEmi:bySub(/no cost emi/),
+    installFee:bySub(/^installation fee/), techVisit:bySub(/technical visit/),
+    uninstall:bySub(/^uninstallation/), custAddOnsRecov:bySub(/customer add-ons amount recovery/),
+    franchiseFee:bySub(/^franchise fee/), shopsyMkt:bySub(/shopsy marketing fee/),
+    prodCancelFee:bySub(/product cancellation fee/),
+    gst:bySub(/^taxes \(gst\)/), tcs:bySub(/^taxes \(tcs\)/), tds:bySub(/^taxes \(tds\)/),
+    rewardsTotal:byGrp(/^rewards & other benefits/),
+    bankSettle:byGrp(/^bank settlement/), itcTotal:byGrp(/^input tax credits/),
+    amtSettled:byGrp(/^amount settled/), amtPending:byGrp(/^amount pending/),
+    payDate1:byBoth(/^transaction-1/,/^payment date/),
+    // every Transaction-N payment date / status, so we can pick the real one
+    payDates:allBoth(/^transaction-\d/,/^payment date/),
+    txnStatuses:allBoth(/^transaction-\d/,/^current status/)
+  };
+  // Fallback to the classic fixed layout for anything we couldn't find by name.
+  const FALLBACK={date:0,orderId:1,itemId:2,sku:3,channel:5,status:8,grossUnits:10,
+    rto:12,rvp:13,cancelled:14,netUnits:15,estNetSales:19,accNetSales:21,
+    commissionFee:26,collectionFee:27,fixedFee:28,pickPackFee:29,fwdShipFee:30,offerAdj:31,
+    revShipFee:32,noCostEmi:33,installFee:34,techVisit:35,uninstall:36,custAddOnsRecov:37,
+    franchiseFee:38,shopsyMkt:39,prodCancelFee:40,gst:41,tcs:42,tds:43,
+    rewardsTotal:44,bankSettle:47,itcTotal:48,amtSettled:55,amtPending:56,payDate1:61};
+  Object.keys(FALLBACK).forEach(k=>{ if(F[k]==null||F[k]<0) F[k]=FALLBACK[k]; });
+  if(!F.payDates||!F.payDates.length) F.payDates=[F.payDate1];
+  return F;
+}
 function parseFlipkart(data){
   const wb=XLSX.read(data,{type:'array',cellDates:true,dateNF:'yyyy-mm-dd'});
   const sn=wb.SheetNames.find(s=>s.toLowerCase().includes('orders'));
   if(!sn)throw new Error('No Orders P&L sheet found in Flipkart file');
   fixSheetRange(wb.Sheets[sn]);
   const aoa=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,raw:false,dateNF:'yyyy-mm-dd'});
-  // Two-row header: row 0 = groups, row 1 = sub-headers, data from row 2
-  // Use fixed column indices (standard Flipkart P&L report)
-  const F={date:0,orderId:1,itemId:2,sku:3,fulfillment:4,channel:5,modeOfPayment:6,zone:7,status:8,
-    grossUnits:10,retCancUnits:11,rto:12,rvp:13,cancelled:14,netUnits:15,
-    fsp:17,custShipFee:18,estNetSales:19,accNetSales:21,
-    saleAmt:22,sellerBurn:23,custAddOns:24,
-    totalExpenses:25,commissionFee:26,collectionFee:27,fixedFee:28,pickPackFee:29,
-    fwdShipFee:30,offerAdj:31,revShipFee:32,noCostEmi:33,installFee:34,techVisit:35,
-    uninstall:36,custAddOnsRecov:37,franchiseFee:38,shopsyMkt:39,prodCancelFee:40,
-    gst:41,tcs:42,tds:43,
-    rewardsTotal:44,rewards:45,spfPayout:46,
-    bankSettle:47,itcTotal:48,itcGstTcs:49,itcTds:50,
-    netEarnings:51,amtSettled:55,amtPending:56,
-    payDate1:61};
+  // Two-row header: row 0 = groups, row 1 = sub-headers, data from row 2.
+  // Flipkart ships several layout variants (some drop "Shipping Zone", rename "Accounted Net Sales (INR)"
+  // to "Accounted Net Sales (Seller Price)", or add transaction columns), which shifts every index.
+  // So resolve columns BY HEADER NAME, falling back to the classic fixed positions.
+  const F=fkColMap(aoa);
 
   const orderRows=[];
   for(let r=2;r<aoa.length;r++){
@@ -880,7 +922,8 @@ function parseFlipkart(data){
     const rtoU=num(row[F.rto]),rvpU=num(row[F.rvp]),canU=num(row[F.cancelled]);
     if(rawStatus==='DELIVERED'||rawStatus==='RETURN_CANCELLED') status='Delivered';
     else if(rawStatus==='CANCELLED') status='Cancelled';
-    else if(rawStatus==='IN_TRANSIT'||rawStatus==='ORDER_RECEIVED'||rawStatus==='READY_TO_DISPATCH') status='Shipped';
+    else if(rawStatus==='IN_TRANSIT'||rawStatus==='ORDER_RECEIVED'||rawStatus==='READY_TO_DISPATCH'
+      ||rawStatus==='READY_TO_SHIP'||rawStatus==='PACKED'||rawStatus==='SHIPPED'||rawStatus==='APPROVED') status='Shipped';
     else if(rawStatus==='RETURNED'||rawStatus==='RETURN_REQUESTED'){
       if(rtoU>0) status='RTO'; else status='Return';
     } else status=rawStatus;
@@ -903,8 +946,9 @@ function parseFlipkart(data){
     const otherFkFees=Math.abs(num(row[F.noCostEmi]))+Math.abs(num(row[F.franchiseFee]))+Math.abs(num(row[F.shopsyMkt]))
       +Math.abs(num(row[F.installFee]))+Math.abs(num(row[F.techVisit]))+Math.abs(num(row[F.uninstall]))+Math.abs(num(row[F.custAddOnsRecov]));
     const itcExplicit=num(row[F.itcTotal]);
-    // payment date — Transaction-1
-    const pd=row[F.payDate1];
+    // payment date — first transaction that actually carries one
+    let pd=null;
+    for(const pc of F.payDates){ const v=row[pc]; if(v!=null&&String(v).trim()!==''){ pd=v; break; } }
     orderRows.push({
       sub:String(row[F.itemId]||'').trim(),txn:String(row[F.orderId]||'').trim(),
       sku:String(row[F.sku]||'').trim()||'(blank SKU)',product:String(row[F.sku]||''),
