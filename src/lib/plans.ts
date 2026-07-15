@@ -19,7 +19,7 @@ export const PLANS: PlanSeed[] = [
     code: "monthly",
     name: "Monthly",
     interval: "MONTHLY",
-    amountPaise: 150000, // ₹1,500 / month (base, +18% GST at checkout)
+    amountPaise: 99900, // ₹999 / month (base, +18% GST at checkout)
     durationDays: 30,
     sortOrder: 1,
     blurb: "Full access, billed every month.",
@@ -28,19 +28,19 @@ export const PLANS: PlanSeed[] = [
     code: "semiannual",
     name: "Semi-annual",
     interval: "HALFYEARLY",
-    amountPaise: 600000, // ₹6,000 every 6 months = ₹1,000/mo (base, +18% GST)
+    amountPaise: 449400, // ₹4,494 every 6 months = ₹749/mo (base, +18% GST)
     durationDays: 182,
     sortOrder: 2,
-    blurb: "Save 33% versus monthly.",
+    blurb: "Save 25% versus monthly.",
   },
   {
     code: "annual",
     name: "Annual",
     interval: "ANNUAL",
-    amountPaise: 900000, // ₹9,000 / year = ₹750/mo (base, +18% GST)
+    amountPaise: 718800, // ₹7,188 / year = ₹599/mo (base, +18% GST)
     durationDays: 365,
     sortOrder: 3,
-    blurb: "Save 50% versus monthly.",
+    blurb: "Save 40% versus monthly.",
     highlight: true,
   },
 ];
