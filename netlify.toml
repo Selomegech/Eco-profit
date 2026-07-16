@@ -5,6 +5,9 @@
 [build]
   command = "npm run build"
 
+[functions]
+  node_bundler = "nft"
+
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
